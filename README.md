@@ -1,0 +1,1 @@
+# google-ads-query-language
