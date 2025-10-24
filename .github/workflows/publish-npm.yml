@@ -148,10 +148,21 @@ jobs:
         run: pnpm --filter @gaql/core test
 
       - name: Publish to npm
+        if: env.NPM_TOKEN != ''
         working-directory: packages/core
         run: pnpm publish --access public --no-git-checks
+        continue-on-error: true
         env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: npm publish status
+        if: env.NPM_TOKEN == ''
+        run: |
+          echo "⚠️ NPM_TOKEN secret not set. Skipping npm publishing."
+          echo "To enable automatic publishing, add your npm token as NPM_TOKEN in repository secrets."
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Extract changelog for this version
         id: changelog
@@ -254,10 +265,21 @@ jobs:
         run: pnpm --filter @gaql/cli test
 
       - name: Publish to npm
+        if: env.NPM_TOKEN != ''
         working-directory: packages/cli
         run: pnpm publish --access public --no-git-checks
+        continue-on-error: true
         env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: npm publish status
+        if: env.NPM_TOKEN == ''
+        run: |
+          echo "⚠️ NPM_TOKEN secret not set. Skipping npm publishing."
+          echo "To enable automatic publishing, add your npm token as NPM_TOKEN in repository secrets."
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Extract changelog for this version
         id: changelog
