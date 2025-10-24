@@ -1,0 +1,17 @@
+.vscode/**
+.github/**
+src/**
+.gitignore
+tsconfig.json
+vite.config.build.ts
+biome.json
+node_modules/**
+.git/**
+**/*.ts
+**/*.test.ts
+**/*.test.js
+**/*.map
+.DS_Store
+*.vsix
+!out/**/*.js
+.turbo/**

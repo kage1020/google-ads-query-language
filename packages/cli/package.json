@@ -1,0 +1,59 @@
+{
+  "name": "@gaql/cli",
+  "version": "0.1.0",
+  "description": "CLI tool for Google Ads Query Language (GAQL) validation and type generation",
+  "license": "MIT",
+  "author": {
+    "name": "kage1020"
+  },
+  "homepage": "https://github.com/kage1020/google-ads-query-language#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kage1020/google-ads-query-language.git",
+    "directory": "packages/cli"
+  },
+  "bugs": {
+    "url": "https://github.com/kage1020/google-ads-query-language/issues"
+  },
+  "keywords": [
+    "google-ads",
+    "gaql",
+    "google-ads-query-language",
+    "cli",
+    "validation",
+    "typescript",
+    "google-ads-api",
+    "command-line"
+  ],
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "bin": {
+    "gaql": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc --build",
+    "dev": "tsc --build --watch",
+    "clean": "rm -rf dist *.tsbuildinfo",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@gaql/core": "workspace:*",
+    "chalk": "^5.6.2",
+    "commander": "^14.0.1",
+    "ora": "^9.0.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.0",
+    "@types/node": "^24.9.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.3"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "name": "google-ads-query-language",
+  "version": "0.0.0",
+  "private": true,
+  "description": "TypeScript tools for Google Ads Query Language (GAQL)",
+  "license": "MIT",
+  "author": "kage1020",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kage1020/google-ads-query-language"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "clean": "turbo run clean && rm -rf node_modules .turbo",
+    "format": "turbo run format"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.0",
+    "turbo": "^2.5.8",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@10.10.0"
+}

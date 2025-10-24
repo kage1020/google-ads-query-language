@@ -1,0 +1,320 @@
+name: Publish to npm
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'packages/core/**'
+      - 'packages/cli/**'
+      - '.github/workflows/publish-npm.yml'
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  # Check @gaql/core version
+  check-core-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version-changed: ${{ steps.check.outputs.changed }}
+      new-version: ${{ steps.check.outputs.version }}
+      previous-version: ${{ steps.check.outputs.previous_version }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get current version
+        id: current
+        run: |
+          VERSION=$(node -p "require('./packages/core/package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Get previous version from latest tag
+        id: previous
+        run: |
+          LATEST_TAG=$(git describe --tags --match "core-v*" --abbrev=0 2>/dev/null || echo "core-v0.0.0")
+          PREVIOUS_VERSION=${LATEST_TAG#core-v}
+          echo "version=$PREVIOUS_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Check if version changed
+        id: check
+        run: |
+          CURRENT="${{ steps.current.outputs.version }}"
+          PREVIOUS="${{ steps.previous.outputs.version }}"
+
+          echo "Current version: $CURRENT"
+          echo "Previous version: $PREVIOUS"
+
+          if [ "$CURRENT" != "$PREVIOUS" ]; then
+            echo "Version has changed from $PREVIOUS to $CURRENT"
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "version=$CURRENT" >> $GITHUB_OUTPUT
+            echo "previous_version=$PREVIOUS" >> $GITHUB_OUTPUT
+          else
+            echo "Version has not changed"
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+  # Check @gaql/cli version
+  check-cli-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version-changed: ${{ steps.check.outputs.changed }}
+      new-version: ${{ steps.check.outputs.version }}
+      previous-version: ${{ steps.check.outputs.previous_version }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get current version
+        id: current
+        run: |
+          VERSION=$(node -p "require('./packages/cli/package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Get previous version from latest tag
+        id: previous
+        run: |
+          LATEST_TAG=$(git describe --tags --match "cli-v*" --abbrev=0 2>/dev/null || echo "cli-v0.0.0")
+          PREVIOUS_VERSION=${LATEST_TAG#cli-v}
+          echo "version=$PREVIOUS_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Check if version changed
+        id: check
+        run: |
+          CURRENT="${{ steps.current.outputs.version }}"
+          PREVIOUS="${{ steps.previous.outputs.version }}"
+
+          echo "Current version: $CURRENT"
+          echo "Previous version: $PREVIOUS"
+
+          if [ "$CURRENT" != "$PREVIOUS" ]; then
+            echo "Version has changed from $PREVIOUS to $CURRENT"
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "version=$CURRENT" >> $GITHUB_OUTPUT
+            echo "previous_version=$PREVIOUS" >> $GITHUB_OUTPUT
+          else
+            echo "Version has not changed"
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+  # Publish @gaql/core
+  publish-core:
+    needs: check-core-version
+    if: needs.check-core-version.outputs.version-changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build @gaql/core
+        run: pnpm --filter @gaql/core build
+
+      - name: Run tests
+        run: pnpm --filter @gaql/core test
+
+      - name: Publish to npm
+        working-directory: packages/core
+        run: pnpm publish --access public --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Extract changelog for this version
+        id: changelog
+        run: |
+          VERSION="${{ needs.check-core-version.outputs.new-version }}"
+
+          if [ -f packages/core/CHANGELOG.md ]; then
+            CHANGELOG=$(sed -n "/## \[$VERSION\]/,/## \[/p" packages/core/CHANGELOG.md | sed '$d' | tail -n +2)
+            if [ -z "$CHANGELOG" ]; then
+              CHANGELOG="Release version $VERSION"
+            fi
+          else
+            CHANGELOG="Release version $VERSION"
+          fi
+
+          {
+            echo 'notes<<EOF'
+            echo "$CHANGELOG"
+            echo EOF
+          } >> $GITHUB_OUTPUT
+
+      - name: Create Git tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "core-v${{ needs.check-core-version.outputs.new-version }}" -m "@gaql/core v${{ needs.check-core-version.outputs.new-version }}"
+          git push origin "core-v${{ needs.check-core-version.outputs.new-version }}"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: core-v${{ needs.check-core-version.outputs.new-version }}
+          name: '@gaql/core v${{ needs.check-core-version.outputs.new-version }}'
+          body: |
+            ${{ steps.changelog.outputs.notes }}
+
+            ## Installation
+
+            ```bash
+            npm install @gaql/core
+            # or
+            pnpm add @gaql/core
+            # or
+            yarn add @gaql/core
+            ```
+
+            ## npm Package
+
+            https://www.npmjs.com/package/@gaql/core/v/${{ needs.check-core-version.outputs.new-version }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Publish @gaql/cli (depends on @gaql/core)
+  publish-cli:
+    needs: [check-cli-version, publish-core]
+    # Run if CLI version changed, OR if we just published core (dependency update)
+    if: |
+      always() &&
+      needs.check-cli-version.outputs.version-changed == 'true' &&
+      (needs.publish-core.result == 'success' || needs.publish-core.result == 'skipped')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build @gaql/cli
+        run: pnpm --filter @gaql/cli build
+
+      - name: Run tests
+        run: pnpm --filter @gaql/cli test
+
+      - name: Publish to npm
+        working-directory: packages/cli
+        run: pnpm publish --access public --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Extract changelog for this version
+        id: changelog
+        run: |
+          VERSION="${{ needs.check-cli-version.outputs.new-version }}"
+
+          if [ -f packages/cli/CHANGELOG.md ]; then
+            CHANGELOG=$(sed -n "/## \[$VERSION\]/,/## \[/p" packages/cli/CHANGELOG.md | sed '$d' | tail -n +2)
+            if [ -z "$CHANGELOG" ]; then
+              CHANGELOG="Release version $VERSION"
+            fi
+          else
+            CHANGELOG="Release version $VERSION"
+          fi
+
+          {
+            echo 'notes<<EOF'
+            echo "$CHANGELOG"
+            echo EOF
+          } >> $GITHUB_OUTPUT
+
+      - name: Create Git tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "cli-v${{ needs.check-cli-version.outputs.new-version }}" -m "@gaql/cli v${{ needs.check-cli-version.outputs.new-version }}"
+          git push origin "cli-v${{ needs.check-cli-version.outputs.new-version }}"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: cli-v${{ needs.check-cli-version.outputs.new-version }}
+          name: '@gaql/cli v${{ needs.check-cli-version.outputs.new-version }}'
+          body: |
+            ${{ steps.changelog.outputs.notes }}
+
+            ## Installation
+
+            ```bash
+            npm install -g @gaql/cli
+            # or
+            pnpm add -g @gaql/cli
+            # or
+            yarn global add @gaql/cli
+            ```
+
+            ## Usage
+
+            ```bash
+            gaql validate <file>
+            gaql validate --api-version 21 --format json
+            ```
+
+            ## npm Package
+
+            https://www.npmjs.com/package/@gaql/cli/v/${{ needs.check-cli-version.outputs.new-version }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

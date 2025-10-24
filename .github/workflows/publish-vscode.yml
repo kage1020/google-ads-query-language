@@ -1,0 +1,227 @@
+name: Publish to VSCode Extension
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'packages/vscode-extension/**'
+      - '.github/workflows/publish-vscode.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version-changed: ${{ steps.check.outputs.changed }}
+      new-version: ${{ steps.check.outputs.version }}
+      previous-version: ${{ steps.check.outputs.previous_version }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get current version
+        id: current
+        run: |
+          VERSION=$(node -p "require('./packages/vscode-extension/package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Get previous version from latest tag
+        id: previous
+        run: |
+          # Get the latest tag starting with 'vscode-extension-v', if it exists
+          LATEST_TAG=$(git describe --tags --match "vscode-extension-v*" --abbrev=0 2>/dev/null || echo "vscode-extension-v0.0.0")
+          # Remove 'vscode-extension-v' prefix
+          PREVIOUS_VERSION=${LATEST_TAG#vscode-extension-v}
+          echo "version=$PREVIOUS_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Check if version changed
+        id: check
+        run: |
+          CURRENT="${{ steps.current.outputs.version }}"
+          PREVIOUS="${{ steps.previous.outputs.version }}"
+
+          echo "Current version: $CURRENT"
+          echo "Previous version: $PREVIOUS"
+
+          if [ "$CURRENT" != "$PREVIOUS" ]; then
+            echo "Version has changed from $PREVIOUS to $CURRENT"
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "version=$CURRENT" >> $GITHUB_OUTPUT
+            echo "previous_version=$PREVIOUS" >> $GITHUB_OUTPUT
+          else
+            echo "Version has not changed"
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+  release:
+    needs: check-version
+    if: needs.check-version.outputs.version-changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run tests
+        run: pnpm --filter gaql-vscode test
+
+      - name: Build extension
+        run: pnpm --filter gaql-vscode build
+
+      - name: Package extension
+        run: pnpm --filter gaql-vscode package
+
+      - name: Get VSIX filename
+        id: vsix
+        run: |
+          VSIX_FILE=$(ls packages/vscode-extension/*.vsix)
+          VSIX_BASENAME=$(basename "$VSIX_FILE")
+          echo "filepath=$VSIX_FILE" >> $GITHUB_OUTPUT
+          echo "filename=$VSIX_BASENAME" >> $GITHUB_OUTPUT
+
+      - name: Extract changelog for this version
+        id: changelog
+        run: |
+          VERSION="${{ needs.check-version.outputs.new-version }}"
+
+          # Extract changelog section for this version
+          if [ -f packages/vscode-extension/CHANGELOG.md ]; then
+            # Extract content between version headers
+            CHANGELOG=$(sed -n "/## \[$VERSION\]/,/## \[/p" packages/vscode-extension/CHANGELOG.md | sed '$d' | tail -n +2)
+
+            # If no specific version section found, use a default message
+            if [ -z "$CHANGELOG" ]; then
+              CHANGELOG="Release version $VERSION"
+            fi
+          else
+            CHANGELOG="Release version $VERSION"
+          fi
+
+          # Write to output (handle multiline)
+          {
+            echo 'notes<<EOF'
+            echo "$CHANGELOG"
+            echo EOF
+          } >> $GITHUB_OUTPUT
+
+      - name: Create Git tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "vscode-extension-v${{ needs.check-version.outputs.new-version }}" -m "VSCode Extension v${{ needs.check-version.outputs.new-version }}"
+          git push origin "vscode-extension-v${{ needs.check-version.outputs.new-version }}"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: vscode-extension-v${{ needs.check-version.outputs.new-version }}
+          name: VSCode Extension v${{ needs.check-version.outputs.new-version }}
+          body: |
+            ${{ steps.changelog.outputs.notes }}
+
+            ## Installation
+
+            ### From VS Code Marketplace
+            1. Open VS Code
+            2. Go to Extensions (Ctrl+Shift+X / Cmd+Shift+X)
+            3. Search for "Google Ads Query Language"
+            4. Click Install
+
+            ### From VSIX File
+            1. Download `${{ steps.vsix.outputs.filename }}` from the assets below
+            2. Open VS Code
+            3. Open Command Palette (Ctrl+Shift+P / Cmd+Shift+P)
+            4. Run `Extensions: Install from VSIX...`
+            5. Select the downloaded VSIX file
+          files: ${{ steps.vsix.outputs.filepath }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-marketplace:
+    needs: [check-version, release]
+    if: needs.check-version.outputs.version-changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build extension
+        run: pnpm --filter gaql-vscode build
+
+      - name: Publish to VS Code Marketplace
+        if: env.VSCE_PAT != ''
+        working-directory: packages/vscode-extension
+        run: |
+          pnpm add -g @vscode/vsce
+          vsce publish -p ${{ secrets.VSCE_PAT }}
+        continue-on-error: true
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+
+      - name: Marketplace publish status
+        if: env.VSCE_PAT == ''
+        run: |
+          echo "⚠️ VSCE_PAT secret not set. Skipping VS Code Marketplace publishing."
+          echo "To enable automatic publishing, add your Personal Access Token as VSCE_PAT in repository secrets."
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}

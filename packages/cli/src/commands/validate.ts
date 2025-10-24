@@ -1,0 +1,140 @@
+import { readFile } from 'node:fs/promises';
+import { stdin } from 'node:process';
+import { setApiVersion, type ValidationResult, validateText } from '@gaql/core';
+import chalk from 'chalk';
+import ora from 'ora';
+
+interface ValidateOptions {
+  apiVersion: string;
+  format: string;
+  color: boolean;
+}
+
+export async function validateCommand(
+  file: string | undefined,
+  options: ValidateOptions,
+): Promise<void> {
+  // Set API version
+  const version = options.apiVersion as '19' | '20' | '21';
+  if (!['19', '20', '21'].includes(version)) {
+    console.error(chalk.red(`Invalid API version: ${version}. Must be 19, 20, or 21.`));
+    process.exit(1);
+  }
+  setApiVersion(version);
+
+  // Read input
+  const spinner = ora('Reading input...').start();
+  let text: string;
+  try {
+    if (file) {
+      text = await readFile(file, 'utf-8');
+      spinner.succeed(`Read file: ${file}`);
+    } else {
+      text = await readStdin();
+      spinner.succeed('Read from stdin');
+    }
+  } catch (error) {
+    spinner.fail('Failed to read input');
+    console.error(chalk.red((error as Error).message));
+    process.exit(1);
+  }
+
+  // Validate
+  spinner.start('Validating GAQL queries...');
+  const results = validateText(text);
+  spinner.stop();
+
+  // Output results
+  if (options.format === 'json') {
+    outputJson(results);
+  } else {
+    outputText(results, options.color);
+  }
+
+  // Exit with error code if validation failed
+  const hasErrors = results.some((result) => !result.valid);
+  process.exit(hasErrors ? 1 : 0);
+}
+
+async function readStdin(): Promise<string> {
+  const chunks: Buffer[] = [];
+  for await (const chunk of stdin) {
+    chunks.push(chunk);
+  }
+  return Buffer.concat(chunks).toString('utf-8');
+}
+
+function outputJson(results: Array<ValidationResult & { query: string; line: number }>): void {
+  console.log(
+    JSON.stringify(
+      {
+        totalQueries: results.length,
+        validQueries: results.filter((r) => r.valid).length,
+        invalidQueries: results.filter((r) => !r.valid).length,
+        results: results.map((result) => ({
+          query: result.query,
+          line: result.line,
+          valid: result.valid,
+          errors: result.errors,
+        })),
+      },
+      null,
+      2,
+    ),
+  );
+}
+
+function outputText(
+  results: Array<ValidationResult & { query: string; line: number }>,
+  useColor: boolean,
+): void {
+  const c = useColor ? chalk : noColorChalk();
+
+  console.log(c.bold('\n=== GAQL Validation Results ===\n'));
+
+  if (results.length === 0) {
+    console.log(c.yellow('No GAQL queries found in input.'));
+    return;
+  }
+
+  const validCount = results.filter((r) => r.valid).length;
+  const invalidCount = results.filter((r) => !r.valid).length;
+
+  console.log(c.bold(`Total queries: ${results.length}`));
+  console.log(c.green(`✓ Valid: ${validCount}`));
+  if (invalidCount > 0) {
+    console.log(c.red(`✗ Invalid: ${invalidCount}`));
+  }
+  console.log();
+
+  // Display each query result
+  for (const result of results) {
+    if (result.valid) {
+      console.log(c.green(`✓ Query at line ${result.line + 1}: Valid`));
+    } else {
+      console.log(c.red(`✗ Query at line ${result.line + 1}: Invalid`));
+      console.log(c.dim('  Query:'));
+      console.log(c.dim(`    ${result.query.replace(/\n/g, '\n    ')}`));
+      console.log();
+      console.log(c.bold('  Errors:'));
+      for (const error of result.errors) {
+        console.log(c.red(`    • ${error.message}`));
+        if (error.suggestion) {
+          console.log(c.yellow(`      Suggestion: ${error.suggestion}`));
+        }
+      }
+      console.log();
+    }
+  }
+}
+
+function noColorChalk() {
+  const identity = (str: string) => str;
+  return {
+    bold: identity,
+    green: identity,
+    red: identity,
+    yellow: identity,
+    dim: identity,
+  };
+}
