@@ -93,6 +93,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build core package
+        run: pnpm --filter @gaql/core build
+
       - name: Run tests
         run: pnpm --filter gaql-vscode test
 
@@ -204,6 +207,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Build core package
+        run: pnpm --filter @gaql/core build
 
       - name: Build extension
         run: pnpm --filter gaql-vscode build
