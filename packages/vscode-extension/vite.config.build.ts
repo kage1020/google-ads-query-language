@@ -12,7 +12,7 @@ export default defineConfig({
     sourcemap: true,
     minify: false,
     rollupOptions: {
-      external: ['vscode', /^node:.*/, '@gaql/core'],
+      external: ['vscode', /^node:.*/],
       output: {
         entryFileNames: 'extension.js',
       },
