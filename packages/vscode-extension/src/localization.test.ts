@@ -78,7 +78,6 @@ describe('localization.ts', () => {
           if (key === 'language') return 'ja';
           return undefined;
         }),
-        // @ts-expect-error - partial mock
         has: vi.fn(),
         inspect: vi.fn(),
         update: vi.fn(),
@@ -177,7 +176,6 @@ describe('localization.ts', () => {
           if (key === 'language') return 'auto';
           return undefined;
         }),
-        // @ts-expect-error - partial mock
         has: vi.fn(),
         inspect: vi.fn(),
         update: vi.fn(),

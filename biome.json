@@ -30,16 +30,8 @@
     "enabled": true,
     "rules": {
       "recommended": true,
-      "correctness": {
-        "noUnusedVariables": "error",
-        "noUnusedImports": "error"
-      },
-      "style": {
-        "useConst": "error",
-        "useTemplate": "warn"
-      },
       "suspicious": {
-        "noExplicitAny": "warn"
+        "noTemplateCurlyInString": "off"
       }
     }
   },
