@@ -15,7 +15,7 @@ program
   .command('validate')
   .description('Validate GAQL queries in a file or from stdin')
   .argument('[file]', 'File containing GAQL queries (if omitted, reads from stdin)')
-  .option('-v, --api-version <version>', 'Google Ads API version (19, 20, or 21)', '21')
+  .option('-a, --api-version <version>', 'Google Ads API version (19, 20, or 21)', '21')
   .option('-f, --format <format>', 'Output format (text, json, llm, or rich)', 'text')
   .option('--no-color', 'Disable colored output')
   .action(validateCommand);
