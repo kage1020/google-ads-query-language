@@ -67,49 +67,51 @@ async function readStdin(): Promise<string> {
   if (stdin.isTTY) {
     throw new Error(
       'No input provided. Please provide a file path or pipe input via stdin.\n' +
-      'Examples:\n' +
-      '  gaql validate query.gaql\n' +
-      '  cat query.gaql | gaql validate\n' +
-      '  echo "SELECT campaign.id FROM campaign" | gaql validate'
+        'Examples:\n' +
+        '  gaql validate query.gaql\n' +
+        '  cat query.gaql | gaql validate\n' +
+        '  echo "SELECT campaign.id FROM campaign" | gaql validate',
     );
   }
 
   return new Promise((resolve, reject) => {
-    const chunks: Buffer[] = []
-    let hasData = false
-    let timeoutId: NodeJS.Timeout
+    const chunks: Buffer[] = [];
+    let hasData = false;
+    let timeoutId: NodeJS.Timeout;
 
     // Set a timeout to detect if no data arrives
     timeoutId = setTimeout(() => {
       if (!hasData) {
-        stdin.removeAllListeners()
+        stdin.removeAllListeners();
         reject(
           new Error(
-            "No input detected. Please provide a file path or pipe input via stdin.\n" +
-              "Examples:\n" +
-              "  gaql validate query.gaql\n" +
-              "  cat query.gaql | gaql validate\n" +
-              '  echo "SELECT campaign.id FROM campaign" | gaql validate'
-          )
-        )
+            'No input detected. Please provide a file path or pipe input via stdin.\n' +
+              'Examples:\n' +
+              '  gaql validate query.gaql\n' +
+              '  cat query.gaql | gaql validate\n' +
+              '  echo "SELECT campaign.id FROM campaign" | gaql validate',
+          ),
+        );
       }
-    }, 1000) // 1 second timeout for first data
+    }, 1000); // 1 second timeout for first data
 
-    stdin.on("data", (chunk: Buffer) => {
-      hasData = true
-      chunks.push(chunk)
-      clearTimeout(timeoutId)
-    })
+    stdin.on('data', (chunk: Buffer) => {
+      hasData = true;
+      chunks.push(chunk);
+      clearTimeout(timeoutId);
+    });
 
-    stdin.on("end", () => {
-      clearTimeout(timeoutId)
-      resolve(Buffer.concat(chunks).toString("utf-8"))
-    })
+    stdin.on('end', () => {
+      clearTimeout(timeoutId);
+      stdin.removeAllListeners();
+      resolve(Buffer.concat(chunks).toString('utf-8'));
+    });
 
-    stdin.on("error", (err: Error) => {
-      clearTimeout(timeoutId)
-      reject(err)
-    })
+    stdin.on('error', (err: Error) => {
+      clearTimeout(timeoutId);
+      stdin.removeAllListeners();
+      reject(err);
+    });
   });
 }
 
