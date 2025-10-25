@@ -1,6 +1,12 @@
 import { readFile } from 'node:fs/promises';
 import { stdin } from 'node:process';
-import { setApiVersion, type ValidationResult, validateText } from '@gaql/core';
+import {
+  type SupportedApiVersion,
+  SupportedApiVersions,
+  setApiVersion,
+  type ValidationResult,
+  validateText,
+} from '@gaql/core';
 import boxen from 'boxen';
 import chalk from 'chalk';
 import Table from 'cli-table3';
@@ -17,9 +23,11 @@ export async function validateCommand(
   options: ValidateOptions,
 ): Promise<void> {
   // Set API version
-  const version = options.apiVersion as '19' | '20' | '21';
-  if (!['19', '20', '21'].includes(version)) {
-    console.error(chalk.red(`Invalid API version: ${version}. Must be 19, 20, or 21.`));
+  const version = options.apiVersion as SupportedApiVersion;
+  if (!SupportedApiVersions.includes(version)) {
+    console.error(
+      chalk.red(`Invalid API version: ${version}. Must be ${SupportedApiVersions.join(', ')}.`),
+    );
     process.exit(1);
   }
   setApiVersion(version);
