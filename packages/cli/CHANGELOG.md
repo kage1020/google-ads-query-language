@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.1] - 2025-10-25
+
+### Added
+
+- Added new output format: "llm" and "rich"
+
 ## [0.1.0] - 2025-10-24
 
 ### Added
@@ -32,4 +38,5 @@
 
 ---
 
+[0.1.1]: https://github.com/kage1020/google-ads-query-language/releases/tag/cli-v0.1.1
 [0.1.0]: https://github.com/kage1020/google-ads-query-language/releases/tag/cli-v0.1.0

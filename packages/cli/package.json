@@ -1,6 +1,6 @@
 {
   "name": "@gaql/cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "CLI tool for Google Ads Query Language (GAQL) validation and type generation",
   "license": "MIT",
   "author": {
