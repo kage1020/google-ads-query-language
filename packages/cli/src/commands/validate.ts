@@ -73,12 +73,14 @@ function outputJson(results: Array<ValidationResult & { query: string; line: num
         totalQueries: results.length,
         validQueries: results.filter((r) => r.valid).length,
         invalidQueries: results.filter((r) => !r.valid).length,
-        results: results.map((result) => ({
-          query: result.query,
-          line: result.line,
-          valid: result.valid,
-          errors: result.errors,
-        })),
+        results: results
+          .filter((result) => !result.valid) // Only include invalid queries
+          .map((result) => ({
+            query: result.query,
+            line: result.line,
+            valid: result.valid,
+            errors: result.errors,
+          })),
       },
       null,
       2,
@@ -162,24 +164,24 @@ function outputText(
   }
   console.log();
 
-  // Display each query result
+  // Display only invalid queries
   for (const result of results) {
     if (result.valid) {
-      console.log(c.green(`✓ Query at line ${result.line + 1}: Valid`));
-    } else {
-      console.log(c.red(`✗ Query at line ${result.line + 1}: Invalid`));
-      console.log(c.dim('  Query:'));
-      console.log(c.dim(`    ${result.query.replace(/\n/g, '\n    ')}`));
-      console.log();
-      console.log(c.bold('  Errors:'));
-      for (const error of result.errors) {
-        console.log(c.red(`    • ${error.message}`));
-        if (error.suggestion) {
-          console.log(c.yellow(`      Suggestion: ${error.suggestion}`));
-        }
-      }
-      console.log();
+      continue; // Skip valid queries
     }
+
+    console.log(c.red(`✗ Query at line ${result.line + 1}: Invalid`));
+    console.log(c.dim('  Query:'));
+    console.log(c.dim(`    ${result.query.replace(/\n/g, '\n    ')}`));
+    console.log();
+    console.log(c.bold('  Errors:'));
+    for (const error of result.errors) {
+      console.log(c.red(`    • ${error.message}`));
+      if (error.suggestion) {
+        console.log(c.yellow(`      Suggestion: ${error.suggestion}`));
+      }
+    }
+    console.log();
   }
 }
 
