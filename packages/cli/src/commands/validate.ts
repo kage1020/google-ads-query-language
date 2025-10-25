@@ -257,6 +257,9 @@ function outputRich(
       ],
     );
 
+    // Collect suggestions from all errors
+    const suggestions: string[] = [];
+
     // Add errors
     for (let i = 0; i < result.errors.length; i++) {
       const error = result.errors[i];
@@ -270,12 +273,35 @@ function outputRich(
         table.push([c.bold('Field'), useColor ? chalk.cyan(error.field) : error.field]);
       }
 
+      // Collect suggestions instead of adding to table
       if (error.suggestion) {
-        table.push([c.bold('💡 Suggestion'), c.green(error.suggestion)]);
+        suggestions.push(error.suggestion);
       }
     }
 
     console.log(table.toString());
+
+    // Display suggestions in a rich box
+    if (suggestions.length > 0) {
+      const suggestionText = suggestions
+        .map((s, i) => {
+          const prefix = suggestions.length > 1 ? `${i + 1}. ` : '';
+          return `${prefix}${c.green(c.bold(s))}`;
+        })
+        .join('\n');
+
+      console.log(
+        boxen(suggestionText, {
+          padding: 1,
+          margin: { left: 2 },
+          borderColor: 'green',
+          borderStyle: 'round',
+          title: '💡 Did you mean?',
+          titleAlignment: 'center',
+        }),
+      );
+    }
+
     console.log();
   }
 }
