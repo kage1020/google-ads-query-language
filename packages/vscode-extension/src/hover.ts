@@ -1,4 +1,10 @@
-import { extractResource, GAQL_KEYWORDS, getFieldsForResource } from '@gaql/core';
+import {
+  extractResource,
+  GAQL_KEYWORDS,
+  getFieldsForResource,
+  getResourceInfo,
+  getResourceNames,
+} from '@gaql/core';
 import * as vscode from 'vscode';
 import { getEnabled } from './config.js';
 
@@ -36,6 +42,30 @@ export class GAQLHoverProvider implements vscode.HoverProvider {
       return new vscode.Hover(
         new vscode.MarkdownString(`**GAQL Keyword**: \`${word.toUpperCase()}\``),
       );
+    }
+
+    // Check if it's a resource name
+    const resourceNames = getResourceNames();
+    if (resourceNames.includes(word)) {
+      const resourceInfo = getResourceInfo(word);
+      if (resourceInfo) {
+        const markdown = new vscode.MarkdownString();
+        markdown.appendMarkdown(`**Resource**: \`${resourceInfo.name}\`\n\n`);
+        markdown.appendMarkdown(`---\n\n`);
+        markdown.appendMarkdown(`**Available Fields**: ${resourceInfo.fieldCount}\n\n`);
+        markdown.appendMarkdown(`**Available Metrics**: ${resourceInfo.metricCount}\n\n`);
+        markdown.appendMarkdown(`**Available Segments**: ${resourceInfo.segmentCount}\n\n`);
+
+        if (resourceInfo.attributedResources.length > 0) {
+          markdown.appendMarkdown(`---\n\n`);
+          markdown.appendMarkdown(`**Attributed Resources**:\n`);
+          resourceInfo.attributedResources.forEach((attr) => {
+            markdown.appendMarkdown(`- \`${attr}\`\n`);
+          });
+        }
+
+        return new vscode.Hover(markdown);
+      }
     }
 
     // Extract resource from query

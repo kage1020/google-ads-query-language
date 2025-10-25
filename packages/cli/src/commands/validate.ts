@@ -1,6 +1,12 @@
 import { readFile } from 'node:fs/promises';
 import { stdin } from 'node:process';
-import { setApiVersion, type ValidationResult, validateText } from '@gaql/core';
+import {
+  type SupportedApiVersion,
+  SupportedApiVersions,
+  setApiVersion,
+  type ValidationResult,
+  validateText,
+} from '@gaql/core';
 import boxen from 'boxen';
 import chalk from 'chalk';
 import Table from 'cli-table3';
@@ -17,9 +23,11 @@ export async function validateCommand(
   options: ValidateOptions,
 ): Promise<void> {
   // Set API version
-  const version = options.apiVersion as '19' | '20' | '21';
-  if (!['19', '20', '21'].includes(version)) {
-    console.error(chalk.red(`Invalid API version: ${version}. Must be 19, 20, or 21.`));
+  const version = options.apiVersion as SupportedApiVersion;
+  if (!SupportedApiVersions.includes(version)) {
+    console.error(
+      chalk.red(`Invalid API version: ${version}. Must be ${SupportedApiVersions.join(', ')}.`),
+    );
     process.exit(1);
   }
   setApiVersion(version);
@@ -63,11 +71,56 @@ export async function validateCommand(
 }
 
 async function readStdin(): Promise<string> {
-  const chunks: Buffer[] = [];
-  for await (const chunk of stdin) {
-    chunks.push(chunk);
+  // Check if stdin is a TTY (interactive terminal)
+  if (stdin.isTTY) {
+    throw new Error(
+      'No input provided. Please provide a file path or pipe input via stdin.\n' +
+        'Examples:\n' +
+        '  gaql validate query.gaql\n' +
+        '  cat query.gaql | gaql validate\n' +
+        '  echo "SELECT campaign.id FROM campaign" | gaql validate',
+    );
   }
-  return Buffer.concat(chunks).toString('utf-8');
+
+  return new Promise((resolve, reject) => {
+    const chunks: Buffer[] = [];
+    let hasData = false;
+    let timeoutId: NodeJS.Timeout;
+
+    // Set a timeout to detect if no data arrives
+    timeoutId = setTimeout(() => {
+      if (!hasData) {
+        stdin.removeAllListeners();
+        reject(
+          new Error(
+            'No input detected. Please provide a file path or pipe input via stdin.\n' +
+              'Examples:\n' +
+              '  gaql validate query.gaql\n' +
+              '  cat query.gaql | gaql validate\n' +
+              '  echo "SELECT campaign.id FROM campaign" | gaql validate',
+          ),
+        );
+      }
+    }, 1000); // 1 second timeout for first data
+
+    stdin.on('data', (chunk: Buffer) => {
+      hasData = true;
+      chunks.push(chunk);
+      clearTimeout(timeoutId);
+    });
+
+    stdin.on('end', () => {
+      clearTimeout(timeoutId);
+      stdin.removeAllListeners();
+      resolve(Buffer.concat(chunks).toString('utf-8'));
+    });
+
+    stdin.on('error', (err: Error) => {
+      clearTimeout(timeoutId);
+      stdin.removeAllListeners();
+      reject(err);
+    });
+  });
 }
 
 function outputJson(results: Array<ValidationResult & { query: string; line: number }>): void {

@@ -25,10 +25,14 @@ interface FieldsDataType {
   };
 }
 
-// Version management
-let currentApiVersion: '19' | '20' | '21' = '21';
+export const SupportedApiVersions = ['19', '20', '21'] as const;
+export type SupportedApiVersion = (typeof SupportedApiVersions)[number];
 
-const versionSchemas: Record<string, FieldsDataType> = {
+// Version management
+let currentApiVersion: SupportedApiVersion = '21';
+export const defaultApiVersion: SupportedApiVersion = '21';
+
+const versionSchemas: Record<SupportedApiVersion, FieldsDataType> = {
   '19': fieldsDataV19 as FieldsDataType,
   '20': fieldsDataV20 as FieldsDataType,
   '21': fieldsDataV21 as FieldsDataType,
@@ -36,9 +40,9 @@ const versionSchemas: Record<string, FieldsDataType> = {
 
 /**
  * Set the Google Ads API version to use
- * @param version API version (19, 20, or 21)
+ * @param version API version
  */
-export function setApiVersion(version: '19' | '20' | '21'): void {
+export function setApiVersion(version: SupportedApiVersion): void {
   currentApiVersion = version;
 }
 
@@ -200,4 +204,33 @@ export function getSegmentsForResource(resourceName: string): FieldDefinition[] 
 export function getResourceNames(): string[] {
   const fieldsData = getFieldsData();
   return Object.keys(fieldsData).sort();
+}
+
+// Get resource information
+export function getResourceInfo(resourceName: string): {
+  name: string;
+  fieldCount: number;
+  metricCount: number;
+  segmentCount: number;
+  attributedResources: string[];
+} | null {
+  const fieldsData = getFieldsData();
+  const data = fieldsData[resourceName];
+  if (!data) return null;
+
+  const attributedResources = data.fields ? Object.keys(data.fields).sort() : [];
+  const fieldCount = Object.values(data.fields || {}).reduce(
+    (sum, fields) => sum + Object.keys(fields).length,
+    0,
+  );
+  const metricCount = Object.keys(data.metrics || {}).length;
+  const segmentCount = Object.keys(data.segments || {}).length;
+
+  return {
+    name: resourceName,
+    fieldCount,
+    metricCount,
+    segmentCount,
+    attributedResources,
+  };
 }

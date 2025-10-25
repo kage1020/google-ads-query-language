@@ -12,17 +12,21 @@ export {
   type QueryContext,
 } from './parser.js';
 export {
+  defaultApiVersion,
   type FieldDefinition,
   GAQL_KEYWORDS,
   getApiVersion,
   getFieldsForResource,
   getFieldsForResourcePrefix,
   getMetricsForResource,
+  getResourceInfo,
   getResourceNames,
   getResourcePrefixesForResource,
   getSegmentsForResource,
   OPERATORS,
   STATUS_VALUES,
+  SupportedApiVersion,
+  SupportedApiVersions,
   setApiVersion,
 } from './schema.js';
 // Validator exports

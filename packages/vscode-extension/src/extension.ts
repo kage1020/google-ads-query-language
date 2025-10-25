@@ -122,6 +122,4 @@ export function activate(context: vscode.ExtensionContext) {
   );
 }
 
-export function deactivate() {
-  // Cleanup if needed
-}
+export function deactivate() {}

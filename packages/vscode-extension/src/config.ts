@@ -1,3 +1,4 @@
+import { defaultApiVersion, type SupportedApiVersion } from '@gaql/core';
 import * as vscode from 'vscode';
 
 /**
@@ -28,8 +29,8 @@ export function getActivationMode(): 'always' | 'onDemand' {
 /**
  * Get API version
  */
-export function getApiVersion(): '19' | '20' | '21' {
-  return getConfigValue<'19' | '20' | '21'>('apiVersion', '21');
+export function getApiVersion(): SupportedApiVersion {
+  return getConfigValue<SupportedApiVersion>('apiVersion', defaultApiVersion);
 }
 
 /**
