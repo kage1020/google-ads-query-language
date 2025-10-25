@@ -2,7 +2,7 @@
   "name": "gaql-vscode",
   "displayName": "Google Ads Query Language",
   "description": "Language support for Google Ads Query Language (GAQL): validation, autocomplete, IntelliSense, and diagnostics",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "publisher": "kage1020",
   "author": {
     "name": "kage1020"
