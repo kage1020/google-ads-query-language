@@ -22,6 +22,7 @@ export interface ValidationError {
   column: number;
   length: number;
   field?: string;
+  resource?: string;
   suggestion?: string;
 }
 
@@ -141,6 +142,7 @@ export function validateQuery(query: string): ValidationResult {
           column: column >= 0 ? column : 0,
           length: field.length,
           field,
+          resource: resourceName,
           suggestion: findClosestMatch(field, validFieldDescriptions),
         });
       }
@@ -171,6 +173,7 @@ export function validateQuery(query: string): ValidationResult {
           column: column >= 0 ? column : 0,
           length: field.length,
           field,
+          resource: resourceName,
           suggestion: findClosestMatch(field, validFieldDescriptions),
         });
       }
