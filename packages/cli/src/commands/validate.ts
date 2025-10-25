@@ -1,7 +1,9 @@
 import { readFile } from 'node:fs/promises';
 import { stdin } from 'node:process';
 import { setApiVersion, type ValidationResult, validateText } from '@gaql/core';
+import boxen from 'boxen';
 import chalk from 'chalk';
+import Table from 'cli-table3';
 import ora from 'ora';
 
 interface ValidateOptions {
@@ -49,6 +51,8 @@ export async function validateCommand(
     outputJson(results);
   } else if (options.format === 'llm') {
     outputLlm(results, options.color);
+  } else if (options.format === 'rich') {
+    outputRich(results, options.color);
   } else {
     outputText(results, options.color);
   }
@@ -181,6 +185,97 @@ function outputText(
         console.log(c.yellow(`      Suggestion: ${error.suggestion}`));
       }
     }
+    console.log();
+  }
+}
+
+function outputRich(
+  results: Array<ValidationResult & { query: string; line: number }>,
+  useColor: boolean,
+): void {
+  const c = useColor ? chalk : noColorChalk();
+
+  if (results.length === 0) {
+    console.log(
+      boxen(c.yellow('No GAQL queries found in input.'), {
+        padding: 1,
+        borderColor: 'yellow',
+        borderStyle: 'round',
+      }),
+    );
+    return;
+  }
+
+  const validCount = results.filter((r) => r.valid).length;
+  const invalidCount = results.filter((r) => !r.valid).length;
+
+  // Display summary in a box
+  const summaryText = [
+    c.bold('GAQL Validation Results'),
+    '',
+    `Total queries: ${c.bold(results.length.toString())}`,
+    `${c.green('✓')} Valid: ${c.green(validCount.toString())}`,
+    `${c.red('✗')} Invalid: ${c.red(invalidCount.toString())}`,
+  ].join('\n');
+
+  console.log(
+    boxen(summaryText, {
+      padding: 1,
+      borderColor: invalidCount > 0 ? 'red' : 'green',
+      borderStyle: 'round',
+      title: '📊 Summary',
+      titleAlignment: 'center',
+    }),
+  );
+  console.log();
+
+  // Display only invalid queries in tables
+  const invalidResults = results.filter((r) => !r.valid);
+
+  if (invalidResults.length === 0) {
+    console.log(c.green('✨ All queries are valid!'));
+    return;
+  }
+
+  for (const result of invalidResults) {
+    // Create a table for each invalid query
+    const table = new Table({
+      head: [c.bold('Property'), c.bold('Value')],
+      colWidths: [20, 80],
+      wordWrap: true,
+      style: {
+        head: useColor ? ['cyan'] : [],
+        border: useColor ? ['gray'] : [],
+      },
+    });
+
+    table.push(
+      [c.bold('Line'), c.red((result.line + 1).toString())],
+      [
+        c.bold('Query'),
+        c.dim(result.query.length > 100 ? result.query.substring(0, 100) + '...' : result.query),
+      ],
+    );
+
+    // Add errors
+    for (let i = 0; i < result.errors.length; i++) {
+      const error = result.errors[i];
+      table.push(
+        [c.bold(`Error ${i + 1}`), c.red(error.message)],
+        [c.bold('Type'), c.yellow(error.type)],
+        [c.bold('Position'), `Line ${error.line}, Column ${error.column}-${error.column + error.length}`],
+      );
+
+      if (error.field) {
+        table.push([c.bold('Field'), useColor ? chalk.cyan(error.field) : error.field]);
+      }
+
+      if (error.suggestion) {
+        table.push([c.bold('💡 Suggestion'), c.green(error.suggestion)]);
+      }
+    }
+
+    console.log(table.toString());
     console.log();
   }
 }

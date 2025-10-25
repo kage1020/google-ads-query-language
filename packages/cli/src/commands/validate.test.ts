@@ -300,6 +300,55 @@ describe('validate command', () => {
       consoleLogSpy.mockRestore();
     });
 
+    it('should respect --format option for rich', async () => {
+      const mockContent = `const query = \`SELECT campaign.id FROM campaign\`;`;
+
+      vi.mocked(fs.readFile).mockResolvedValue(mockContent);
+
+      const { validateCommand } = await import('./validate.js');
+
+      const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+      await validateCommand('test.ts', { apiVersion: '21', format: 'rich', color: false });
+
+      expect(consoleLogSpy).toHaveBeenCalled();
+      const output = consoleLogSpy.mock.calls.map((call) => call[0]).join('\n');
+
+      // Should contain summary box
+      expect(output).toContain('GAQL Validation Results');
+      // Should contain valid count
+      expect(output).toContain('Valid');
+      expect(mockExit).toHaveBeenCalledWith(0);
+
+      consoleLogSpy.mockRestore();
+    });
+
+    it('should output errors in rich format with tables', async () => {
+      const mockContent = `const query = \`SELECT campaign.invalid_field FROM campaign\`;`;
+
+      vi.mocked(fs.readFile).mockResolvedValue(mockContent);
+
+      const { validateCommand } = await import('./validate.js');
+
+      const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+      await validateCommand('test.ts', { apiVersion: '21', format: 'rich', color: false });
+
+      expect(consoleLogSpy).toHaveBeenCalled();
+      const output = consoleLogSpy.mock.calls.map((call) => call[0]).join('\n');
+
+      // Should contain summary
+      expect(output).toContain('GAQL Validation Results');
+      // Should contain table with property and value
+      expect(output).toContain('Property');
+      expect(output).toContain('Value');
+      // Should contain error details
+      expect(output).toContain('invalid_field');
+      expect(mockExit).toHaveBeenCalledWith(1);
+
+      consoleLogSpy.mockRestore();
+    });
+
     it('should use default API version when not specified', async () => {
       const mockContent = `const query = \`SELECT campaign.id FROM campaign\`;`;
 
