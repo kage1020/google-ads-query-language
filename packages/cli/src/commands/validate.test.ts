@@ -240,6 +240,56 @@ describe('validate command', () => {
       consoleLogSpy.mockRestore();
     });
 
+    it('should respect --format option for llm', async () => {
+      const mockContent = `const query = \`SELECT campaign.id FROM campaign\`;`;
+
+      vi.mocked(fs.readFile).mockResolvedValue(mockContent);
+
+      const { validateCommand } = await import('./validate.js');
+
+      const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+      await validateCommand('test.ts', { apiVersion: '21', format: 'llm', color: false });
+
+      expect(consoleLogSpy).toHaveBeenCalled();
+      const output = consoleLogSpy.mock.calls.map((call) => call[0]).join('\n');
+
+      // Should contain SUMMARY line
+      expect(output).toContain('SUMMARY:');
+      // Should contain [VALID] marker
+      expect(output).toContain('[VALID]');
+      expect(mockExit).toHaveBeenCalledWith(0);
+
+      consoleLogSpy.mockRestore();
+    });
+
+    it('should output errors in llm format with single-line entries', async () => {
+      const mockContent = `const query = \`SELECT campaign.invalid_field FROM campaign\`;`;
+
+      vi.mocked(fs.readFile).mockResolvedValue(mockContent);
+
+      const { validateCommand } = await import('./validate.js');
+
+      const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+      await validateCommand('test.ts', { apiVersion: '21', format: 'llm', color: false });
+
+      expect(consoleLogSpy).toHaveBeenCalled();
+      const output = consoleLogSpy.mock.calls.map((call) => call[0]).join('\n');
+
+      // Should contain SUMMARY line
+      expect(output).toContain('SUMMARY:');
+      // Should contain [ERROR] marker
+      expect(output).toContain('[ERROR]');
+      // Should contain error type
+      expect(output).toContain('invalid_field');
+      // Should contain the query
+      expect(output).toContain('SELECT campaign.invalid_field FROM campaign');
+      expect(mockExit).toHaveBeenCalledWith(1);
+
+      consoleLogSpy.mockRestore();
+    });
+
     it('should use default API version when not specified', async () => {
       const mockContent = `const query = \`SELECT campaign.id FROM campaign\`;`;
 

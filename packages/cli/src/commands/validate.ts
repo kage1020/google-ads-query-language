@@ -47,6 +47,8 @@ export async function validateCommand(
   // Output results
   if (options.format === 'json') {
     outputJson(results);
+  } else if (options.format === 'llm') {
+    outputLlm(results, options.color);
   } else {
     outputText(results, options.color);
   }
@@ -82,6 +84,59 @@ function outputJson(results: Array<ValidationResult & { query: string; line: num
       2,
     ),
   );
+}
+
+function outputLlm(
+  results: Array<ValidationResult & { query: string; line: number }>,
+  useColor: boolean,
+): void {
+  const c = useColor ? chalk : noColorChalk();
+
+  if (results.length === 0) {
+    console.log('SUMMARY: Total=0, Valid=0, Invalid=0');
+    console.log();
+    console.log(c.yellow('[WARN] No GAQL queries found in input.'));
+    return;
+  }
+
+  // Summary line
+  const validCount = results.filter((r) => r.valid).length;
+  const invalidCount = results.filter((r) => !r.valid).length;
+  console.log(c.bold(`SUMMARY: Total=${results.length}, Valid=${validCount}, Invalid=${invalidCount}`));
+  console.log();
+
+  // Each query result on a single line
+  for (const result of results) {
+    const queryOneLine = result.query.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
+
+    if (result.valid) {
+      console.log(c.green(`[VALID] Line ${result.line + 1}: ${queryOneLine}`));
+    } else {
+      // Output each error on its own line
+      for (const error of result.errors) {
+        const parts = [
+          c.red('[ERROR]'),
+          `Line ${result.line + 1}`,
+          `(col ${error.column}-${error.column + error.length}):`,
+          `${error.type}`,
+          `-`,
+          `${error.message}`,
+        ];
+
+        if (error.suggestion) {
+          parts.push(`|`, `Suggestion: ${error.suggestion}`);
+        }
+
+        if (error.field) {
+          parts.push(`|`, `Field: ${error.field}`);
+        }
+
+        parts.push(`|`, `Query: ${queryOneLine}`);
+
+        console.log(parts.join(' '));
+      }
+    }
+  }
 }
 
 function outputText(
