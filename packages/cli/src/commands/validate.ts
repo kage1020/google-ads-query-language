@@ -258,7 +258,7 @@ function outputRich(
     );
 
     // Collect suggestions from all errors
-    const suggestions: string[] = [];
+    const suggestions: Array<{ field: string; suggestion: string }> = [];
 
     // Add errors
     for (let i = 0; i < result.errors.length; i++) {
@@ -274,21 +274,23 @@ function outputRich(
       }
 
       // Collect suggestions instead of adding to table
-      if (error.suggestion) {
-        suggestions.push(error.suggestion);
+      if (error.suggestion && error.field) {
+        suggestions.push({ field: error.field, suggestion: error.suggestion });
       }
     }
 
     console.log(table.toString());
 
-    // Display suggestions in a rich box
+    // Display suggestions in a rich box with corrected query
     if (suggestions.length > 0) {
       const suggestionText = suggestions
         .map((s, i) => {
+          // Create corrected query by replacing the error field with suggestion
+          const correctedQuery = result.query.replace(s.field, s.suggestion);
           const prefix = suggestions.length > 1 ? `${i + 1}. ` : '';
-          return `${prefix}${c.green(c.bold(s))}`;
+          return `${prefix}${c.green(c.bold(correctedQuery))}`;
         })
-        .join('\n');
+        .join('\n\n');
 
       console.log(
         boxen(suggestionText, {
