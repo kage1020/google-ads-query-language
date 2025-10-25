@@ -201,3 +201,32 @@ export function getResourceNames(): string[] {
   const fieldsData = getFieldsData();
   return Object.keys(fieldsData).sort();
 }
+
+// Get resource information
+export function getResourceInfo(resourceName: string): {
+  name: string;
+  fieldCount: number;
+  metricCount: number;
+  segmentCount: number;
+  attributedResources: string[];
+} | null {
+  const fieldsData = getFieldsData();
+  const data = fieldsData[resourceName];
+  if (!data) return null;
+
+  const attributedResources = data.fields ? Object.keys(data.fields).sort() : [];
+  const fieldCount = Object.values(data.fields || {}).reduce(
+    (sum, fields) => sum + Object.keys(fields).length,
+    0,
+  );
+  const metricCount = Object.keys(data.metrics || {}).length;
+  const segmentCount = Object.keys(data.segments || {}).length;
+
+  return {
+    name: resourceName,
+    fieldCount,
+    metricCount,
+    segmentCount,
+    attributedResources,
+  };
+}
