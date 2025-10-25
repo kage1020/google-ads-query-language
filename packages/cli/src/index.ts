@@ -17,7 +17,8 @@ program
   .description('Validate GAQL queries in a file or from stdin')
   .argument('[file]', 'File containing GAQL queries (if omitted, reads from stdin)')
   .option(
-    `-v, --api-version <version>', 'Google Ads API version (${SupportedApiVersions.join(', ')})`,
+    `-v, --api-version <version>`,
+    `Google Ads API version (${SupportedApiVersions.join(', ')})`,
     defaultApiVersion,
   )
   .option('-f, --format <format>', 'Output format (text, json, llm, or rich)', 'text')
