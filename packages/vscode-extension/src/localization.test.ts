@@ -78,11 +78,11 @@ describe('localization.ts', () => {
           if (key === 'language') return 'ja';
           return undefined;
         }),
-        // @ts-expect-error - partial mock
         has: vi.fn(),
         inspect: vi.fn(),
         update: vi.fn(),
-      });
+        // biome-ignore lint/suspicious/noExplicitAny: partial mock for testing
+      } as any);
 
       updateLanguage();
 
@@ -177,11 +177,11 @@ describe('localization.ts', () => {
           if (key === 'language') return 'auto';
           return undefined;
         }),
-        // @ts-expect-error - partial mock
         has: vi.fn(),
         inspect: vi.fn(),
         update: vi.fn(),
-      });
+        // biome-ignore lint/suspicious/noExplicitAny: partial mock for testing
+      } as any);
       vi.mocked(vscode.env).language = 'de-DE';
 
       updateLanguage('auto');

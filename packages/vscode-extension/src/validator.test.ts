@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as vscode from 'vscode';
-import { GAQLValidator } from './validator.js';
 import { initializeLocalization } from './localization.js';
+import { GAQLValidator } from './validator.js';
 
 // Mock vscode module
 vi.mock('vscode', async () => {
@@ -45,7 +45,7 @@ vi.mock('vscode', async () => {
     },
     Diagnostic: class Diagnostic {
       constructor(
-        public range: any,
+        public range: unknown,
         public message: string,
         public severity?: number,
       ) {}
@@ -65,6 +65,7 @@ describe('GAQLValidator', () => {
   });
 
   describe('Template Literal Interpolations', () => {
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: Testing template literal handling
     it('should not report errors for ${...} in WHERE clause', async () => {
       const diagnosticCollection = vscode.languages.createDiagnosticCollection('gaql');
       const validator = new GAQLValidator(diagnosticCollection);
@@ -85,7 +86,7 @@ describe('GAQLValidator', () => {
       const document = {
         getText: () => documentText,
         uri: { fsPath: 'test.ts' },
-      } as any;
+      } as vscode.TextDocument;
 
       await validator.validateDocument(document);
 
@@ -96,6 +97,7 @@ describe('GAQLValidator', () => {
       expect(diagnostics).toHaveLength(0);
     });
 
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: Testing template literal handling
     it('should report errors for invalid fields even with ${...} present', async () => {
       const diagnosticCollection = vscode.languages.createDiagnosticCollection('gaql');
       const validator = new GAQLValidator(diagnosticCollection);
@@ -115,7 +117,7 @@ describe('GAQLValidator', () => {
       const document = {
         getText: () => documentText,
         uri: { fsPath: 'test.ts' },
-      } as any;
+      } as vscode.TextDocument;
 
       await validator.validateDocument(document);
 
@@ -150,7 +152,7 @@ describe('GAQLValidator', () => {
       const document = {
         getText: () => documentText,
         uri: { fsPath: 'test.ts' },
-      } as any;
+      } as vscode.TextDocument;
 
       await validator.validateDocument(document);
 
