@@ -238,7 +238,6 @@ describe('validator.ts', () => {
   });
 
   describe('Template Literal Interpolations', () => {
-    // biome-ignore lint/suspicious/noTemplateCurlyInString: Testing template literal handling
     it('should ignore ${...} template literal interpolations in WHERE clause', () => {
       const query = `
         SELECT
@@ -255,7 +254,6 @@ describe('validator.ts', () => {
       expect(result.errors).toHaveLength(0);
     });
 
-    // biome-ignore lint/suspicious/noTemplateCurlyInString: Testing template literal handling
     it('should ignore ${...} when used in WHERE with valid SELECT fields', () => {
       const query = `
         SELECT
@@ -272,7 +270,6 @@ describe('validator.ts', () => {
       expect(result.errors).toHaveLength(0);
     });
 
-    // biome-ignore lint/suspicious/noTemplateCurlyInString: Testing template literal handling
     it('should ignore multiple ${...} expressions', () => {
       const query = `
         SELECT
@@ -290,7 +287,6 @@ describe('validator.ts', () => {
       expect(result.errors).toHaveLength(0);
     });
 
-    // biome-ignore lint/suspicious/noTemplateCurlyInString: Testing template literal handling
     it('should validate actual fields even when ${...} is present', () => {
       const query = `
         SELECT

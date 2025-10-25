@@ -1,3 +1,4 @@
+import type { Mock } from 'vitest';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as vscode from 'vscode';
 import { initializeLocalization } from './localization.js';
@@ -65,7 +66,6 @@ describe('GAQLValidator', () => {
   });
 
   describe('Template Literal Interpolations', () => {
-    // biome-ignore lint/suspicious/noTemplateCurlyInString: Testing template literal handling
     it('should not report errors for ${...} in WHERE clause', async () => {
       const diagnosticCollection = vscode.languages.createDiagnosticCollection('gaql');
       const validator = new GAQLValidator(diagnosticCollection);
@@ -74,8 +74,7 @@ describe('GAQLValidator', () => {
         // @gaql
         const query = \`
           SELECT
-            customer_client.client_customer,
-            customer_client.descriptive_name
+            customer_client.client_customer
           FROM
             customer_client
           WHERE
@@ -90,14 +89,18 @@ describe('GAQLValidator', () => {
 
       await validator.validateDocument(document);
 
-      const setCalls = vi.mocked(diagnosticCollection.set).mock.calls;
+      const mockSet = diagnosticCollection.set as Mock;
+      const setCalls = mockSet.mock.calls as Array<
+        [uri: vscode.Uri, diagnostics: vscode.Diagnostic[] | undefined]
+      >;
       expect(setCalls.length).toBeGreaterThan(0);
 
-      const diagnostics = setCalls[setCalls.length - 1][1];
+      const lastCall = setCalls[setCalls.length - 1];
+      const diagnostics = lastCall[1];
+      expect(diagnostics).toBeDefined();
       expect(diagnostics).toHaveLength(0);
     });
 
-    // biome-ignore lint/suspicious/noTemplateCurlyInString: Testing template literal handling
     it('should report errors for invalid fields even with ${...} present', async () => {
       const diagnosticCollection = vscode.languages.createDiagnosticCollection('gaql');
       const validator = new GAQLValidator(diagnosticCollection);
@@ -121,18 +124,24 @@ describe('GAQLValidator', () => {
 
       await validator.validateDocument(document);
 
-      const setCalls = vi.mocked(diagnosticCollection.set).mock.calls;
+      const mockSet = diagnosticCollection.set as Mock;
+      const setCalls = mockSet.mock.calls as Array<
+        [uri: vscode.Uri, diagnostics: vscode.Diagnostic[] | undefined]
+      >;
       expect(setCalls.length).toBeGreaterThan(0);
 
-      const diagnostics = setCalls[setCalls.length - 1][1];
-      expect(diagnostics.length).toBeGreaterThan(0);
+      const lastCall = setCalls[setCalls.length - 1];
+      const diagnostics = lastCall[1];
+      expect(diagnostics).toBeDefined();
+      expect(diagnostics?.length).toBeGreaterThan(0);
 
       // Check that error message is properly formatted in Japanese
-      const diagnostic = diagnostics[0];
-      expect(diagnostic.message).toContain('customer_client');
-      expect(diagnostic.message).toContain('invalid_field');
-      expect(diagnostic.message).not.toContain('{0}');
-      expect(diagnostic.message).not.toContain('{1}');
+      const diagnostic = diagnostics?.[0];
+      expect(diagnostic).toBeDefined();
+      expect(diagnostic?.message).toContain('customer_client');
+      expect(diagnostic?.message).toContain('invalid_field');
+      expect(diagnostic?.message).not.toContain('{0}');
+      expect(diagnostic?.message).not.toContain('{1}');
     });
 
     it('should format INVALID_FIELD error message correctly in Japanese', async () => {
@@ -156,14 +165,20 @@ describe('GAQLValidator', () => {
 
       await validator.validateDocument(document);
 
-      const setCalls = vi.mocked(diagnosticCollection.set).mock.calls;
-      const diagnostics = setCalls[setCalls.length - 1][1];
+      const mockSet = diagnosticCollection.set as Mock;
+      const setCalls = mockSet.mock.calls as Array<
+        [uri: vscode.Uri, diagnostics: vscode.Diagnostic[] | undefined]
+      >;
+      const lastCall = setCalls[setCalls.length - 1];
+      const diagnostics = lastCall[1];
 
-      expect(diagnostics.length).toBeGreaterThan(0);
-      const diagnostic = diagnostics[0];
+      expect(diagnostics).toBeDefined();
+      expect(diagnostics?.length).toBeGreaterThan(0);
+      const diagnostic = diagnostics?.[0];
+      expect(diagnostic).toBeDefined();
 
       // Japanese message format: リソース「{0}」には「{1}」というフィールドは存在しません
-      expect(diagnostic.message).toBe(
+      expect(diagnostic?.message).toBe(
         'リソース「campaign」には「campaign.invalid_field_name」というフィールドは存在しません',
       );
     });

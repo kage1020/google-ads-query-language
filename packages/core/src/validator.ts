@@ -43,7 +43,7 @@ export interface ValidationResult {
 function stripTemplateLiteralInterpolations(query: string): string {
   // Replace ${...} with a placeholder to avoid validating interpolated expressions
   // We use a string literal placeholder to maintain query structure
-  return query.replace(/\$\{[^}]+\}/g, "'__PLACEHOLDER__'");
+  return query.replace(/\$\{(?:[^{}]|\{[^}]*\})*\}/g, "'__PLACEHOLDER__'");
 }
 
 /**
@@ -56,7 +56,7 @@ export function validateQuery(query: string): ValidationResult {
   const cleanedQuery = stripTemplateLiteralInterpolations(query);
 
   const errors: ValidationError[] = [];
-  const lines = cleanedQuery.split('\n');
+  const lines = query.split('\n');
 
   // Check for SELECT keyword
   if (!cleanedQuery.match(/\bSELECT\b/i)) {

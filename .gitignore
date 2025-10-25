@@ -22,7 +22,6 @@ yarn-debug.log*
 yarn-error.log*
 
 # Editor directories
-# .vscode/ is committed to share extension development settings
 .idea/
 *.swp
 *.swo

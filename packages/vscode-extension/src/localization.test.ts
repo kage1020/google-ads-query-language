@@ -81,8 +81,7 @@ describe('localization.ts', () => {
         has: vi.fn(),
         inspect: vi.fn(),
         update: vi.fn(),
-        // biome-ignore lint/suspicious/noExplicitAny: partial mock for testing
-      } as any);
+      });
 
       updateLanguage();
 
@@ -180,8 +179,7 @@ describe('localization.ts', () => {
         has: vi.fn(),
         inspect: vi.fn(),
         update: vi.fn(),
-        // biome-ignore lint/suspicious/noExplicitAny: partial mock for testing
-      } as any);
+      });
       vi.mocked(vscode.env).language = 'de-DE';
 
       updateLanguage('auto');
