@@ -105,36 +105,36 @@ function outputLlm(
   console.log(c.bold(`SUMMARY: Total=${results.length}, Valid=${validCount}, Invalid=${invalidCount}`));
   console.log();
 
-  // Each query result on a single line
+  // Only show invalid queries to reduce noise
   for (const result of results) {
+    if (result.valid) {
+      continue; // Skip valid queries
+    }
+
     const queryOneLine = result.query.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
 
-    if (result.valid) {
-      console.log(c.green(`[VALID] Line ${result.line + 1}: ${queryOneLine}`));
-    } else {
-      // Output each error on its own line
-      for (const error of result.errors) {
-        const parts = [
-          c.red('[ERROR]'),
-          `Line ${result.line + 1}`,
-          `(col ${error.column}-${error.column + error.length}):`,
-          `${error.type}`,
-          `-`,
-          `${error.message}`,
-        ];
+    // Output each error on its own line
+    for (const error of result.errors) {
+      const parts = [
+        c.red('[ERROR]'),
+        `Line ${result.line + 1}`,
+        `(col ${error.column}-${error.column + error.length}):`,
+        `${error.type}`,
+        `-`,
+        `${error.message}`,
+      ];
 
-        if (error.suggestion) {
-          parts.push(`|`, `Suggestion: ${error.suggestion}`);
-        }
-
-        if (error.field) {
-          parts.push(`|`, `Field: ${error.field}`);
-        }
-
-        parts.push(`|`, `Query: ${queryOneLine}`);
-
-        console.log(parts.join(' '));
+      if (error.suggestion) {
+        parts.push(`|`, `Suggestion: ${error.suggestion}`);
       }
+
+      if (error.field) {
+        parts.push(`|`, `Field: ${error.field}`);
+      }
+
+      parts.push(`|`, `Query: ${queryOneLine}`);
+
+      console.log(parts.join(' '));
     }
   }
 }

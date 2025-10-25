@@ -256,8 +256,10 @@ describe('validate command', () => {
 
       // Should contain SUMMARY line
       expect(output).toContain('SUMMARY:');
-      // Should contain [VALID] marker
-      expect(output).toContain('[VALID]');
+      // Should not contain [VALID] marker (valid queries are hidden by default)
+      expect(output).not.toContain('[VALID]');
+      // Should not contain [ERROR] marker
+      expect(output).not.toContain('[ERROR]');
       expect(mockExit).toHaveBeenCalledWith(0);
 
       consoleLogSpy.mockRestore();
