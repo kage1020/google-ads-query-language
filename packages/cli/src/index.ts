@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { defaultApiVersion, SupportedApiVersions } from '@gaql/core';
 import { Command } from 'commander';
 import packageJson from '../package.json' with { type: 'json' };
 import { validateCommand } from './commands/validate.js';
@@ -15,7 +16,10 @@ program
   .command('validate')
   .description('Validate GAQL queries in a file or from stdin')
   .argument('[file]', 'File containing GAQL queries (if omitted, reads from stdin)')
-  .option('-v, --api-version <version>', 'Google Ads API version (19, 20, or 21)', '21')
+  .option(
+    `-v, --api-version <version>', 'Google Ads API version (${SupportedApiVersions.join(', ')})`,
+    defaultApiVersion,
+  )
   .option('-f, --format <format>', 'Output format (text, json, llm, or rich)', 'text')
   .option('--no-color', 'Disable colored output')
   .action(validateCommand);
