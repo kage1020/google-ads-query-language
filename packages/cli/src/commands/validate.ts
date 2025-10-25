@@ -291,7 +291,7 @@ function outputRich(
       const suggestionText = suggestions
         .map((s, i) => {
           // Create corrected query by replacing the error field with suggestion
-          const correctedQuery = result.query.replace(s.field, s.suggestion);
+          const correctedQuery = result.query.replaceAll(s.field, s.suggestion);
           const prefix = suggestions.length > 1 ? `${i + 1}. ` : '';
           return `${prefix}${c.green(c.bold(correctedQuery))}`;
         })
@@ -321,5 +321,6 @@ function noColorChalk() {
     red: identity,
     yellow: identity,
     dim: identity,
+    cyan: identity,
   };
 }
