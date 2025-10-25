@@ -156,7 +156,7 @@ export class GAQLValidator {
       case ValidationErrorType.INVALID_RESOURCE:
         return getMessage(MessageKey.INVALID_RESOURCE, error.field || '');
       case ValidationErrorType.INVALID_FIELD:
-        return getMessage(MessageKey.INVALID_FIELD, error.field || '');
+        return getMessage(MessageKey.INVALID_FIELD, error.resource || '', error.field || '');
       case ValidationErrorType.INVALID_SYNTAX:
         return getMessage(MessageKey.INVALID_SYNTAX);
       case ValidationErrorType.INVALID_OPERATOR:

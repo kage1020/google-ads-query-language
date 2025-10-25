@@ -192,7 +192,3 @@ MIT License - see [LICENSE](../../LICENSE) for details.
 ## Changelog
 
 See [CHANGELOG.md](./CHANGELOG.md) for release history.
-
----
-
-🤖 Built with [Claude Code](https://claude.com/claude-code)

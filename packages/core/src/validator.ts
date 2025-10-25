@@ -22,6 +22,7 @@ export interface ValidationError {
   column: number;
   length: number;
   field?: string;
+  resource?: string;
   suggestion?: string;
 }
 
@@ -34,47 +35,62 @@ export interface ValidationResult {
 }
 
 /**
+ * Remove template literal interpolations from query for validation
+ * This prevents ${...} expressions from being validated as fields
+ * @param query The query string potentially containing ${...}
+ * @returns Query with ${...} replaced by placeholder strings
+ */
+function stripTemplateLiteralInterpolations(query: string): string {
+  // Replace ${...} with a placeholder to avoid validating interpolated expressions
+  // We use a string literal placeholder to maintain query structure
+  return query.replace(/\$\{(?:[^{}]|\{[^}]*\})*\}/g, "'__PLACEHOLDER__'");
+}
+
+/**
  * Validate a single GAQL query string
  * @param query The GAQL query string to validate
  * @returns Validation result with errors if any
  */
 export function validateQuery(query: string): ValidationResult {
+  // Strip template literal interpolations before validation
+  const cleanedQuery = stripTemplateLiteralInterpolations(query);
+
   const errors: ValidationError[] = [];
   const lines = query.split('\n');
 
   // Check for SELECT keyword
-  if (!query.match(/\bSELECT\b/i)) {
+  if (!cleanedQuery.match(/\bSELECT\b/i)) {
     errors.push({
       type: ValidationErrorType.MISSING_SELECT,
       message: 'Missing SELECT clause',
       line: 0,
       column: 0,
-      length: query.length,
+      length: cleanedQuery.length,
     });
   }
 
   // Check for FROM keyword
-  if (!query.match(/\bFROM\b/i)) {
+  if (!cleanedQuery.match(/\bFROM\b/i)) {
     errors.push({
       type: ValidationErrorType.MISSING_FROM,
       message: 'Missing FROM clause',
       line: 0,
       column: 0,
-      length: query.length,
+      length: cleanedQuery.length,
     });
     // Cannot continue validation without FROM clause
     return { valid: errors.length === 0, errors };
   }
 
   // Extract resource name from FROM clause
-  const fromMatch = query.match(/\bFROM\s+(\w+)/i);
+  const fromMatch = cleanedQuery.match(/\bFROM\s+(\w+)/i);
   if (!fromMatch) {
     errors.push({
       type: ValidationErrorType.INVALID_SYNTAX,
       message: 'Invalid FROM clause syntax',
       line: 0,
       column: 0,
-      length: query.length,
+      length: cleanedQuery.length,
     });
     return { valid: false, errors };
   }
@@ -102,7 +118,7 @@ export function validateQuery(query: string): ValidationResult {
   }
 
   // Validate fields in SELECT clause
-  const selectMatch = query.match(/\bSELECT\s+(.+?)\s+FROM/is);
+  const selectMatch = cleanedQuery.match(/\bSELECT\s+(.+?)\s+FROM/is);
   if (selectMatch) {
     const selectFields = selectMatch[1]
       .split(',')
@@ -126,6 +142,7 @@ export function validateQuery(query: string): ValidationResult {
           column: column >= 0 ? column : 0,
           length: field.length,
           field,
+          resource: resourceName,
           suggestion: findClosestMatch(field, validFieldDescriptions),
         });
       }
@@ -133,7 +150,7 @@ export function validateQuery(query: string): ValidationResult {
   }
 
   // Validate fields in WHERE clause
-  const whereMatch = query.match(/\bWHERE\s+(.+?)(\s+ORDER\s+BY|\s+LIMIT|$)/is);
+  const whereMatch = cleanedQuery.match(/\bWHERE\s+(.+?)(\s+ORDER\s+BY|\s+LIMIT|$)/is);
   if (whereMatch) {
     const whereClause = whereMatch[1];
     // Extract field references (e.g., campaign.id, metrics.clicks)
@@ -156,6 +173,7 @@ export function validateQuery(query: string): ValidationResult {
           column: column >= 0 ? column : 0,
           length: field.length,
           field,
+          resource: resourceName,
           suggestion: findClosestMatch(field, validFieldDescriptions),
         });
       }
