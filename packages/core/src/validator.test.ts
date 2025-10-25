@@ -237,6 +237,76 @@ describe('validator.ts', () => {
     });
   });
 
+  describe('Template Literal Interpolations', () => {
+    it('should ignore ${...} template literal interpolations in WHERE clause', () => {
+      const query = `
+        SELECT
+          customer_client.client_customer,
+          customer_client.descriptive_name
+        FROM
+          customer_client
+        WHERE
+          customer_client.client_customer = '\${this.customerId}'
+      `;
+      const result = validateQuery(query);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it('should ignore ${...} when used in WHERE with valid SELECT fields', () => {
+      const query = `
+        SELECT
+          campaign.id,
+          campaign.name
+        FROM
+          campaign
+        WHERE
+          campaign.name LIKE '%\${searchTerm}%'
+      `;
+      const result = validateQuery(query);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it('should ignore multiple ${...} expressions', () => {
+      const query = `
+        SELECT
+          campaign.id,
+          campaign.name
+        FROM
+          campaign
+        WHERE
+          campaign.id = '\${campaignId}'
+          AND campaign.status = '\${status}'
+      `;
+      const result = validateQuery(query);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it('should validate actual fields even when ${...} is present', () => {
+      const query = `
+        SELECT
+          campaign.invalid_field
+        FROM
+          campaign
+        WHERE
+          campaign.id = '\${campaignId}'
+      `;
+      const result = validateQuery(query);
+
+      expect(result.valid).toBe(false);
+      const invalidFieldError = result.errors.find(
+        (e) => e.type === ValidationErrorType.INVALID_FIELD,
+      );
+      expect(invalidFieldError).toBeDefined();
+      expect(invalidFieldError?.field).toBe('campaign.invalid_field');
+    });
+  });
+
   describe('Edge Cases', () => {
     it('should handle empty query', () => {
       const query = '';
