@@ -94,7 +94,12 @@ describe('validate command', () => {
       const output = consoleLogSpy.mock.calls.map((call) => call[0]).join('');
 
       // Should be valid JSON
-      expect(() => JSON.parse(output)).not.toThrow();
+      const result = JSON.parse(output);
+      expect(result.totalQueries).toBe(1);
+      expect(result.validQueries).toBe(1);
+      expect(result.invalidQueries).toBe(0);
+      // Valid queries should not be in results array
+      expect(result.results.length).toBe(0);
       expect(mockExit).toHaveBeenCalledWith(0);
 
       consoleLogSpy.mockRestore();
@@ -168,9 +173,12 @@ describe('validate command', () => {
 
       const result = JSON.parse(output);
       expect(result.totalQueries).toBe(2);
+      expect(result.validQueries).toBe(2);
+      expect(result.invalidQueries).toBe(0);
       expect(result.results).toBeDefined();
       expect(Array.isArray(result.results)).toBe(true);
-      expect(result.results.length).toBe(2);
+      // Valid queries should not be in results array
+      expect(result.results.length).toBe(0);
       expect(mockExit).toHaveBeenCalledWith(0);
 
       consoleLogSpy.mockRestore();
@@ -240,6 +248,107 @@ describe('validate command', () => {
       consoleLogSpy.mockRestore();
     });
 
+    it('should respect --format option for llm', async () => {
+      const mockContent = `const query = \`SELECT campaign.id FROM campaign\`;`;
+
+      vi.mocked(fs.readFile).mockResolvedValue(mockContent);
+
+      const { validateCommand } = await import('./validate.js');
+
+      const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+      await validateCommand('test.ts', { apiVersion: '21', format: 'llm', color: false });
+
+      expect(consoleLogSpy).toHaveBeenCalled();
+      const output = consoleLogSpy.mock.calls.map((call) => call[0]).join('\n');
+
+      // Should contain SUMMARY line
+      expect(output).toContain('SUMMARY:');
+      // Should not contain [VALID] marker (valid queries are hidden by default)
+      expect(output).not.toContain('[VALID]');
+      // Should not contain [ERROR] marker
+      expect(output).not.toContain('[ERROR]');
+      expect(mockExit).toHaveBeenCalledWith(0);
+
+      consoleLogSpy.mockRestore();
+    });
+
+    it('should output errors in llm format with single-line entries', async () => {
+      const mockContent = `const query = \`SELECT campaign.invalid_field FROM campaign\`;`;
+
+      vi.mocked(fs.readFile).mockResolvedValue(mockContent);
+
+      const { validateCommand } = await import('./validate.js');
+
+      const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+      await validateCommand('test.ts', { apiVersion: '21', format: 'llm', color: false });
+
+      expect(consoleLogSpy).toHaveBeenCalled();
+      const output = consoleLogSpy.mock.calls.map((call) => call[0]).join('\n');
+
+      // Should contain SUMMARY line
+      expect(output).toContain('SUMMARY:');
+      // Should contain [ERROR] marker
+      expect(output).toContain('[ERROR]');
+      // Should contain error type
+      expect(output).toContain('invalid_field');
+      // Should contain the query
+      expect(output).toContain('SELECT campaign.invalid_field FROM campaign');
+      expect(mockExit).toHaveBeenCalledWith(1);
+
+      consoleLogSpy.mockRestore();
+    });
+
+    it('should respect --format option for rich', async () => {
+      const mockContent = `const query = \`SELECT campaign.id FROM campaign\`;`;
+
+      vi.mocked(fs.readFile).mockResolvedValue(mockContent);
+
+      const { validateCommand } = await import('./validate.js');
+
+      const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+      await validateCommand('test.ts', { apiVersion: '21', format: 'rich', color: false });
+
+      expect(consoleLogSpy).toHaveBeenCalled();
+      const output = consoleLogSpy.mock.calls.map((call) => call[0]).join('\n');
+
+      // Should contain summary box
+      expect(output).toContain('GAQL Validation Results');
+      // Should contain valid count
+      expect(output).toContain('Valid');
+      expect(mockExit).toHaveBeenCalledWith(0);
+
+      consoleLogSpy.mockRestore();
+    });
+
+    it('should output errors in rich format with tables', async () => {
+      const mockContent = `const query = \`SELECT campaign.invalid_field FROM campaign\`;`;
+
+      vi.mocked(fs.readFile).mockResolvedValue(mockContent);
+
+      const { validateCommand } = await import('./validate.js');
+
+      const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+      await validateCommand('test.ts', { apiVersion: '21', format: 'rich', color: false });
+
+      expect(consoleLogSpy).toHaveBeenCalled();
+      const output = consoleLogSpy.mock.calls.map((call) => call[0]).join('\n');
+
+      // Should contain summary
+      expect(output).toContain('GAQL Validation Results');
+      // Should contain table with property and value
+      expect(output).toContain('Property');
+      expect(output).toContain('Value');
+      // Should contain error details
+      expect(output).toContain('invalid_field');
+      expect(mockExit).toHaveBeenCalledWith(1);
+
+      consoleLogSpy.mockRestore();
+    });
+
     it('should use default API version when not specified', async () => {
       const mockContent = `const query = \`SELECT campaign.id FROM campaign\`;`;
 
@@ -295,7 +404,7 @@ describe('validate command', () => {
       consoleLogSpy.mockRestore();
     });
 
-    it('should include all validation results in JSON format', async () => {
+    it('should include only invalid queries in JSON format', async () => {
       const mockContent = `
         const query1 = \`SELECT campaign.id FROM campaign\`;
         const query2 = \`SELECT campaign.invalid FROM campaign\`;
@@ -313,9 +422,11 @@ describe('validate command', () => {
       const result = JSON.parse(output);
 
       expect(result.totalQueries).toBe(2);
-      expect(result.results.length).toBe(2);
-      expect(result.results[0].valid).toBe(true);
-      expect(result.results[1].valid).toBe(false);
+      expect(result.validQueries).toBe(1);
+      expect(result.invalidQueries).toBe(1);
+      // Only invalid queries should be in results array
+      expect(result.results.length).toBe(1);
+      expect(result.results[0].valid).toBe(false);
       expect(mockExit).toHaveBeenCalledWith(1);
 
       consoleLogSpy.mockRestore();
@@ -434,7 +545,10 @@ describe('validate command', () => {
 
       // Should only find the GAQL query, not the "Hello World" template literal
       expect(result.totalQueries).toBe(1);
-      expect(result.results[0].valid).toBe(true);
+      expect(result.validQueries).toBe(1);
+      expect(result.invalidQueries).toBe(0);
+      // Valid queries should not be in results array
+      expect(result.results.length).toBe(0);
       expect(mockExit).toHaveBeenCalledWith(0);
 
       consoleLogSpy.mockRestore();
