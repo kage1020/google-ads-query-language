@@ -108,7 +108,9 @@ function outputLlm(
   // Summary line
   const validCount = results.filter((r) => r.valid).length;
   const invalidCount = results.filter((r) => !r.valid).length;
-  console.log(c.bold(`SUMMARY: Total=${results.length}, Valid=${validCount}, Invalid=${invalidCount}`));
+  console.log(
+    c.bold(`SUMMARY: Total=${results.length}, Valid=${validCount}, Invalid=${invalidCount}`),
+  );
   console.log();
 
   // Only show invalid queries to reduce noise
@@ -253,7 +255,7 @@ function outputRich(
       [c.bold('Line'), c.red((result.line + 1).toString())],
       [
         c.bold('Query'),
-        c.dim(result.query.length > 100 ? result.query.substring(0, 100) + '...' : result.query),
+        c.dim(result.query.length > 100 ? `${result.query.substring(0, 100)}...` : result.query),
       ],
     );
 
@@ -266,7 +268,10 @@ function outputRich(
       table.push(
         [c.bold(`Error ${i + 1}`), c.red(error.message)],
         [c.bold('Type'), c.yellow(error.type)],
-        [c.bold('Position'), `Line ${error.line}, Column ${error.column}-${error.column + error.length}`],
+        [
+          c.bold('Position'),
+          `Line ${error.line}, Column ${error.column}-${error.column + error.length}`,
+        ],
       );
 
       if (error.field) {

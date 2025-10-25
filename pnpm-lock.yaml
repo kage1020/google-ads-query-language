@@ -56,7 +56,10 @@ importers:
         version: 4.0.3(@types/node@24.9.1)(@vitest/ui@4.0.3)(happy-dom@20.0.8)
 
   packages/core:
-    dependencies:
+    devDependencies:
+      '@biomejs/biome':
+        specifier: ^2.3.0
+        version: 2.3.0
       google-ads-api-v19:
         specifier: npm:google-ads-api@^19.0.2
         version: google-ads-api@19.0.2
@@ -66,10 +69,6 @@ importers:
       google-ads-api-v21:
         specifier: npm:google-ads-api@^21.0.1
         version: google-ads-api@21.0.1
-    devDependencies:
-      '@biomejs/biome':
-        specifier: ^2.3.0
-        version: 2.3.0
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -78,14 +77,13 @@ importers:
         version: 4.0.3(@types/node@24.9.1)(@vitest/ui@4.0.3)(happy-dom@20.0.8)
 
   packages/vscode-extension:
-    dependencies:
-      '@gaql/core':
-        specifier: workspace:*
-        version: link:../core
     devDependencies:
       '@biomejs/biome':
         specifier: ^2.3.0
         version: 2.3.0
+      '@gaql/core':
+        specifier: workspace:*
+        version: link:../core
       '@types/node':
         specifier: ^24.9.1
         version: 24.9.1
