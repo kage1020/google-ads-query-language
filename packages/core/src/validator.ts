@@ -1,4 +1,9 @@
-import { getFieldsForResource, getResourceNames } from './schema.js';
+import {
+  getFieldsForResource,
+  getResourceNames,
+  type ResourceName,
+  type SupportedApiVersion,
+} from './schema.js';
 
 /**
  * Validation error types
@@ -51,7 +56,10 @@ function stripTemplateLiteralInterpolations(query: string): string {
  * @param query The GAQL query string to validate
  * @returns Validation result with errors if any
  */
-export function validateQuery(query: string): ValidationResult {
+export function validateQuery<T extends SupportedApiVersion>(
+  query: string,
+  version: T,
+): ValidationResult {
   // Strip template literal interpolations before validation
   const cleanedQuery = stripTemplateLiteralInterpolations(query);
 
@@ -95,8 +103,8 @@ export function validateQuery(query: string): ValidationResult {
     return { valid: false, errors };
   }
 
-  const resourceName = fromMatch[1];
-  const availableResources = getResourceNames();
+  const resourceName = fromMatch[1] as ResourceName<T>;
+  const availableResources = getResourceNames(version);
 
   // Validate resource name
   if (!availableResources.includes(resourceName)) {
@@ -125,7 +133,7 @@ export function validateQuery(query: string): ValidationResult {
       .map((f) => f.trim())
       .filter((f) => f.length > 0);
 
-    const validFields = getFieldsForResource(resourceName);
+    const validFields = getFieldsForResource(resourceName, version);
     const validFieldDescriptions = validFields.map((f) => f.description);
 
     for (const field of selectFields) {
@@ -157,7 +165,7 @@ export function validateQuery(query: string): ValidationResult {
     const fieldRegex = /([a-z_][a-z0-9_]*\.[a-z_][a-z0-9_]*)/gi;
     const whereFields = whereClause.match(fieldRegex) || [];
 
-    const validFields = getFieldsForResource(resourceName);
+    const validFields = getFieldsForResource(resourceName, version);
     const validFieldDescriptions = validFields.map((f) => f.description);
 
     for (const field of whereFields) {
@@ -258,8 +266,9 @@ function levenshteinDistance(a: string, b: string): number {
  * @param text The text containing GAQL queries
  * @returns Array of validation results with query positions
  */
-export function validateText(
+export function validateText<T extends SupportedApiVersion>(
   text: string,
+  version: T,
 ): Array<ValidationResult & { query: string; line: number }> {
   const results: Array<ValidationResult & { query: string; line: number }> = [];
 
@@ -273,7 +282,7 @@ export function validateText(
     const startPos = match.index;
     const lineNumber = text.substring(0, startPos).split('\n').length - 1;
 
-    const result = validateQuery(query);
+    const result = validateQuery(query, version);
     results.push({
       ...result,
       query,

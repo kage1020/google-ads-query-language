@@ -11,6 +11,9 @@ importers:
       '@biomejs/biome':
         specifier: ^2.3.0
         version: 2.3.0
+      husky:
+        specifier: ^9.1.7
+        version: 9.1.7
       turbo:
         specifier: ^2.5.8
         version: 2.5.8
@@ -56,10 +59,7 @@ importers:
         version: 4.0.3(@types/node@24.9.1)(@vitest/ui@4.0.3)(happy-dom@20.0.8)
 
   packages/core:
-    devDependencies:
-      '@biomejs/biome':
-        specifier: ^2.3.0
-        version: 2.3.0
+    dependencies:
       google-ads-api-v19:
         specifier: npm:google-ads-api@^19.0.2
         version: google-ads-api@19.0.2
@@ -69,6 +69,10 @@ importers:
       google-ads-api-v21:
         specifier: npm:google-ads-api@^21.0.1
         version: google-ads-api@21.0.1
+    devDependencies:
+      '@biomejs/biome':
+        specifier: ^2.3.0
+        version: 2.3.0
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -1391,6 +1395,11 @@ packages:
   https-proxy-agent@7.0.6:
     resolution: {integrity: sha512-vK9P5/iUfdl95AI+JVyUuIcVtd4ofvtrOr3HNtM2yxC9bnMbEdp3x01OhQNnjb8IJYi38VlTE3mBXwcfvywuSw==}
     engines: {node: '>= 14'}
+
+  husky@9.1.7:
+    resolution: {integrity: sha512-5gs5ytaNjBrh5Ow3zrvdUUY+0VxIuWVL4i9irt6friV+BqdCfmV11CQTWMiBYWHbXhco+J1kHfTOUkePhCDvMA==}
+    engines: {node: '>=18'}
+    hasBin: true
 
   iconv-lite@0.6.3:
     resolution: {integrity: sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw==}
@@ -3803,6 +3812,8 @@ snapshots:
       debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
+
+  husky@9.1.7: {}
 
   iconv-lite@0.6.3:
     dependencies:

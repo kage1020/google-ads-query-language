@@ -1,6 +1,6 @@
 {
   "name": "@gaql/cli",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "CLI tool for Google Ads Query Language (GAQL) validation and type generation",
   "license": "MIT",
   "author": {
@@ -39,8 +39,7 @@
     "build": "tsc --build",
     "dev": "tsc --build --watch",
     "clean": "rm -rf dist *.tsbuildinfo",
-    "lint": "biome check .",
-    "format": "biome format --write .",
+    "lint": "biome check --write --assist-enabled=true .",
     "test": "vitest run",
     "test:watch": "vitest"
   },
