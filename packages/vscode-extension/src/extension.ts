@@ -12,8 +12,6 @@ export function activate(context: vscode.ExtensionContext) {
   // Initialize localization
   initializeLocalization(getLanguage());
 
-  const version = getApiVersion();
-
   // Register completion provider
   const completionProvider = vscode.languages.registerCompletionItemProvider(
     supportedCodeLanguages,
@@ -47,7 +45,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.workspace.onDidOpenTextDocument((document) => {
       if (supportedCodeLanguages.includes(document.languageId as SupportedCodeLanguage)) {
-        validator.validateDocument(document, version);
+        validator.validateDocument(document, getApiVersion());
       }
     }),
   );
@@ -56,7 +54,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.workspace.onDidChangeTextDocument((event) => {
       if (supportedCodeLanguages.includes(event.document.languageId as SupportedCodeLanguage)) {
-        validator.validateDocument(event.document, version);
+        validator.validateDocument(event.document, getApiVersion());
       }
     }),
   );
@@ -67,7 +65,7 @@ export function activate(context: vscode.ExtensionContext) {
       if (editor) {
         const document = editor.document;
         if (supportedCodeLanguages.includes(document.languageId as SupportedCodeLanguage)) {
-          validator.validateDocument(document, version);
+          validator.validateDocument(document, getApiVersion());
         }
       }
     }),
@@ -77,7 +75,7 @@ export function activate(context: vscode.ExtensionContext) {
   if (vscode.window.activeTextEditor) {
     const document = vscode.window.activeTextEditor.document;
     if (supportedCodeLanguages.includes(document.languageId as SupportedCodeLanguage)) {
-      validator.validateDocument(document, version);
+      validator.validateDocument(document, getApiVersion());
     }
   }
 
@@ -85,12 +83,9 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.workspace.onDidChangeConfiguration((event) => {
       if (event.affectsConfiguration(`${configName.prefix}.${configName.apiVersion}`)) {
-        const newVersion = getApiVersion();
-
-        // Re-validate all open documents
         for (const document of vscode.workspace.textDocuments) {
           if (supportedCodeLanguages.includes(document.languageId as SupportedCodeLanguage)) {
-            validator.validateDocument(document, newVersion);
+            validator.validateDocument(document, getApiVersion());
           }
         }
       }
@@ -102,7 +97,7 @@ export function activate(context: vscode.ExtensionContext) {
         // Re-validate all open documents to update error messages
         for (const document of vscode.workspace.textDocuments) {
           if (supportedCodeLanguages.includes(document.languageId as SupportedCodeLanguage)) {
-            validator.validateDocument(document, version);
+            validator.validateDocument(document, getApiVersion());
           }
         }
       }

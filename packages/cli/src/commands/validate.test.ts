@@ -1,3 +1,4 @@
+// @gaql-disable
 import * as fs from 'node:fs/promises';
 import * as core from '@gaql/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
