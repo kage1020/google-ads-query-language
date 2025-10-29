@@ -5,7 +5,9 @@ import {
   getFieldsForResourcePrefix,
   getResourceNames,
   OPERATORS,
+  type ResourceName,
   STATUS_VALUES,
+  type SupportedApiVersion,
 } from './schema.js';
 
 /**
@@ -94,7 +96,11 @@ export function determineContext(query: string, position: number): QueryContext 
  * @param position The cursor position (0-based index)
  * @returns Parse result with suggestions
  */
-export function getCompletions(query: string, position: number): ParseResult {
+export function getCompletions<T extends SupportedApiVersion>(
+  query: string,
+  position: number,
+  version: T,
+): ParseResult {
   const context = determineContext(query, position);
   const beforeCursor = query.substring(0, position);
 
@@ -112,7 +118,7 @@ export function getCompletions(query: string, position: number): ParseResult {
     case 'from_clause':
       return {
         context,
-        suggestions: getResourceNames().map((resource) => ({
+        suggestions: getResourceNames(version).map((resource) => ({
           label: resource,
           type: 'resource',
           description: `Google Ads resource: ${resource}`,
@@ -147,14 +153,14 @@ export function getCompletions(query: string, position: number): ParseResult {
         return { context, suggestions: [] };
       }
 
-      const resource = fromMatch[1];
+      const resource = fromMatch[1] as ResourceName<T>;
 
       // Extract the current field path being typed
       const fieldMatch = beforeCursor.match(/([a-z_][a-z0-9_]*(?:\.[a-z_][a-z0-9_]*)*)$/i);
       const typedPath = fieldMatch ? fieldMatch[1] : '';
 
       // Get field suggestions based on typed path
-      const suggestions = getFieldSuggestions(resource, typedPath);
+      const suggestions = getFieldSuggestions(resource, typedPath, version);
 
       return {
         context,
@@ -175,8 +181,12 @@ export function getCompletions(query: string, position: number): ParseResult {
  * @param typedPath The partially typed field path
  * @returns Array of completion items
  */
-function getFieldSuggestions(resource: string, typedPath: string): CompletionItem[] {
-  const allFields = getFieldsForResource(resource);
+function getFieldSuggestions<T extends SupportedApiVersion>(
+  resource: ResourceName<T>,
+  typedPath: string,
+  version: T,
+): CompletionItem[] {
+  const allFields = getFieldsForResource(resource, version);
 
   if (!typedPath || !typedPath.includes('.')) {
     // No prefix yet, show all fields
@@ -188,7 +198,7 @@ function getFieldSuggestions(resource: string, typedPath: string): CompletionIte
   const prefix = segments.slice(0, -1).join('.');
 
   // Get fields for the specific prefix
-  const prefixFields = prefix ? getFieldsForResourcePrefix(resource, prefix) : allFields;
+  const prefixFields = prefix ? getFieldsForResourcePrefix(resource, prefix, version) : allFields;
 
   // Filter fields that start with the typed path
   const matchingFields = prefixFields.filter((field) =>
@@ -227,9 +237,11 @@ function fieldToCompletionItem(field: FieldDefinition): CompletionItem {
  * @param query The GAQL query string
  * @returns The resource name or undefined
  */
-export function extractResource(query: string): string | undefined {
+export function extractResource<T extends SupportedApiVersion>(
+  query: string,
+): ResourceName<T> | undefined {
   const fromMatch = query.match(/\bFROM\s+(\w+)/i);
-  return fromMatch ? fromMatch[1] : undefined;
+  return fromMatch ? (fromMatch[1] as ResourceName<T>) : undefined;
 }
 
 /**

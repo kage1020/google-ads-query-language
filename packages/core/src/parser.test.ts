@@ -60,7 +60,7 @@ describe('parser.ts', () => {
   describe('Completions', () => {
     it('should return GAQL keywords in keyword context', () => {
       const query = '';
-      const result = getCompletions(query, 0);
+      const result = getCompletions(query, 0, '21');
 
       expect(result.context).toBe('keyword');
       expect(result.suggestions.length).toBeGreaterThan(0);
@@ -70,7 +70,7 @@ describe('parser.ts', () => {
 
     it('should return resource names in from_clause context', () => {
       const query = 'SELECT campaign.id FROM ';
-      const result = getCompletions(query, query.length);
+      const result = getCompletions(query, query.length, '21');
 
       // Context may be from_clause or keyword depending on regex matching
       expect(['from_clause', 'keyword']).toContain(result.context);
@@ -84,7 +84,7 @@ describe('parser.ts', () => {
 
     it('should return suggestions in select_fields context', () => {
       const query = 'SELECT ';
-      const result = getCompletions(query, query.length);
+      const result = getCompletions(query, query.length, '21');
 
       expect(['select_fields', 'keyword']).toContain(result.context);
       // In SELECT context, we should get some suggestions
@@ -93,7 +93,7 @@ describe('parser.ts', () => {
 
     it('should filter completions based on partial input', () => {
       const query = 'SELECT campaign.id FROM cam';
-      const result = getCompletions(query, query.length);
+      const result = getCompletions(query, query.length, '21');
 
       // Context depends on implementation
       expect(result.suggestions.length).toBeGreaterThan(0);
@@ -102,7 +102,7 @@ describe('parser.ts', () => {
 
     it('should have label, type, and description for each suggestion', () => {
       const query = '';
-      const result = getCompletions(query, 0);
+      const result = getCompletions(query, 0, '21');
 
       expect(result.suggestions.length).toBeGreaterThan(0);
       const suggestion = result.suggestions[0];
@@ -237,20 +237,20 @@ describe('parser.ts', () => {
   describe('Edge Cases', () => {
     it('should handle empty query for completions', () => {
       const query = '';
-      const result = getCompletions(query, 0);
+      const result = getCompletions(query, 0, '21');
       expect(result.suggestions.length).toBeGreaterThan(0);
     });
 
     it('should handle cursor position beyond query length', () => {
       const query = 'SELECT';
-      const result = getCompletions(query, 1000);
+      const result = getCompletions(query, 1000, '21');
       // Should not crash and should return some suggestions
       expect(Array.isArray(result.suggestions)).toBe(true);
     });
 
     it('should handle negative cursor position', () => {
       const query = 'SELECT campaign.id FROM campaign';
-      const result = getCompletions(query, -1);
+      const result = getCompletions(query, -1, '21');
       // Should not crash
       expect(Array.isArray(result.suggestions)).toBe(true);
     });
@@ -268,7 +268,7 @@ describe('parser.ts', () => {
     it('should provide field completions based on extracted resource', () => {
       const query = 'SELECT campaign.id FROM campaign WHERE campaign.';
       const resource = extractResource(query);
-      const result = getCompletions(query, query.length);
+      const result = getCompletions(query, query.length, '21');
 
       expect(resource).toBe('campaign');
       // Should get some suggestions
@@ -278,17 +278,17 @@ describe('parser.ts', () => {
     it('should handle complete query flow', () => {
       // Start with empty query
       let query = '';
-      let result = getCompletions(query, 0);
+      let result = getCompletions(query, 0, '21');
       expect(result.context).toBe('keyword');
 
       // Add SELECT
       query = 'SELECT ';
-      result = getCompletions(query, query.length);
+      result = getCompletions(query, query.length, '21');
       expect(['select_fields', 'keyword']).toContain(result.context);
 
       // Add field and FROM with trailing space
       query = 'SELECT campaign.id FROM ';
-      result = getCompletions(query, query.length);
+      result = getCompletions(query, query.length, '21');
       // Context depends on whether regex matches trailing space
       expect(['from_clause', 'keyword']).toContain(result.context);
 
