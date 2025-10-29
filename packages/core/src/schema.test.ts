@@ -5,7 +5,6 @@ import {
   getMetricsForResource,
   getResourceInfo,
   getResourceNames,
-  getResourcePrefixesForResource,
   getSegmentsForResource,
 } from './schema.js';
 
@@ -145,23 +144,24 @@ describe('schema.ts', () => {
 
   describe('Fields for Resource Prefix', () => {
     it('should return fields for a specific resource prefix', () => {
-      const fields = getFieldsForResourcePrefix('campaign', 'campaign');
+      const fields = getFieldsForResourcePrefix('campaign', 'campaign', '21');
       expect(Array.isArray(fields)).toBe(true);
       expect(fields.length).toBeGreaterThan(0);
     });
 
     it('should return empty array for invalid resource', () => {
-      const fields = getFieldsForResourcePrefix('invalid_resource', 'campaign');
+      // @ts-expect-error Testing invalid resource name
+      const fields = getFieldsForResourcePrefix('invalid_resource', 'campaign', '21');
       expect(fields).toEqual([]);
     });
 
     it('should return empty array for invalid prefix', () => {
-      const fields = getFieldsForResourcePrefix('campaign', 'invalid_prefix');
+      const fields = getFieldsForResourcePrefix('campaign', 'invalid_prefix', '21');
       expect(fields).toEqual([]);
     });
 
     it('should have proper structure for prefix fields', () => {
-      const fields = getFieldsForResourcePrefix('campaign', 'campaign');
+      const fields = getFieldsForResourcePrefix('campaign', 'campaign', '21');
       if (fields.length > 0) {
         const field = fields[0];
         expect(field).toHaveProperty('name');
@@ -172,29 +172,10 @@ describe('schema.ts', () => {
     });
   });
 
-  describe('Resource Prefixes for Resource', () => {
-    it('should return resource prefixes for campaign', () => {
-      const prefixes = getResourcePrefixesForResource('campaign');
-      expect(Array.isArray(prefixes)).toBe(true);
-      expect(prefixes.length).toBeGreaterThan(0);
-      expect(prefixes).toContain('campaign');
-    });
-
-    it('should return empty array for invalid resource', () => {
-      const prefixes = getResourcePrefixesForResource('invalid_resource_name');
-      expect(prefixes).toEqual([]);
-    });
-
-    it('should return sorted prefixes', () => {
-      const prefixes = getResourcePrefixesForResource('campaign');
-      const sortedPrefixes = [...prefixes].sort();
-      expect(prefixes).toEqual(sortedPrefixes);
-    });
-  });
 
   describe('Resource Info', () => {
     it('should return resource info for campaign', () => {
-      const info = getResourceInfo('campaign');
+      const info = getResourceInfo('campaign', '21');
       expect(info).not.toBeNull();
       expect(info).toHaveProperty('name');
       expect(info).toHaveProperty('fieldCount');
@@ -205,12 +186,13 @@ describe('schema.ts', () => {
     });
 
     it('should return null for invalid resource', () => {
-      const info = getResourceInfo('invalid_resource_name');
+      // @ts-expect-error Testing invalid resource name
+      const info = getResourceInfo('invalid_resource_name', '21');
       expect(info).toBeNull();
     });
 
     it('should have correct field counts', () => {
-      const info = getResourceInfo('campaign');
+      const info = getResourceInfo('campaign', '21');
       expect(info?.fieldCount).toBeGreaterThan(0);
       expect(typeof info?.fieldCount).toBe('number');
       expect(typeof info?.metricCount).toBe('number');
@@ -218,7 +200,7 @@ describe('schema.ts', () => {
     });
 
     it('should have sorted attributed resources', () => {
-      const info = getResourceInfo('campaign');
+      const info = getResourceInfo('campaign', '21');
       expect(Array.isArray(info?.attributedResources)).toBe(true);
       if (info?.attributedResources) {
         const sorted = [...info.attributedResources].sort();
