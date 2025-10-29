@@ -1,9 +1,10 @@
 # Changelog
 
-All notable changes to @gaql/core will be documented in this file.
+## [0.1.4] - 2025-10-29
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+### Changed
+
+- Removed stateful api version management in favor of explicit version parameters in functions
 
 ## [0.1.3] - 2025-10-26
 
@@ -38,7 +39,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Features
 
-- `setApiVersion()` / `getApiVersion()` - API version management
 - `getResourceNames()` - Get available resource names
 - `getFieldsForResource()` - Get fields for a specific resource
 - `getMetricsForResource()` - Get metrics for a resource
@@ -59,6 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[0.1.4]: https://github.com/kage1020/google-ads-query-language/releases/tag/core-v0.1.4
 [0.1.3]: https://github.com/kage1020/google-ads-query-language/releases/tag/core-v0.1.3
 [0.1.2]: https://github.com/kage1020/google-ads-query-language/releases/tag/core-v0.1.2
 [0.1.1]: https://github.com/kage1020/google-ads-query-language/releases/tag/core-v0.1.1

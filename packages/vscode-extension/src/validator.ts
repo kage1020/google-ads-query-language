@@ -1,4 +1,9 @@
-import { type ValidationError, ValidationErrorType, validateQuery } from '@gaql/core';
+import {
+  type SupportedApiVersion,
+  type ValidationError,
+  ValidationErrorType,
+  validateQuery,
+} from '@gaql/core';
 import * as vscode from 'vscode';
 import { getActivationMode, getEnabled } from './config.js';
 import { getMessage, MessageKey } from './localization.js';
@@ -16,7 +21,10 @@ export class GAQLValidator {
   /**
    * Validate GAQL queries in the document
    */
-  public async validateDocument(document: vscode.TextDocument): Promise<void> {
+  public async validateDocument<T extends SupportedApiVersion>(
+    document: vscode.TextDocument,
+    version: T,
+  ): Promise<void> {
     const enabled = getEnabled();
     if (!enabled) {
       this.diagnosticCollection.set(document.uri, []);
@@ -42,7 +50,7 @@ export class GAQLValidator {
       }
 
       // Validate query using @gaql/core
-      const result = validateQuery(query.text);
+      const result = validateQuery(query.text, version);
 
       // Convert validation errors to VS Code diagnostics
       for (const error of result.errors) {
@@ -83,7 +91,11 @@ export class GAQLValidator {
   private extractQueries(
     text: string,
   ): Array<{ text: string; startLine: number; disabled: boolean }> {
-    const queries: Array<{ text: string; startLine: number; disabled: boolean }> = [];
+    const queries: Array<{
+      text: string;
+      startLine: number;
+      disabled: boolean;
+    }> = [];
     const lines = text.split('\n');
 
     let backtickCount = 0;
