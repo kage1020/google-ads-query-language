@@ -5,6 +5,7 @@ import {
   type FieldNameForResource,
   getFieldsForResource,
   getResourceNames,
+  type ResourceName,
   type SupportedApiVersion,
 } from './schema.js';
 
@@ -459,7 +460,10 @@ export class GoogleAdsQueryBuilder<TResource extends string = never> {
       return [];
     }
 
-    const fields = getFieldsForResource(this._from as any, this.apiVersion);
+    const fields = getFieldsForResource(
+      this._from as ResourceName<SupportedApiVersion>,
+      this.apiVersion,
+    );
     return fields.map((f) => f.description);
   }
 
