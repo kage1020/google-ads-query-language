@@ -172,7 +172,6 @@ describe('schema.ts', () => {
     });
   });
 
-
   describe('Resource Info', () => {
     it('should return resource info for campaign', () => {
       const info = getResourceInfo('campaign', '21');
