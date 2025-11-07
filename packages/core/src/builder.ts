@@ -1,3 +1,6 @@
+import type { Customer as CustomerV19 } from 'google-ads-api-v19';
+import type { Customer as CustomerV20 } from 'google-ads-api-v20';
+import type { Customer as CustomerV21 } from 'google-ads-api-v21';
 import {
   type AnyResourceName,
   defaultApiVersion,
@@ -9,6 +12,11 @@ import {
 } from './schema.js';
 import type { ValidationResult } from './validator.js';
 import { validateQuery } from './validator.js';
+
+/**
+ * Google Ads API Customer class from any supported version
+ */
+export type GoogleAdsCustomer = CustomerV19 | CustomerV20 | CustomerV21;
 
 /**
  * Interface for query validation
@@ -74,9 +82,10 @@ export interface QueryBuilderConfig<TResult = unknown, TParsed = unknown> {
    */
   validator?: QueryValidator;
   /**
-   * Query executor for executing queries
+   * Query executor for executing queries.
+   * Can be either a QueryExecutor interface implementation or a google-ads-api Customer instance.
    */
-  executor?: QueryExecutor<TResult>;
+  executor?: QueryExecutor<TResult> | GoogleAdsCustomer;
   /**
    * Query parser for parsing queries
    */
@@ -160,7 +169,7 @@ export class GoogleAdsQueryBuilder<TResource extends string = never> {
   private _parameters: string[] = [];
 
   private validator: QueryValidator;
-  private executor?: QueryExecutor<unknown>;
+  private executor?: QueryExecutor<unknown> | GoogleAdsCustomer;
   private parser?: QueryParser<unknown>;
   private autoValidate: boolean;
   private apiVersion: SupportedApiVersion;
@@ -396,8 +405,13 @@ export class GoogleAdsQueryBuilder<TResource extends string = never> {
    *
    * @example
    * ```typescript
+   * // Using google-ads-api Customer instance
+   * import { GoogleAdsApi } from 'google-ads-api';
+   * const client = new GoogleAdsApi({ ... });
+   * const customer = client.Customer({ customer_id: '1234567890' });
+   *
    * const builder = new GoogleAdsQueryBuilder({
-   *   executor: new GoogleAdsExecutor(client)
+   *   executor: customer
    * });
    *
    * const results = await builder
@@ -412,7 +426,18 @@ export class GoogleAdsQueryBuilder<TResource extends string = never> {
     }
 
     const query = this.build();
-    return this.executor.execute(query) as Promise<TResult>;
+
+    // Check if executor is a google-ads-api Customer instance (has query method)
+    if ('query' in this.executor && typeof this.executor.query === 'function') {
+      return this.executor.query(query) as Promise<TResult>;
+    }
+
+    // Otherwise, treat it as QueryExecutor interface (has execute method)
+    if ('execute' in this.executor && typeof this.executor.execute === 'function') {
+      return this.executor.execute(query) as Promise<TResult>;
+    }
+
+    throw new Error('Invalid executor: must have either query() or execute() method.');
   }
 
   /**
