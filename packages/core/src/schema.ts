@@ -5,14 +5,12 @@ import fieldsDataV19 from './schemas/fields-v19.json' with { type: 'json' };
 import fieldsDataV20 from './schemas/fields-v20.json' with { type: 'json' };
 import fieldsDataV21 from './schemas/fields-v21.json' with { type: 'json' };
 
-// Import field types from google-ads-api packages
-type MetricV19 = fieldsV19.Metric;
-type MetricV20 = fieldsV20.Metric;
-type MetricV21 = fieldsV21.Metric;
-
-type SegmentV19 = fieldsV19.Segment;
-type SegmentV20 = fieldsV20.Segment;
-type SegmentV21 = fieldsV21.Segment;
+// Import auto-generated type mappings for all 173 resources
+import type {
+  ResourceFieldMap,
+  ResourceMetricMap,
+  ResourceSegmentMap,
+} from './generated-resource-types.js';
 
 export const SupportedApiVersions = ['19', '20', '21'] as const;
 export type SupportedApiVersion = (typeof SupportedApiVersions)[number];
@@ -62,57 +60,6 @@ const versionSchemas: Record<SupportedApiVersion, FieldsDataType<SupportedApiVer
   '20': fieldsDataV20 as FieldsDataType<'20'>,
   '21': fieldsDataV21 as FieldsDataType<'21'>,
 };
-
-/**
- * Map resource name to its corresponding Field type from google-ads-api
- */
-type ResourceFieldMap<TResource extends string> = TResource extends 'campaign'
-  ? fieldsV19.CampaignField | fieldsV20.CampaignField | fieldsV21.CampaignField
-  : TResource extends 'ad_group'
-    ? fieldsV19.AdGroupField | fieldsV20.AdGroupField | fieldsV21.AdGroupField
-    : TResource extends 'ad_group_ad'
-      ? fieldsV19.AdGroupAdField | fieldsV20.AdGroupAdField | fieldsV21.AdGroupAdField
-      : TResource extends 'customer'
-        ? fieldsV19.CustomerField | fieldsV20.CustomerField | fieldsV21.CustomerField
-        : TResource extends 'keyword_view'
-          ? fieldsV19.KeywordViewField | fieldsV20.KeywordViewField | fieldsV21.KeywordViewField
-          : TResource extends 'search_term_view'
-            ? fieldsV19.SearchTermViewField | fieldsV20.SearchTermViewField | fieldsV21.SearchTermViewField
-            : never;
-
-/**
- * Map resource name to its corresponding Metric type from google-ads-api
- */
-type ResourceMetricMap<TResource extends string> = TResource extends 'campaign'
-  ? fieldsV19.CampaignMetric | fieldsV20.CampaignMetric | fieldsV21.CampaignMetric
-  : TResource extends 'ad_group'
-    ? fieldsV19.AdGroupMetric | fieldsV20.AdGroupMetric | fieldsV21.AdGroupMetric
-    : TResource extends 'ad_group_ad'
-      ? fieldsV19.AdGroupAdMetric | fieldsV20.AdGroupAdMetric | fieldsV21.AdGroupAdMetric
-      : TResource extends 'customer'
-        ? fieldsV19.CustomerMetric | fieldsV20.CustomerMetric | fieldsV21.CustomerMetric
-        : TResource extends 'keyword_view'
-          ? fieldsV19.KeywordViewMetric | fieldsV20.KeywordViewMetric | fieldsV21.KeywordViewMetric
-          : TResource extends 'search_term_view'
-            ? fieldsV19.SearchTermViewMetric | fieldsV20.SearchTermViewMetric | fieldsV21.SearchTermViewMetric
-            : MetricV19 | MetricV20 | MetricV21;
-
-/**
- * Map resource name to its corresponding Segment type from google-ads-api
- */
-type ResourceSegmentMap<TResource extends string> = TResource extends 'campaign'
-  ? fieldsV19.CampaignSegment | fieldsV20.CampaignSegment | fieldsV21.CampaignSegment
-  : TResource extends 'ad_group'
-    ? fieldsV19.AdGroupSegment | fieldsV20.AdGroupSegment | fieldsV21.AdGroupSegment
-    : TResource extends 'ad_group_ad'
-      ? fieldsV19.AdGroupAdSegment | fieldsV20.AdGroupAdSegment | fieldsV21.AdGroupAdSegment
-      : TResource extends 'customer'
-        ? fieldsV19.CustomerSegment | fieldsV20.CustomerSegment | fieldsV21.CustomerSegment
-        : TResource extends 'keyword_view'
-          ? fieldsV19.KeywordViewSegment | fieldsV20.KeywordViewSegment | fieldsV21.KeywordViewSegment
-          : TResource extends 'search_term_view'
-            ? fieldsV19.SearchTermViewSegment | fieldsV20.SearchTermViewSegment | fieldsV21.SearchTermViewSegment
-            : SegmentV19 | SegmentV20 | SegmentV21;
 
 /**
  * Type helper for field names based on resource

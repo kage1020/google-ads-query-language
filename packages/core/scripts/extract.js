@@ -13,6 +13,9 @@ import path from 'node:path';
 // Define all supported API versions
 const SUPPORTED_VERSIONS = ['19', '20', '21'];
 
+// Store all resources across versions for type generation
+const allResourcesByVersion = {};
+
 for (const version of SUPPORTED_VERSIONS) {
   try {
     // Read the fields.d.ts file from the aliased package
@@ -173,11 +176,17 @@ for (const version of SUPPORTED_VERSIONS) {
     // Write to version-specific file
     const outputPath = path.join(schemasDir, `fields-v${version}.json`);
     fs.writeFileSync(outputPath, JSON.stringify(resourceFieldsMap, null, 2));
+
+    // Store resources for type generation
+    allResourcesByVersion[version] = resources;
   } catch (error) {
     console.error(`  ❌ Error processing v${version}:`, error.message);
     console.error('');
   }
 }
+
+// Generate TypeScript type definitions for all resources
+generateResourceTypes(allResourcesByVersion);
 
 /**
  * Extract documentation for fields from an interface in protos.d.ts
@@ -317,4 +326,180 @@ function extractFieldsFlat(typeString, prefix, docs) {
     });
 
   return result;
+}
+
+/**
+ * Convert snake_case to PascalCase
+ * Example: "ad_group" → "AdGroup", "campaign" → "Campaign"
+ */
+function toPascalCase(str) {
+  return str
+    .split('_')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join('');
+}
+
+/**
+ * Check if a type exists in fields.d.ts content
+ */
+function typeExists(fieldsContent, typeName) {
+  const pattern = new RegExp(`type ${typeName} =`);
+  return pattern.test(fieldsContent);
+}
+
+/**
+ * Generate TypeScript type definitions for all resources
+ */
+function generateResourceTypes(resourcesByVersion) {
+  console.log('\n📝 Generating TypeScript type definitions...');
+
+  // Load field definitions for each version to check type existence
+  const fieldsContents = {};
+  for (const version of SUPPORTED_VERSIONS) {
+    const fieldsPath = path.join(
+      import.meta.dirname,
+      '..',
+      'node_modules',
+      `google-ads-api-v${version}`,
+      'build',
+      'src',
+      'protos',
+      'autogen',
+      'fields.d.ts',
+    );
+    if (fs.existsSync(fieldsPath)) {
+      fieldsContents[version] = fs.readFileSync(fieldsPath, 'utf8');
+    }
+  }
+
+  // Get unique resources across all versions
+  const allResources = new Set();
+  Object.values(resourcesByVersion).forEach((resources) => {
+    resources.forEach((r) => allResources.add(r));
+  });
+
+  const sortedResources = Array.from(allResources).sort();
+
+  console.log(`   Found ${sortedResources.length} unique resources across all API versions`);
+
+  // Generate Field type mapping
+  const fieldMappings = sortedResources
+    .map((resource) => {
+      const pascalCase = toPascalCase(resource);
+      const types = [];
+
+      if (fieldsContents['19'] && typeExists(fieldsContents['19'], `${pascalCase}Field`)) {
+        types.push(`fieldsV19.${pascalCase}Field`);
+      }
+      if (fieldsContents['20'] && typeExists(fieldsContents['20'], `${pascalCase}Field`)) {
+        types.push(`fieldsV20.${pascalCase}Field`);
+      }
+      if (fieldsContents['21'] && typeExists(fieldsContents['21'], `${pascalCase}Field`)) {
+        types.push(`fieldsV21.${pascalCase}Field`);
+      }
+
+      if (types.length === 0) return null;
+      return `  : TResource extends '${resource}'\n    ? ${types.join(' | ')}`;
+    })
+    .filter(Boolean)
+    .join('\n');
+
+  // Generate Metric type mapping
+  const metricMappings = sortedResources
+    .map((resource) => {
+      const pascalCase = toPascalCase(resource);
+      const types = [];
+
+      if (fieldsContents['19'] && typeExists(fieldsContents['19'], `${pascalCase}Metric`)) {
+        types.push(`fieldsV19.${pascalCase}Metric`);
+      }
+      if (fieldsContents['20'] && typeExists(fieldsContents['20'], `${pascalCase}Metric`)) {
+        types.push(`fieldsV20.${pascalCase}Metric`);
+      }
+      if (fieldsContents['21'] && typeExists(fieldsContents['21'], `${pascalCase}Metric`)) {
+        types.push(`fieldsV21.${pascalCase}Metric`);
+      }
+
+      if (types.length === 0) return null;
+      return `  : TResource extends '${resource}'\n    ? ${types.join(' | ')}`;
+    })
+    .filter(Boolean)
+    .join('\n');
+
+  // Generate Segment type mapping
+  const segmentMappings = sortedResources
+    .map((resource) => {
+      const pascalCase = toPascalCase(resource);
+      const types = [];
+
+      if (fieldsContents['19'] && typeExists(fieldsContents['19'], `${pascalCase}Segment`)) {
+        types.push(`fieldsV19.${pascalCase}Segment`);
+      }
+      if (fieldsContents['20'] && typeExists(fieldsContents['20'], `${pascalCase}Segment`)) {
+        types.push(`fieldsV20.${pascalCase}Segment`);
+      }
+      if (fieldsContents['21'] && typeExists(fieldsContents['21'], `${pascalCase}Segment`)) {
+        types.push(`fieldsV21.${pascalCase}Segment`);
+      }
+
+      if (types.length === 0) return null;
+      return `  : TResource extends '${resource}'\n    ? ${types.join(' | ')}`;
+    })
+    .filter(Boolean)
+    .join('\n');
+
+  const typeDefinitions = `// Auto-generated by scripts/extract.js
+// Do not edit manually - regenerate by running: node scripts/extract.js
+
+import type { fields as fieldsV19 } from 'google-ads-api-v19';
+import type { fields as fieldsV20 } from 'google-ads-api-v20';
+import type { fields as fieldsV21 } from 'google-ads-api-v21';
+
+type MetricV19 = fieldsV19.Metric;
+type MetricV20 = fieldsV20.Metric;
+type MetricV21 = fieldsV21.Metric;
+
+type SegmentV19 = fieldsV19.Segment;
+type SegmentV20 = fieldsV20.Segment;
+type SegmentV21 = fieldsV21.Segment;
+
+/**
+ * Map resource name to its corresponding Field type from google-ads-api
+ * Supports all ${sortedResources.length} resources across API versions 19, 20, and 21
+ */
+export type ResourceFieldMap<TResource extends string> = TResource extends 'campaign'
+  ? fieldsV19.CampaignField | fieldsV20.CampaignField | fieldsV21.CampaignField
+${fieldMappings}
+    : never;
+
+/**
+ * Map resource name to its corresponding Metric type from google-ads-api
+ * Falls back to global Metric type if resource-specific type not found
+ */
+export type ResourceMetricMap<TResource extends string> = TResource extends 'campaign'
+  ? fieldsV19.CampaignMetric | fieldsV20.CampaignMetric | fieldsV21.CampaignMetric
+${metricMappings}
+    : MetricV19 | MetricV20 | MetricV21;
+
+/**
+ * Map resource name to its corresponding Segment type from google-ads-api
+ * Falls back to global Segment type if resource-specific type not found
+ */
+export type ResourceSegmentMap<TResource extends string> = TResource extends 'campaign'
+  ? fieldsV19.CampaignSegment | fieldsV20.CampaignSegment | fieldsV21.CampaignSegment
+${segmentMappings}
+    : SegmentV19 | SegmentV20 | SegmentV21;
+`;
+
+  // Write to generated file
+  const generatedPath = path.join(
+    import.meta.dirname,
+    '..',
+    'src',
+    'generated-resource-types.ts',
+  );
+  fs.writeFileSync(generatedPath, typeDefinitions);
+
+  console.log(`   ✅ Generated ${generatedPath}`);
+  console.log(`   📊 Type mappings created for ${sortedResources.length} resources\n`);
 }
