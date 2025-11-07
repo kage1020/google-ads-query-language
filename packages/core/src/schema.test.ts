@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
   getFieldsForResource,
+  getFieldsForResourcePrefix,
   getMetricsForResource,
+  getResourceInfo,
   getResourceNames,
   getSegmentsForResource,
 } from './schema.js';
@@ -136,6 +138,72 @@ describe('schema.ts', () => {
         expect(segment).toHaveProperty('name');
         expect(segment).toHaveProperty('type');
         expect(segment).toHaveProperty('description');
+      }
+    });
+  });
+
+  describe('Fields for Resource Prefix', () => {
+    it('should return fields for a specific resource prefix', () => {
+      const fields = getFieldsForResourcePrefix('campaign', 'campaign', '21');
+      expect(Array.isArray(fields)).toBe(true);
+      expect(fields.length).toBeGreaterThan(0);
+    });
+
+    it('should return empty array for invalid resource', () => {
+      // @ts-expect-error Testing invalid resource name
+      const fields = getFieldsForResourcePrefix('invalid_resource', 'campaign', '21');
+      expect(fields).toEqual([]);
+    });
+
+    it('should return empty array for invalid prefix', () => {
+      const fields = getFieldsForResourcePrefix('campaign', 'invalid_prefix', '21');
+      expect(fields).toEqual([]);
+    });
+
+    it('should have proper structure for prefix fields', () => {
+      const fields = getFieldsForResourcePrefix('campaign', 'campaign', '21');
+      if (fields.length > 0) {
+        const field = fields[0];
+        expect(field).toHaveProperty('name');
+        expect(field).toHaveProperty('type');
+        expect(field).toHaveProperty('description');
+        expect(field.description).toMatch(/^campaign\./);
+      }
+    });
+  });
+
+  describe('Resource Info', () => {
+    it('should return resource info for campaign', () => {
+      const info = getResourceInfo('campaign', '21');
+      expect(info).not.toBeNull();
+      expect(info).toHaveProperty('name');
+      expect(info).toHaveProperty('fieldCount');
+      expect(info).toHaveProperty('metricCount');
+      expect(info).toHaveProperty('segmentCount');
+      expect(info).toHaveProperty('attributedResources');
+      expect(info?.name).toBe('campaign');
+    });
+
+    it('should return null for invalid resource', () => {
+      // @ts-expect-error Testing invalid resource name
+      const info = getResourceInfo('invalid_resource_name', '21');
+      expect(info).toBeNull();
+    });
+
+    it('should have correct field counts', () => {
+      const info = getResourceInfo('campaign', '21');
+      expect(info?.fieldCount).toBeGreaterThan(0);
+      expect(typeof info?.fieldCount).toBe('number');
+      expect(typeof info?.metricCount).toBe('number');
+      expect(typeof info?.segmentCount).toBe('number');
+    });
+
+    it('should have sorted attributed resources', () => {
+      const info = getResourceInfo('campaign', '21');
+      expect(Array.isArray(info?.attributedResources)).toBe(true);
+      if (info?.attributedResources) {
+        const sorted = [...info.attributedResources].sort();
+        expect(info.attributedResources).toEqual(sorted);
       }
     });
   });

@@ -62,6 +62,7 @@
     "pretest": "node scripts/extract.js",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:ui": "vitest --ui --coverage",
     "extract": "node scripts/extract.js",
     "prepublishOnly": "pnpm build"
   },
@@ -72,6 +73,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.0",
+    "@vitest/coverage-v8": "4.0.3",
     "typescript": "^5.9.3",
     "vitest": "^4.0.3"
   }
