@@ -2,6 +2,7 @@ import type { ValidationResult } from './validator.js';
 import { validateQuery } from './validator.js';
 import {
   defaultApiVersion,
+  type FieldNameForResource,
   getFieldsForResource,
   getResourceNames,
   type SupportedApiVersion,
@@ -96,11 +97,28 @@ export interface QueryBuilderConfig<TResult = unknown, TParsed = unknown> {
  * - Type inference based on the selected resource
  * - Dependency injection for validation, execution, and parsing
  *
- * @example
- * ```typescript
- * const builder = new GoogleAdsQueryBuilder();
+ * ## Type-Safe Field Selection
  *
- * const query = builder
+ * When you call `.from(resource)`, TypeScript automatically infers the resource type
+ * and enforces that only fields from that resource (or metrics/segments) can be selected:
+ *
+ * @example Type inference with field validation
+ * ```typescript
+ * const builder = new GoogleAdsQueryBuilder()
+ *   .from('campaign')  // Resource type is inferred as 'campaign'
+ *   .select([
+ *     'campaign.id',        // ✓ Valid - matches resource
+ *     'campaign.name',      // ✓ Valid - matches resource
+ *     'metrics.impressions', // ✓ Valid - metrics always allowed
+ *     'segments.date',      // ✓ Valid - segments always allowed
+ *     // 'ad_group.id'      // ✗ TypeScript error - wrong resource
+ *   ])
+ *   .build();
+ * ```
+ *
+ * @example Basic usage
+ * ```typescript
+ * const query = new GoogleAdsQueryBuilder()
  *   .from('campaign')
  *   .select(['campaign.id', 'campaign.name', 'metrics.impressions'])
  *   .where('campaign.status = "ENABLED"')
@@ -120,6 +138,7 @@ export interface QueryBuilderConfig<TResult = unknown, TParsed = unknown> {
  * const builder = new GoogleAdsQueryBuilder({
  *   validator: new CustomValidator(),
  *   executor: new GoogleAdsExecutor(client),
+ *   apiVersion: '21',
  * });
  *
  * const results = await builder
@@ -183,22 +202,28 @@ export class GoogleAdsQueryBuilder<TResource extends string = never> {
    * Fields should be in the format 'resource.field', 'metrics.metric_name',
    * or 'segments.segment_name'.
    *
+   * When a resource is specified via `from()`, only fields matching that resource
+   * prefix (or metrics/segments) are type-checked.
+   *
    * @param fields Array of field names to select
    * @returns The builder instance for method chaining
    *
    * @example
    * ```typescript
-   * builder.select([
-   *   'campaign.id',
-   *   'campaign.name',
-   *   'campaign.status',
-   *   'metrics.impressions',
-   *   'metrics.clicks'
-   * ]);
+   * // After calling .from('campaign'), TypeScript will enforce field names
+   * builder
+   *   .from('campaign')
+   *   .select([
+   *     'campaign.id',        // ✓ Valid
+   *     'campaign.name',      // ✓ Valid
+   *     'metrics.impressions', // ✓ Valid
+   *     'segments.date',      // ✓ Valid
+   *     // 'ad_group.id'      // ✗ Type error - wrong resource
+   *   ]);
    * ```
    */
-  select(fields: readonly string[]): this {
-    this._select = [...this._select, ...fields];
+  select<F extends FieldNameForResource<TResource>>(fields: readonly F[]): this {
+    this._select = [...this._select, ...(fields as readonly string[])];
     return this;
   }
 

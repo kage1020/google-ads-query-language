@@ -22,6 +22,7 @@ export {
 export {
   defaultApiVersion,
   type FieldDefinition,
+  type FieldNameForResource,
   fieldsDataV19,
   fieldsDataV20,
   fieldsDataV21,

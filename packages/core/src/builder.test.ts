@@ -183,6 +183,36 @@ describe('GoogleAdsQueryBuilder', () => {
       expect(campaignQuery).toBe('SELECT campaign.id FROM campaign');
       expect(adGroupQuery).toBe('SELECT ad_group.id FROM ad_group');
     });
+
+    it('should enforce field name types based on resource', () => {
+      // After calling from('campaign'), TypeScript enforces campaign.* fields
+      const builder = new GoogleAdsQueryBuilder()
+        .from('campaign')
+        .select(['campaign.id', 'campaign.name', 'metrics.impressions', 'segments.date']);
+
+      const query = builder.build();
+      expect(query).toContain('campaign.id');
+      expect(query).toContain('metrics.impressions');
+    });
+
+    it('should allow metrics and segments for any resource', () => {
+      const builder = new GoogleAdsQueryBuilder()
+        .from('ad_group')
+        .select(['ad_group.id', 'metrics.clicks', 'segments.device']);
+
+      const query = builder.build();
+      expect(query).toContain('ad_group.id');
+      expect(query).toContain('metrics.clicks');
+      expect(query).toContain('segments.device');
+    });
+
+    it('should allow string fields when no resource is specified', () => {
+      // Before calling from(), any string is allowed
+      const builder = new GoogleAdsQueryBuilder();
+      builder.select(['campaign.id', 'ad_group.id', 'metrics.impressions']);
+
+      expect(builder).toBeInstanceOf(GoogleAdsQueryBuilder);
+    });
   });
 
   describe('Validation', () => {

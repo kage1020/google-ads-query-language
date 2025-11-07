@@ -49,6 +49,14 @@ const versionSchemas: Record<SupportedApiVersion, FieldsDataType<SupportedApiVer
   '21': fieldsDataV21 as FieldsDataType<'21'>,
 };
 
+/**
+ * Type helper for field names based on resource
+ * Allows fields in the format: resource.field, metrics.*, segments.*
+ */
+export type FieldNameForResource<TResource extends string> = TResource extends never
+  ? string
+  : `${TResource}.${string}` | `metrics.${string}` | `segments.${string}`;
+
 // GAQL Keywords
 export const GAQL_KEYWORDS = [
   'SELECT',
