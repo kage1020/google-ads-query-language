@@ -258,6 +258,7 @@ describe('GoogleAdsQueryBuilder', () => {
 
     it('should detect invalid field names', () => {
       const builder = new GoogleAdsQueryBuilder({ autoValidate: false });
+      // @ts-expect-error - Testing invalid field name detection
       builder.from('campaign').select(['campaign.invalid_field']);
 
       const result = builder.validate();
@@ -561,7 +562,6 @@ describe('GoogleAdsQueryBuilder', () => {
       const query = builder
         .from('ad_group')
         .select([
-          // @ts-expect-error - Testing cross-resource field selection (campaign.id in ad_group query)
           'campaign.id',
           'ad_group.id',
           'ad_group.name',

@@ -5,6 +5,15 @@ import fieldsDataV19 from './schemas/fields-v19.json' with { type: 'json' };
 import fieldsDataV20 from './schemas/fields-v20.json' with { type: 'json' };
 import fieldsDataV21 from './schemas/fields-v21.json' with { type: 'json' };
 
+// Import field types from google-ads-api packages
+type MetricV19 = fieldsV19.Metric;
+type MetricV20 = fieldsV20.Metric;
+type MetricV21 = fieldsV21.Metric;
+
+type SegmentV19 = fieldsV19.Segment;
+type SegmentV20 = fieldsV20.Segment;
+type SegmentV21 = fieldsV21.Segment;
+
 export const SupportedApiVersions = ['19', '20', '21'] as const;
 export type SupportedApiVersion = (typeof SupportedApiVersions)[number];
 
@@ -55,12 +64,43 @@ const versionSchemas: Record<SupportedApiVersion, FieldsDataType<SupportedApiVer
 };
 
 /**
+ * Union of all metrics across all API versions
+ */
+type AnyMetric = MetricV19 | MetricV20 | MetricV21;
+
+/**
+ * Union of all segments across all API versions
+ */
+type AnySegment = SegmentV19 | SegmentV20 | SegmentV21;
+
+/**
+ * Map resource name to its corresponding Field type from google-ads-api
+ */
+type ResourceFieldMap<TResource extends string> = TResource extends 'campaign'
+  ? fieldsV19.CampaignField | fieldsV20.CampaignField | fieldsV21.CampaignField
+  : TResource extends 'ad_group'
+    ? fieldsV19.AdGroupField | fieldsV20.AdGroupField | fieldsV21.AdGroupField
+    : TResource extends 'ad_group_ad'
+      ? fieldsV19.AdGroupAdField | fieldsV20.AdGroupAdField | fieldsV21.AdGroupAdField
+      : TResource extends 'customer'
+        ? fieldsV19.CustomerField | fieldsV20.CustomerField | fieldsV21.CustomerField
+        : TResource extends 'ad'
+          ? fieldsV19.AdField | fieldsV20.AdField | fieldsV21.AdField
+          : TResource extends 'keyword_view'
+            ? fieldsV19.KeywordViewField | fieldsV20.KeywordViewField | fieldsV21.KeywordViewField
+            : TResource extends 'search_term_view'
+              ? fieldsV19.SearchTermViewField | fieldsV20.SearchTermViewField | fieldsV21.SearchTermViewField
+              : never;
+
+/**
  * Type helper for field names based on resource
- * Allows fields in the format: resource.field, metrics.*, segments.*
+ * Provides strict type checking for actual field names from google-ads-api
  */
 export type FieldNameForResource<TResource extends string> = TResource extends never
   ? string
-  : `${TResource}.${string}` | `metrics.${string}` | `segments.${string}`;
+  : ResourceFieldMap<TResource> extends never
+    ? `${TResource}.${string}` | AnyMetric | AnySegment
+    : ResourceFieldMap<TResource> | AnyMetric | AnySegment;
 
 // GAQL Keywords
 export const GAQL_KEYWORDS = [
