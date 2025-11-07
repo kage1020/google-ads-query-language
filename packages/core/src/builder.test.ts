@@ -208,7 +208,8 @@ describe('GoogleAdsQueryBuilder', () => {
     it('should allow string fields when no resource is specified', () => {
       // Before calling from(), select accepts any string through type casting
       const builder = new GoogleAdsQueryBuilder();
-      builder.select(['campaign.id', 'ad_group.id', 'metrics.impressions'] as any);
+      // @ts-expect-error - Testing select without from() call
+      builder.select(['campaign.id', 'ad_group.id', 'metrics.impressions']);
 
       expect(builder).toBeInstanceOf(GoogleAdsQueryBuilder);
     });
@@ -235,7 +236,8 @@ describe('GoogleAdsQueryBuilder', () => {
 
     it('should detect missing FROM clause', () => {
       const builder = new GoogleAdsQueryBuilder({ autoValidate: false });
-      builder.select(['campaign.id'] as any);
+      // @ts-expect-error - Testing missing FROM clause
+      builder.select(['campaign.id']);
 
       const result = builder.validate();
       expect(result.valid).toBe(false);
@@ -244,7 +246,8 @@ describe('GoogleAdsQueryBuilder', () => {
 
     it('should detect invalid resource name', () => {
       const builder = new GoogleAdsQueryBuilder({ autoValidate: false });
-      builder.from('invalid_resource').select(['campaign.id'] as any);
+      // @ts-expect-error - Testing invalid resource with mismatched fields
+      builder.from('invalid_resource').select(['campaign.id']);
 
       const result = builder.validate();
       expect(result.valid).toBe(false);
@@ -264,14 +267,16 @@ describe('GoogleAdsQueryBuilder', () => {
 
     it('should throw error when autoValidate is enabled and query is invalid', () => {
       const builder = new GoogleAdsQueryBuilder({ autoValidate: true });
-      builder.from('invalid_resource').select(['campaign.id'] as any);
+      // @ts-expect-error - Testing invalid resource with autoValidate
+      builder.from('invalid_resource').select(['campaign.id']);
 
       expect(() => builder.build()).toThrow('Query validation failed');
     });
 
     it('should not throw error when autoValidate is disabled', () => {
       const builder = new GoogleAdsQueryBuilder({ autoValidate: false });
-      builder.from('invalid_resource').select(['campaign.id'] as any);
+      // @ts-expect-error - Testing invalid resource without autoValidate
+      builder.from('invalid_resource').select(['campaign.id']);
 
       expect(() => builder.build()).not.toThrow();
     });
@@ -512,7 +517,8 @@ describe('GoogleAdsQueryBuilder', () => {
         .limit(10) // Add limit first
         .orderBy('campaign.id') // Then order by
         .where('campaign.status = "ENABLED"') // Then where
-        .select(['campaign.id'] as any) // Then select (as any because from not called yet)
+        // @ts-expect-error - Testing method order: select before from
+        .select(['campaign.id']) // Then select
         .from('campaign') // Finally from
         .build();
 
@@ -555,13 +561,14 @@ describe('GoogleAdsQueryBuilder', () => {
       const query = builder
         .from('ad_group')
         .select([
+          // @ts-expect-error - Testing cross-resource field selection (campaign.id in ad_group query)
           'campaign.id',
           'ad_group.id',
           'ad_group.name',
           'segments.date',
           'metrics.impressions',
           'metrics.clicks',
-        ] as any)
+        ])
         .where('segments.date DURING LAST_30_DAYS')
         .orderBy('segments.date', 'DESC')
         .build();
