@@ -47,8 +47,18 @@ export interface QueryParser<TParsed = unknown> {
  * Default validator implementation using built-in validateQuery
  */
 export class DefaultQueryValidator implements QueryValidator {
+  private apiVersion: SupportedApiVersion;
+
+  constructor(apiVersion: SupportedApiVersion = defaultApiVersion) {
+    this.apiVersion = apiVersion;
+  }
+
   validate(query: string): ValidationResult {
-    return validateQuery(query);
+    return validateQuery(query, this.apiVersion);
+  }
+
+  setApiVersion(version: SupportedApiVersion): void {
+    this.apiVersion = version;
   }
 }
 
@@ -139,11 +149,11 @@ export class GoogleAdsQueryBuilder<TResource extends string = never> {
    * @param config Configuration options for the builder
    */
   constructor(config: QueryBuilderConfig = {}) {
-    this.validator = config.validator || new DefaultQueryValidator();
+    this.apiVersion = config.apiVersion || defaultApiVersion;
+    this.validator = config.validator || new DefaultQueryValidator(this.apiVersion);
     this.executor = config.executor;
     this.parser = config.parser;
     this.autoValidate = config.autoValidate !== false;
-    this.apiVersion = config.apiVersion || defaultApiVersion;
   }
 
   /**
@@ -476,6 +486,10 @@ export class GoogleAdsQueryBuilder<TResource extends string = never> {
    */
   setApiVersion(version: SupportedApiVersion): this {
     this.apiVersion = version;
+    // Update validator API version if it's a DefaultQueryValidator
+    if (this.validator instanceof DefaultQueryValidator) {
+      this.validator.setApiVersion(version);
+    }
     return this;
   }
 
