@@ -374,9 +374,11 @@ function generateResourceTypes(resourcesByVersion) {
 
   // Get unique resources across all versions
   const allResources = new Set();
-  Object.values(resourcesByVersion).forEach((resources) => {
-    resources.forEach((r) => allResources.add(r));
-  });
+  for (const resources of Object.values(resourcesByVersion)) {
+    for (const r of resources) {
+      allResources.add(r);
+    }
+  }
 
   const sortedResources = Array.from(allResources).sort();
 
@@ -513,12 +515,7 @@ export type ResourceSegmentMap<TResource extends string> = TResource extends key
 `;
 
   // Write to generated file
-  const generatedPath = path.join(
-    import.meta.dirname,
-    '..',
-    'src',
-    'generated-resource-types.ts',
-  );
+  const generatedPath = path.join(import.meta.dirname, '..', 'src', 'generated-resource-types.ts');
   fs.writeFileSync(generatedPath, typeDefinitions);
 
   console.log(`   ✅ Generated ${generatedPath}`);
