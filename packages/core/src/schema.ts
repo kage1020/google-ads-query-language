@@ -18,6 +18,11 @@ export type ResourceName<T extends SupportedApiVersion> = T extends '19'
     ? ResourceNameV20
     : ResourceNameV21;
 
+/**
+ * Union type of all resource names across all supported API versions
+ */
+export type AnyResourceName = ResourceNameV19 | ResourceNameV20 | ResourceNameV21;
+
 export interface FieldDefinition {
   name: string;
   type: string;

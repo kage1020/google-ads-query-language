@@ -20,6 +20,7 @@ export {
   type QueryContext,
 } from './parser.js';
 export {
+  type AnyResourceName,
   defaultApiVersion,
   type FieldDefinition,
   type FieldNameForResource,

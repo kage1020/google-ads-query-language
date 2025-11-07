@@ -1,6 +1,7 @@
 import type { ValidationResult } from './validator.js';
 import { validateQuery } from './validator.js';
 import {
+  type AnyResourceName,
   defaultApiVersion,
   type FieldNameForResource,
   getFieldsForResource,
@@ -192,7 +193,7 @@ export class GoogleAdsQueryBuilder<TResource extends string = never> {
    *   .select(['campaign.id', 'campaign.name']);
    * ```
    */
-  from<R extends string>(resource: R): GoogleAdsQueryBuilder<R> {
+  from<R extends AnyResourceName>(resource: R): GoogleAdsQueryBuilder<R> {
     this._from = resource;
     return this as unknown as GoogleAdsQueryBuilder<R>;
   }
