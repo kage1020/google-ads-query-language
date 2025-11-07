@@ -64,16 +64,6 @@ const versionSchemas: Record<SupportedApiVersion, FieldsDataType<SupportedApiVer
 };
 
 /**
- * Union of all metrics across all API versions
- */
-type AnyMetric = MetricV19 | MetricV20 | MetricV21;
-
-/**
- * Union of all segments across all API versions
- */
-type AnySegment = SegmentV19 | SegmentV20 | SegmentV21;
-
-/**
  * Map resource name to its corresponding Field type from google-ads-api
  */
 type ResourceFieldMap<TResource extends string> = TResource extends 'campaign'
@@ -84,23 +74,56 @@ type ResourceFieldMap<TResource extends string> = TResource extends 'campaign'
       ? fieldsV19.AdGroupAdField | fieldsV20.AdGroupAdField | fieldsV21.AdGroupAdField
       : TResource extends 'customer'
         ? fieldsV19.CustomerField | fieldsV20.CustomerField | fieldsV21.CustomerField
-        : TResource extends 'ad'
-          ? fieldsV19.AdField | fieldsV20.AdField | fieldsV21.AdField
-          : TResource extends 'keyword_view'
-            ? fieldsV19.KeywordViewField | fieldsV20.KeywordViewField | fieldsV21.KeywordViewField
-            : TResource extends 'search_term_view'
-              ? fieldsV19.SearchTermViewField | fieldsV20.SearchTermViewField | fieldsV21.SearchTermViewField
-              : never;
+        : TResource extends 'keyword_view'
+          ? fieldsV19.KeywordViewField | fieldsV20.KeywordViewField | fieldsV21.KeywordViewField
+          : TResource extends 'search_term_view'
+            ? fieldsV19.SearchTermViewField | fieldsV20.SearchTermViewField | fieldsV21.SearchTermViewField
+            : never;
+
+/**
+ * Map resource name to its corresponding Metric type from google-ads-api
+ */
+type ResourceMetricMap<TResource extends string> = TResource extends 'campaign'
+  ? fieldsV19.CampaignMetric | fieldsV20.CampaignMetric | fieldsV21.CampaignMetric
+  : TResource extends 'ad_group'
+    ? fieldsV19.AdGroupMetric | fieldsV20.AdGroupMetric | fieldsV21.AdGroupMetric
+    : TResource extends 'ad_group_ad'
+      ? fieldsV19.AdGroupAdMetric | fieldsV20.AdGroupAdMetric | fieldsV21.AdGroupAdMetric
+      : TResource extends 'customer'
+        ? fieldsV19.CustomerMetric | fieldsV20.CustomerMetric | fieldsV21.CustomerMetric
+        : TResource extends 'keyword_view'
+          ? fieldsV19.KeywordViewMetric | fieldsV20.KeywordViewMetric | fieldsV21.KeywordViewMetric
+          : TResource extends 'search_term_view'
+            ? fieldsV19.SearchTermViewMetric | fieldsV20.SearchTermViewMetric | fieldsV21.SearchTermViewMetric
+            : MetricV19 | MetricV20 | MetricV21;
+
+/**
+ * Map resource name to its corresponding Segment type from google-ads-api
+ */
+type ResourceSegmentMap<TResource extends string> = TResource extends 'campaign'
+  ? fieldsV19.CampaignSegment | fieldsV20.CampaignSegment | fieldsV21.CampaignSegment
+  : TResource extends 'ad_group'
+    ? fieldsV19.AdGroupSegment | fieldsV20.AdGroupSegment | fieldsV21.AdGroupSegment
+    : TResource extends 'ad_group_ad'
+      ? fieldsV19.AdGroupAdSegment | fieldsV20.AdGroupAdSegment | fieldsV21.AdGroupAdSegment
+      : TResource extends 'customer'
+        ? fieldsV19.CustomerSegment | fieldsV20.CustomerSegment | fieldsV21.CustomerSegment
+        : TResource extends 'keyword_view'
+          ? fieldsV19.KeywordViewSegment | fieldsV20.KeywordViewSegment | fieldsV21.KeywordViewSegment
+          : TResource extends 'search_term_view'
+            ? fieldsV19.SearchTermViewSegment | fieldsV20.SearchTermViewSegment | fieldsV21.SearchTermViewSegment
+            : SegmentV19 | SegmentV20 | SegmentV21;
 
 /**
  * Type helper for field names based on resource
  * Provides strict type checking for actual field names from google-ads-api
+ * Uses resource-specific Field, Metric, and Segment types for precise autocomplete
  */
 export type FieldNameForResource<TResource extends string> = TResource extends never
   ? string
   : ResourceFieldMap<TResource> extends never
-    ? `${TResource}.${string}` | AnyMetric | AnySegment
-    : ResourceFieldMap<TResource> | AnyMetric | AnySegment;
+    ? `${TResource}.${string}` | ResourceMetricMap<TResource> | ResourceSegmentMap<TResource>
+    : ResourceFieldMap<TResource> | ResourceMetricMap<TResource> | ResourceSegmentMap<TResource>;
 
 // GAQL Keywords
 export const GAQL_KEYWORDS = [
