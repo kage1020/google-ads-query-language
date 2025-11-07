@@ -18,179 +18,614 @@ type SegmentV21 = fieldsV21.Segment;
  * Supports all 173 resources across API versions 19, 20, and 21
  */
 interface ResourceFieldMapInterface {
-  accessible_bidding_strategy: fieldsV19.AccessibleBiddingStrategyField | fieldsV20.AccessibleBiddingStrategyField | fieldsV21.AccessibleBiddingStrategyField;
-  account_budget: fieldsV19.AccountBudgetField | fieldsV20.AccountBudgetField | fieldsV21.AccountBudgetField;
-  account_budget_proposal: fieldsV19.AccountBudgetProposalField | fieldsV20.AccountBudgetProposalField | fieldsV21.AccountBudgetProposalField;
-  account_link: fieldsV19.AccountLinkField | fieldsV20.AccountLinkField | fieldsV21.AccountLinkField;
+  accessible_bidding_strategy:
+    | fieldsV19.AccessibleBiddingStrategyField
+    | fieldsV20.AccessibleBiddingStrategyField
+    | fieldsV21.AccessibleBiddingStrategyField;
+  account_budget:
+    | fieldsV19.AccountBudgetField
+    | fieldsV20.AccountBudgetField
+    | fieldsV21.AccountBudgetField;
+  account_budget_proposal:
+    | fieldsV19.AccountBudgetProposalField
+    | fieldsV20.AccountBudgetProposalField
+    | fieldsV21.AccountBudgetProposalField;
+  account_link:
+    | fieldsV19.AccountLinkField
+    | fieldsV20.AccountLinkField
+    | fieldsV21.AccountLinkField;
   ad: fieldsV19.AdField | fieldsV20.AdField | fieldsV21.AdField;
   ad_group: fieldsV19.AdGroupField | fieldsV20.AdGroupField | fieldsV21.AdGroupField;
   ad_group_ad: fieldsV19.AdGroupAdField | fieldsV20.AdGroupAdField | fieldsV21.AdGroupAdField;
-  ad_group_ad_asset_combination_view: fieldsV19.AdGroupAdAssetCombinationViewField | fieldsV20.AdGroupAdAssetCombinationViewField | fieldsV21.AdGroupAdAssetCombinationViewField;
-  ad_group_ad_asset_view: fieldsV19.AdGroupAdAssetViewField | fieldsV20.AdGroupAdAssetViewField | fieldsV21.AdGroupAdAssetViewField;
-  ad_group_ad_label: fieldsV19.AdGroupAdLabelField | fieldsV20.AdGroupAdLabelField | fieldsV21.AdGroupAdLabelField;
-  ad_group_asset: fieldsV19.AdGroupAssetField | fieldsV20.AdGroupAssetField | fieldsV21.AdGroupAssetField;
-  ad_group_asset_set: fieldsV19.AdGroupAssetSetField | fieldsV20.AdGroupAssetSetField | fieldsV21.AdGroupAssetSetField;
-  ad_group_audience_view: fieldsV19.AdGroupAudienceViewField | fieldsV20.AdGroupAudienceViewField | fieldsV21.AdGroupAudienceViewField;
-  ad_group_bid_modifier: fieldsV19.AdGroupBidModifierField | fieldsV20.AdGroupBidModifierField | fieldsV21.AdGroupBidModifierField;
-  ad_group_criterion: fieldsV19.AdGroupCriterionField | fieldsV20.AdGroupCriterionField | fieldsV21.AdGroupCriterionField;
-  ad_group_criterion_customizer: fieldsV19.AdGroupCriterionCustomizerField | fieldsV20.AdGroupCriterionCustomizerField | fieldsV21.AdGroupCriterionCustomizerField;
-  ad_group_criterion_label: fieldsV19.AdGroupCriterionLabelField | fieldsV20.AdGroupCriterionLabelField | fieldsV21.AdGroupCriterionLabelField;
-  ad_group_criterion_simulation: fieldsV19.AdGroupCriterionSimulationField | fieldsV20.AdGroupCriterionSimulationField | fieldsV21.AdGroupCriterionSimulationField;
-  ad_group_customizer: fieldsV19.AdGroupCustomizerField | fieldsV20.AdGroupCustomizerField | fieldsV21.AdGroupCustomizerField;
-  ad_group_label: fieldsV19.AdGroupLabelField | fieldsV20.AdGroupLabelField | fieldsV21.AdGroupLabelField;
-  ad_group_simulation: fieldsV19.AdGroupSimulationField | fieldsV20.AdGroupSimulationField | fieldsV21.AdGroupSimulationField;
-  ad_parameter: fieldsV19.AdParameterField | fieldsV20.AdParameterField | fieldsV21.AdParameterField;
-  ad_schedule_view: fieldsV19.AdScheduleViewField | fieldsV20.AdScheduleViewField | fieldsV21.AdScheduleViewField;
-  age_range_view: fieldsV19.AgeRangeViewField | fieldsV20.AgeRangeViewField | fieldsV21.AgeRangeViewField;
+  ad_group_ad_asset_combination_view:
+    | fieldsV19.AdGroupAdAssetCombinationViewField
+    | fieldsV20.AdGroupAdAssetCombinationViewField
+    | fieldsV21.AdGroupAdAssetCombinationViewField;
+  ad_group_ad_asset_view:
+    | fieldsV19.AdGroupAdAssetViewField
+    | fieldsV20.AdGroupAdAssetViewField
+    | fieldsV21.AdGroupAdAssetViewField;
+  ad_group_ad_label:
+    | fieldsV19.AdGroupAdLabelField
+    | fieldsV20.AdGroupAdLabelField
+    | fieldsV21.AdGroupAdLabelField;
+  ad_group_asset:
+    | fieldsV19.AdGroupAssetField
+    | fieldsV20.AdGroupAssetField
+    | fieldsV21.AdGroupAssetField;
+  ad_group_asset_set:
+    | fieldsV19.AdGroupAssetSetField
+    | fieldsV20.AdGroupAssetSetField
+    | fieldsV21.AdGroupAssetSetField;
+  ad_group_audience_view:
+    | fieldsV19.AdGroupAudienceViewField
+    | fieldsV20.AdGroupAudienceViewField
+    | fieldsV21.AdGroupAudienceViewField;
+  ad_group_bid_modifier:
+    | fieldsV19.AdGroupBidModifierField
+    | fieldsV20.AdGroupBidModifierField
+    | fieldsV21.AdGroupBidModifierField;
+  ad_group_criterion:
+    | fieldsV19.AdGroupCriterionField
+    | fieldsV20.AdGroupCriterionField
+    | fieldsV21.AdGroupCriterionField;
+  ad_group_criterion_customizer:
+    | fieldsV19.AdGroupCriterionCustomizerField
+    | fieldsV20.AdGroupCriterionCustomizerField
+    | fieldsV21.AdGroupCriterionCustomizerField;
+  ad_group_criterion_label:
+    | fieldsV19.AdGroupCriterionLabelField
+    | fieldsV20.AdGroupCriterionLabelField
+    | fieldsV21.AdGroupCriterionLabelField;
+  ad_group_criterion_simulation:
+    | fieldsV19.AdGroupCriterionSimulationField
+    | fieldsV20.AdGroupCriterionSimulationField
+    | fieldsV21.AdGroupCriterionSimulationField;
+  ad_group_customizer:
+    | fieldsV19.AdGroupCustomizerField
+    | fieldsV20.AdGroupCustomizerField
+    | fieldsV21.AdGroupCustomizerField;
+  ad_group_label:
+    | fieldsV19.AdGroupLabelField
+    | fieldsV20.AdGroupLabelField
+    | fieldsV21.AdGroupLabelField;
+  ad_group_simulation:
+    | fieldsV19.AdGroupSimulationField
+    | fieldsV20.AdGroupSimulationField
+    | fieldsV21.AdGroupSimulationField;
+  ad_parameter:
+    | fieldsV19.AdParameterField
+    | fieldsV20.AdParameterField
+    | fieldsV21.AdParameterField;
+  ad_schedule_view:
+    | fieldsV19.AdScheduleViewField
+    | fieldsV20.AdScheduleViewField
+    | fieldsV21.AdScheduleViewField;
+  age_range_view:
+    | fieldsV19.AgeRangeViewField
+    | fieldsV20.AgeRangeViewField
+    | fieldsV21.AgeRangeViewField;
   ai_max_search_term_ad_combination_view: fieldsV21.AiMaxSearchTermAdCombinationViewField;
-  android_privacy_shared_key_google_ad_group: fieldsV19.AndroidPrivacySharedKeyGoogleAdGroupField | fieldsV20.AndroidPrivacySharedKeyGoogleAdGroupField | fieldsV21.AndroidPrivacySharedKeyGoogleAdGroupField;
-  android_privacy_shared_key_google_campaign: fieldsV19.AndroidPrivacySharedKeyGoogleCampaignField | fieldsV20.AndroidPrivacySharedKeyGoogleCampaignField | fieldsV21.AndroidPrivacySharedKeyGoogleCampaignField;
-  android_privacy_shared_key_google_network_type: fieldsV19.AndroidPrivacySharedKeyGoogleNetworkTypeField | fieldsV20.AndroidPrivacySharedKeyGoogleNetworkTypeField | fieldsV21.AndroidPrivacySharedKeyGoogleNetworkTypeField;
+  android_privacy_shared_key_google_ad_group:
+    | fieldsV19.AndroidPrivacySharedKeyGoogleAdGroupField
+    | fieldsV20.AndroidPrivacySharedKeyGoogleAdGroupField
+    | fieldsV21.AndroidPrivacySharedKeyGoogleAdGroupField;
+  android_privacy_shared_key_google_campaign:
+    | fieldsV19.AndroidPrivacySharedKeyGoogleCampaignField
+    | fieldsV20.AndroidPrivacySharedKeyGoogleCampaignField
+    | fieldsV21.AndroidPrivacySharedKeyGoogleCampaignField;
+  android_privacy_shared_key_google_network_type:
+    | fieldsV19.AndroidPrivacySharedKeyGoogleNetworkTypeField
+    | fieldsV20.AndroidPrivacySharedKeyGoogleNetworkTypeField
+    | fieldsV21.AndroidPrivacySharedKeyGoogleNetworkTypeField;
   asset: fieldsV19.AssetField | fieldsV20.AssetField | fieldsV21.AssetField;
-  asset_field_type_view: fieldsV19.AssetFieldTypeViewField | fieldsV20.AssetFieldTypeViewField | fieldsV21.AssetFieldTypeViewField;
+  asset_field_type_view:
+    | fieldsV19.AssetFieldTypeViewField
+    | fieldsV20.AssetFieldTypeViewField
+    | fieldsV21.AssetFieldTypeViewField;
   asset_group: fieldsV19.AssetGroupField | fieldsV20.AssetGroupField | fieldsV21.AssetGroupField;
-  asset_group_asset: fieldsV19.AssetGroupAssetField | fieldsV20.AssetGroupAssetField | fieldsV21.AssetGroupAssetField;
-  asset_group_listing_group_filter: fieldsV19.AssetGroupListingGroupFilterField | fieldsV20.AssetGroupListingGroupFilterField | fieldsV21.AssetGroupListingGroupFilterField;
-  asset_group_product_group_view: fieldsV19.AssetGroupProductGroupViewField | fieldsV20.AssetGroupProductGroupViewField | fieldsV21.AssetGroupProductGroupViewField;
-  asset_group_signal: fieldsV19.AssetGroupSignalField | fieldsV20.AssetGroupSignalField | fieldsV21.AssetGroupSignalField;
-  asset_group_top_combination_view: fieldsV19.AssetGroupTopCombinationViewField | fieldsV20.AssetGroupTopCombinationViewField | fieldsV21.AssetGroupTopCombinationViewField;
+  asset_group_asset:
+    | fieldsV19.AssetGroupAssetField
+    | fieldsV20.AssetGroupAssetField
+    | fieldsV21.AssetGroupAssetField;
+  asset_group_listing_group_filter:
+    | fieldsV19.AssetGroupListingGroupFilterField
+    | fieldsV20.AssetGroupListingGroupFilterField
+    | fieldsV21.AssetGroupListingGroupFilterField;
+  asset_group_product_group_view:
+    | fieldsV19.AssetGroupProductGroupViewField
+    | fieldsV20.AssetGroupProductGroupViewField
+    | fieldsV21.AssetGroupProductGroupViewField;
+  asset_group_signal:
+    | fieldsV19.AssetGroupSignalField
+    | fieldsV20.AssetGroupSignalField
+    | fieldsV21.AssetGroupSignalField;
+  asset_group_top_combination_view:
+    | fieldsV19.AssetGroupTopCombinationViewField
+    | fieldsV20.AssetGroupTopCombinationViewField
+    | fieldsV21.AssetGroupTopCombinationViewField;
   asset_set: fieldsV19.AssetSetField | fieldsV20.AssetSetField | fieldsV21.AssetSetField;
-  asset_set_asset: fieldsV19.AssetSetAssetField | fieldsV20.AssetSetAssetField | fieldsV21.AssetSetAssetField;
-  asset_set_type_view: fieldsV19.AssetSetTypeViewField | fieldsV20.AssetSetTypeViewField | fieldsV21.AssetSetTypeViewField;
+  asset_set_asset:
+    | fieldsV19.AssetSetAssetField
+    | fieldsV20.AssetSetAssetField
+    | fieldsV21.AssetSetAssetField;
+  asset_set_type_view:
+    | fieldsV19.AssetSetTypeViewField
+    | fieldsV20.AssetSetTypeViewField
+    | fieldsV21.AssetSetTypeViewField;
   audience: fieldsV19.AudienceField | fieldsV20.AudienceField | fieldsV21.AudienceField;
   batch_job: fieldsV19.BatchJobField | fieldsV20.BatchJobField | fieldsV21.BatchJobField;
-  bidding_data_exclusion: fieldsV19.BiddingDataExclusionField | fieldsV20.BiddingDataExclusionField | fieldsV21.BiddingDataExclusionField;
-  bidding_seasonality_adjustment: fieldsV19.BiddingSeasonalityAdjustmentField | fieldsV20.BiddingSeasonalityAdjustmentField | fieldsV21.BiddingSeasonalityAdjustmentField;
-  bidding_strategy: fieldsV19.BiddingStrategyField | fieldsV20.BiddingStrategyField | fieldsV21.BiddingStrategyField;
-  bidding_strategy_simulation: fieldsV19.BiddingStrategySimulationField | fieldsV20.BiddingStrategySimulationField | fieldsV21.BiddingStrategySimulationField;
-  billing_setup: fieldsV19.BillingSetupField | fieldsV20.BillingSetupField | fieldsV21.BillingSetupField;
+  bidding_data_exclusion:
+    | fieldsV19.BiddingDataExclusionField
+    | fieldsV20.BiddingDataExclusionField
+    | fieldsV21.BiddingDataExclusionField;
+  bidding_seasonality_adjustment:
+    | fieldsV19.BiddingSeasonalityAdjustmentField
+    | fieldsV20.BiddingSeasonalityAdjustmentField
+    | fieldsV21.BiddingSeasonalityAdjustmentField;
+  bidding_strategy:
+    | fieldsV19.BiddingStrategyField
+    | fieldsV20.BiddingStrategyField
+    | fieldsV21.BiddingStrategyField;
+  bidding_strategy_simulation:
+    | fieldsV19.BiddingStrategySimulationField
+    | fieldsV20.BiddingStrategySimulationField
+    | fieldsV21.BiddingStrategySimulationField;
+  billing_setup:
+    | fieldsV19.BillingSetupField
+    | fieldsV20.BillingSetupField
+    | fieldsV21.BillingSetupField;
   call_view: fieldsV19.CallViewField | fieldsV20.CallViewField | fieldsV21.CallViewField;
   campaign: fieldsV19.CampaignField | fieldsV20.CampaignField | fieldsV21.CampaignField;
-  campaign_aggregate_asset_view: fieldsV19.CampaignAggregateAssetViewField | fieldsV20.CampaignAggregateAssetViewField | fieldsV21.CampaignAggregateAssetViewField;
-  campaign_asset: fieldsV19.CampaignAssetField | fieldsV20.CampaignAssetField | fieldsV21.CampaignAssetField;
-  campaign_asset_set: fieldsV19.CampaignAssetSetField | fieldsV20.CampaignAssetSetField | fieldsV21.CampaignAssetSetField;
-  campaign_audience_view: fieldsV19.CampaignAudienceViewField | fieldsV20.CampaignAudienceViewField | fieldsV21.CampaignAudienceViewField;
-  campaign_bid_modifier: fieldsV19.CampaignBidModifierField | fieldsV20.CampaignBidModifierField | fieldsV21.CampaignBidModifierField;
-  campaign_budget: fieldsV19.CampaignBudgetField | fieldsV20.CampaignBudgetField | fieldsV21.CampaignBudgetField;
-  campaign_conversion_goal: fieldsV19.CampaignConversionGoalField | fieldsV20.CampaignConversionGoalField | fieldsV21.CampaignConversionGoalField;
-  campaign_criterion: fieldsV19.CampaignCriterionField | fieldsV20.CampaignCriterionField | fieldsV21.CampaignCriterionField;
-  campaign_customizer: fieldsV19.CampaignCustomizerField | fieldsV20.CampaignCustomizerField | fieldsV21.CampaignCustomizerField;
-  campaign_draft: fieldsV19.CampaignDraftField | fieldsV20.CampaignDraftField | fieldsV21.CampaignDraftField;
-  campaign_group: fieldsV19.CampaignGroupField | fieldsV20.CampaignGroupField | fieldsV21.CampaignGroupField;
-  campaign_label: fieldsV19.CampaignLabelField | fieldsV20.CampaignLabelField | fieldsV21.CampaignLabelField;
-  campaign_lifecycle_goal: fieldsV19.CampaignLifecycleGoalField | fieldsV20.CampaignLifecycleGoalField | fieldsV21.CampaignLifecycleGoalField;
-  campaign_search_term_insight: fieldsV19.CampaignSearchTermInsightField | fieldsV20.CampaignSearchTermInsightField | fieldsV21.CampaignSearchTermInsightField;
+  campaign_aggregate_asset_view:
+    | fieldsV19.CampaignAggregateAssetViewField
+    | fieldsV20.CampaignAggregateAssetViewField
+    | fieldsV21.CampaignAggregateAssetViewField;
+  campaign_asset:
+    | fieldsV19.CampaignAssetField
+    | fieldsV20.CampaignAssetField
+    | fieldsV21.CampaignAssetField;
+  campaign_asset_set:
+    | fieldsV19.CampaignAssetSetField
+    | fieldsV20.CampaignAssetSetField
+    | fieldsV21.CampaignAssetSetField;
+  campaign_audience_view:
+    | fieldsV19.CampaignAudienceViewField
+    | fieldsV20.CampaignAudienceViewField
+    | fieldsV21.CampaignAudienceViewField;
+  campaign_bid_modifier:
+    | fieldsV19.CampaignBidModifierField
+    | fieldsV20.CampaignBidModifierField
+    | fieldsV21.CampaignBidModifierField;
+  campaign_budget:
+    | fieldsV19.CampaignBudgetField
+    | fieldsV20.CampaignBudgetField
+    | fieldsV21.CampaignBudgetField;
+  campaign_conversion_goal:
+    | fieldsV19.CampaignConversionGoalField
+    | fieldsV20.CampaignConversionGoalField
+    | fieldsV21.CampaignConversionGoalField;
+  campaign_criterion:
+    | fieldsV19.CampaignCriterionField
+    | fieldsV20.CampaignCriterionField
+    | fieldsV21.CampaignCriterionField;
+  campaign_customizer:
+    | fieldsV19.CampaignCustomizerField
+    | fieldsV20.CampaignCustomizerField
+    | fieldsV21.CampaignCustomizerField;
+  campaign_draft:
+    | fieldsV19.CampaignDraftField
+    | fieldsV20.CampaignDraftField
+    | fieldsV21.CampaignDraftField;
+  campaign_group:
+    | fieldsV19.CampaignGroupField
+    | fieldsV20.CampaignGroupField
+    | fieldsV21.CampaignGroupField;
+  campaign_label:
+    | fieldsV19.CampaignLabelField
+    | fieldsV20.CampaignLabelField
+    | fieldsV21.CampaignLabelField;
+  campaign_lifecycle_goal:
+    | fieldsV19.CampaignLifecycleGoalField
+    | fieldsV20.CampaignLifecycleGoalField
+    | fieldsV21.CampaignLifecycleGoalField;
+  campaign_search_term_insight:
+    | fieldsV19.CampaignSearchTermInsightField
+    | fieldsV20.CampaignSearchTermInsightField
+    | fieldsV21.CampaignSearchTermInsightField;
   campaign_search_term_view: fieldsV21.CampaignSearchTermViewField;
-  campaign_shared_set: fieldsV19.CampaignSharedSetField | fieldsV20.CampaignSharedSetField | fieldsV21.CampaignSharedSetField;
-  campaign_simulation: fieldsV19.CampaignSimulationField | fieldsV20.CampaignSimulationField | fieldsV21.CampaignSimulationField;
-  carrier_constant: fieldsV19.CarrierConstantField | fieldsV20.CarrierConstantField | fieldsV21.CarrierConstantField;
-  change_event: fieldsV19.ChangeEventField | fieldsV20.ChangeEventField | fieldsV21.ChangeEventField;
-  change_status: fieldsV19.ChangeStatusField | fieldsV20.ChangeStatusField | fieldsV21.ChangeStatusField;
-  channel_aggregate_asset_view: fieldsV19.ChannelAggregateAssetViewField | fieldsV20.ChannelAggregateAssetViewField | fieldsV21.ChannelAggregateAssetViewField;
+  campaign_shared_set:
+    | fieldsV19.CampaignSharedSetField
+    | fieldsV20.CampaignSharedSetField
+    | fieldsV21.CampaignSharedSetField;
+  campaign_simulation:
+    | fieldsV19.CampaignSimulationField
+    | fieldsV20.CampaignSimulationField
+    | fieldsV21.CampaignSimulationField;
+  carrier_constant:
+    | fieldsV19.CarrierConstantField
+    | fieldsV20.CarrierConstantField
+    | fieldsV21.CarrierConstantField;
+  change_event:
+    | fieldsV19.ChangeEventField
+    | fieldsV20.ChangeEventField
+    | fieldsV21.ChangeEventField;
+  change_status:
+    | fieldsV19.ChangeStatusField
+    | fieldsV20.ChangeStatusField
+    | fieldsV21.ChangeStatusField;
+  channel_aggregate_asset_view:
+    | fieldsV19.ChannelAggregateAssetViewField
+    | fieldsV20.ChannelAggregateAssetViewField
+    | fieldsV21.ChannelAggregateAssetViewField;
   click_view: fieldsV19.ClickViewField | fieldsV20.ClickViewField | fieldsV21.ClickViewField;
-  combined_audience: fieldsV19.CombinedAudienceField | fieldsV20.CombinedAudienceField | fieldsV21.CombinedAudienceField;
-  content_criterion_view: fieldsV19.ContentCriterionViewField | fieldsV20.ContentCriterionViewField | fieldsV21.ContentCriterionViewField;
-  conversion_action: fieldsV19.ConversionActionField | fieldsV20.ConversionActionField | fieldsV21.ConversionActionField;
-  conversion_custom_variable: fieldsV19.ConversionCustomVariableField | fieldsV20.ConversionCustomVariableField | fieldsV21.ConversionCustomVariableField;
-  conversion_goal_campaign_config: fieldsV19.ConversionGoalCampaignConfigField | fieldsV20.ConversionGoalCampaignConfigField | fieldsV21.ConversionGoalCampaignConfigField;
-  conversion_value_rule: fieldsV19.ConversionValueRuleField | fieldsV20.ConversionValueRuleField | fieldsV21.ConversionValueRuleField;
-  conversion_value_rule_set: fieldsV19.ConversionValueRuleSetField | fieldsV20.ConversionValueRuleSetField | fieldsV21.ConversionValueRuleSetField;
-  currency_constant: fieldsV19.CurrencyConstantField | fieldsV20.CurrencyConstantField | fieldsV21.CurrencyConstantField;
-  custom_audience: fieldsV19.CustomAudienceField | fieldsV20.CustomAudienceField | fieldsV21.CustomAudienceField;
-  custom_conversion_goal: fieldsV19.CustomConversionGoalField | fieldsV20.CustomConversionGoalField | fieldsV21.CustomConversionGoalField;
-  custom_interest: fieldsV19.CustomInterestField | fieldsV20.CustomInterestField | fieldsV21.CustomInterestField;
+  combined_audience:
+    | fieldsV19.CombinedAudienceField
+    | fieldsV20.CombinedAudienceField
+    | fieldsV21.CombinedAudienceField;
+  content_criterion_view:
+    | fieldsV19.ContentCriterionViewField
+    | fieldsV20.ContentCriterionViewField
+    | fieldsV21.ContentCriterionViewField;
+  conversion_action:
+    | fieldsV19.ConversionActionField
+    | fieldsV20.ConversionActionField
+    | fieldsV21.ConversionActionField;
+  conversion_custom_variable:
+    | fieldsV19.ConversionCustomVariableField
+    | fieldsV20.ConversionCustomVariableField
+    | fieldsV21.ConversionCustomVariableField;
+  conversion_goal_campaign_config:
+    | fieldsV19.ConversionGoalCampaignConfigField
+    | fieldsV20.ConversionGoalCampaignConfigField
+    | fieldsV21.ConversionGoalCampaignConfigField;
+  conversion_value_rule:
+    | fieldsV19.ConversionValueRuleField
+    | fieldsV20.ConversionValueRuleField
+    | fieldsV21.ConversionValueRuleField;
+  conversion_value_rule_set:
+    | fieldsV19.ConversionValueRuleSetField
+    | fieldsV20.ConversionValueRuleSetField
+    | fieldsV21.ConversionValueRuleSetField;
+  currency_constant:
+    | fieldsV19.CurrencyConstantField
+    | fieldsV20.CurrencyConstantField
+    | fieldsV21.CurrencyConstantField;
+  custom_audience:
+    | fieldsV19.CustomAudienceField
+    | fieldsV20.CustomAudienceField
+    | fieldsV21.CustomAudienceField;
+  custom_conversion_goal:
+    | fieldsV19.CustomConversionGoalField
+    | fieldsV20.CustomConversionGoalField
+    | fieldsV21.CustomConversionGoalField;
+  custom_interest:
+    | fieldsV19.CustomInterestField
+    | fieldsV20.CustomInterestField
+    | fieldsV21.CustomInterestField;
   customer: fieldsV19.CustomerField | fieldsV20.CustomerField | fieldsV21.CustomerField;
-  customer_asset: fieldsV19.CustomerAssetField | fieldsV20.CustomerAssetField | fieldsV21.CustomerAssetField;
-  customer_asset_set: fieldsV19.CustomerAssetSetField | fieldsV20.CustomerAssetSetField | fieldsV21.CustomerAssetSetField;
-  customer_client: fieldsV19.CustomerClientField | fieldsV20.CustomerClientField | fieldsV21.CustomerClientField;
-  customer_client_link: fieldsV19.CustomerClientLinkField | fieldsV20.CustomerClientLinkField | fieldsV21.CustomerClientLinkField;
-  customer_conversion_goal: fieldsV19.CustomerConversionGoalField | fieldsV20.CustomerConversionGoalField | fieldsV21.CustomerConversionGoalField;
-  customer_customizer: fieldsV19.CustomerCustomizerField | fieldsV20.CustomerCustomizerField | fieldsV21.CustomerCustomizerField;
-  customer_label: fieldsV19.CustomerLabelField | fieldsV20.CustomerLabelField | fieldsV21.CustomerLabelField;
-  customer_lifecycle_goal: fieldsV19.CustomerLifecycleGoalField | fieldsV20.CustomerLifecycleGoalField | fieldsV21.CustomerLifecycleGoalField;
-  customer_manager_link: fieldsV19.CustomerManagerLinkField | fieldsV20.CustomerManagerLinkField | fieldsV21.CustomerManagerLinkField;
-  customer_negative_criterion: fieldsV19.CustomerNegativeCriterionField | fieldsV20.CustomerNegativeCriterionField | fieldsV21.CustomerNegativeCriterionField;
-  customer_search_term_insight: fieldsV19.CustomerSearchTermInsightField | fieldsV20.CustomerSearchTermInsightField | fieldsV21.CustomerSearchTermInsightField;
-  customer_user_access: fieldsV19.CustomerUserAccessField | fieldsV20.CustomerUserAccessField | fieldsV21.CustomerUserAccessField;
-  customer_user_access_invitation: fieldsV19.CustomerUserAccessInvitationField | fieldsV20.CustomerUserAccessInvitationField | fieldsV21.CustomerUserAccessInvitationField;
-  customizer_attribute: fieldsV19.CustomizerAttributeField | fieldsV20.CustomizerAttributeField | fieldsV21.CustomizerAttributeField;
+  customer_asset:
+    | fieldsV19.CustomerAssetField
+    | fieldsV20.CustomerAssetField
+    | fieldsV21.CustomerAssetField;
+  customer_asset_set:
+    | fieldsV19.CustomerAssetSetField
+    | fieldsV20.CustomerAssetSetField
+    | fieldsV21.CustomerAssetSetField;
+  customer_client:
+    | fieldsV19.CustomerClientField
+    | fieldsV20.CustomerClientField
+    | fieldsV21.CustomerClientField;
+  customer_client_link:
+    | fieldsV19.CustomerClientLinkField
+    | fieldsV20.CustomerClientLinkField
+    | fieldsV21.CustomerClientLinkField;
+  customer_conversion_goal:
+    | fieldsV19.CustomerConversionGoalField
+    | fieldsV20.CustomerConversionGoalField
+    | fieldsV21.CustomerConversionGoalField;
+  customer_customizer:
+    | fieldsV19.CustomerCustomizerField
+    | fieldsV20.CustomerCustomizerField
+    | fieldsV21.CustomerCustomizerField;
+  customer_label:
+    | fieldsV19.CustomerLabelField
+    | fieldsV20.CustomerLabelField
+    | fieldsV21.CustomerLabelField;
+  customer_lifecycle_goal:
+    | fieldsV19.CustomerLifecycleGoalField
+    | fieldsV20.CustomerLifecycleGoalField
+    | fieldsV21.CustomerLifecycleGoalField;
+  customer_manager_link:
+    | fieldsV19.CustomerManagerLinkField
+    | fieldsV20.CustomerManagerLinkField
+    | fieldsV21.CustomerManagerLinkField;
+  customer_negative_criterion:
+    | fieldsV19.CustomerNegativeCriterionField
+    | fieldsV20.CustomerNegativeCriterionField
+    | fieldsV21.CustomerNegativeCriterionField;
+  customer_search_term_insight:
+    | fieldsV19.CustomerSearchTermInsightField
+    | fieldsV20.CustomerSearchTermInsightField
+    | fieldsV21.CustomerSearchTermInsightField;
+  customer_user_access:
+    | fieldsV19.CustomerUserAccessField
+    | fieldsV20.CustomerUserAccessField
+    | fieldsV21.CustomerUserAccessField;
+  customer_user_access_invitation:
+    | fieldsV19.CustomerUserAccessInvitationField
+    | fieldsV20.CustomerUserAccessInvitationField
+    | fieldsV21.CustomerUserAccessInvitationField;
+  customizer_attribute:
+    | fieldsV19.CustomizerAttributeField
+    | fieldsV20.CustomizerAttributeField
+    | fieldsV21.CustomizerAttributeField;
   data_link: fieldsV19.DataLinkField | fieldsV20.DataLinkField | fieldsV21.DataLinkField;
   detail_content_suitability_placement_view: fieldsV21.DetailContentSuitabilityPlacementViewField;
-  detail_placement_view: fieldsV19.DetailPlacementViewField | fieldsV20.DetailPlacementViewField | fieldsV21.DetailPlacementViewField;
-  detailed_demographic: fieldsV19.DetailedDemographicField | fieldsV20.DetailedDemographicField | fieldsV21.DetailedDemographicField;
-  display_keyword_view: fieldsV19.DisplayKeywordViewField | fieldsV20.DisplayKeywordViewField | fieldsV21.DisplayKeywordViewField;
-  distance_view: fieldsV19.DistanceViewField | fieldsV20.DistanceViewField | fieldsV21.DistanceViewField;
-  domain_category: fieldsV19.DomainCategoryField | fieldsV20.DomainCategoryField | fieldsV21.DomainCategoryField;
-  dynamic_search_ads_search_term_view: fieldsV19.DynamicSearchAdsSearchTermViewField | fieldsV20.DynamicSearchAdsSearchTermViewField | fieldsV21.DynamicSearchAdsSearchTermViewField;
-  expanded_landing_page_view: fieldsV19.ExpandedLandingPageViewField | fieldsV20.ExpandedLandingPageViewField | fieldsV21.ExpandedLandingPageViewField;
+  detail_placement_view:
+    | fieldsV19.DetailPlacementViewField
+    | fieldsV20.DetailPlacementViewField
+    | fieldsV21.DetailPlacementViewField;
+  detailed_demographic:
+    | fieldsV19.DetailedDemographicField
+    | fieldsV20.DetailedDemographicField
+    | fieldsV21.DetailedDemographicField;
+  display_keyword_view:
+    | fieldsV19.DisplayKeywordViewField
+    | fieldsV20.DisplayKeywordViewField
+    | fieldsV21.DisplayKeywordViewField;
+  distance_view:
+    | fieldsV19.DistanceViewField
+    | fieldsV20.DistanceViewField
+    | fieldsV21.DistanceViewField;
+  domain_category:
+    | fieldsV19.DomainCategoryField
+    | fieldsV20.DomainCategoryField
+    | fieldsV21.DomainCategoryField;
+  dynamic_search_ads_search_term_view:
+    | fieldsV19.DynamicSearchAdsSearchTermViewField
+    | fieldsV20.DynamicSearchAdsSearchTermViewField
+    | fieldsV21.DynamicSearchAdsSearchTermViewField;
+  expanded_landing_page_view:
+    | fieldsV19.ExpandedLandingPageViewField
+    | fieldsV20.ExpandedLandingPageViewField
+    | fieldsV21.ExpandedLandingPageViewField;
   experiment: fieldsV19.ExperimentField | fieldsV20.ExperimentField | fieldsV21.ExperimentField;
-  experiment_arm: fieldsV19.ExperimentArmField | fieldsV20.ExperimentArmField | fieldsV21.ExperimentArmField;
+  experiment_arm:
+    | fieldsV19.ExperimentArmField
+    | fieldsV20.ExperimentArmField
+    | fieldsV21.ExperimentArmField;
   final_url_expansion_asset_view: fieldsV21.FinalUrlExpansionAssetViewField;
   gender_view: fieldsV19.GenderViewField | fieldsV20.GenderViewField | fieldsV21.GenderViewField;
-  geo_target_constant: fieldsV19.GeoTargetConstantField | fieldsV20.GeoTargetConstantField | fieldsV21.GeoTargetConstantField;
-  geographic_view: fieldsV19.GeographicViewField | fieldsV20.GeographicViewField | fieldsV21.GeographicViewField;
+  geo_target_constant:
+    | fieldsV19.GeoTargetConstantField
+    | fieldsV20.GeoTargetConstantField
+    | fieldsV21.GeoTargetConstantField;
+  geographic_view:
+    | fieldsV19.GeographicViewField
+    | fieldsV20.GeographicViewField
+    | fieldsV21.GeographicViewField;
   group_content_suitability_placement_view: fieldsV21.GroupContentSuitabilityPlacementViewField;
-  group_placement_view: fieldsV19.GroupPlacementViewField | fieldsV20.GroupPlacementViewField | fieldsV21.GroupPlacementViewField;
-  hotel_group_view: fieldsV19.HotelGroupViewField | fieldsV20.HotelGroupViewField | fieldsV21.HotelGroupViewField;
-  hotel_performance_view: fieldsV19.HotelPerformanceViewField | fieldsV20.HotelPerformanceViewField | fieldsV21.HotelPerformanceViewField;
-  hotel_reconciliation: fieldsV19.HotelReconciliationField | fieldsV20.HotelReconciliationField | fieldsV21.HotelReconciliationField;
-  income_range_view: fieldsV19.IncomeRangeViewField | fieldsV20.IncomeRangeViewField | fieldsV21.IncomeRangeViewField;
-  keyword_plan: fieldsV19.KeywordPlanField | fieldsV20.KeywordPlanField | fieldsV21.KeywordPlanField;
-  keyword_plan_ad_group: fieldsV19.KeywordPlanAdGroupField | fieldsV20.KeywordPlanAdGroupField | fieldsV21.KeywordPlanAdGroupField;
-  keyword_plan_ad_group_keyword: fieldsV19.KeywordPlanAdGroupKeywordField | fieldsV20.KeywordPlanAdGroupKeywordField | fieldsV21.KeywordPlanAdGroupKeywordField;
-  keyword_plan_campaign: fieldsV19.KeywordPlanCampaignField | fieldsV20.KeywordPlanCampaignField | fieldsV21.KeywordPlanCampaignField;
-  keyword_plan_campaign_keyword: fieldsV19.KeywordPlanCampaignKeywordField | fieldsV20.KeywordPlanCampaignKeywordField | fieldsV21.KeywordPlanCampaignKeywordField;
-  keyword_theme_constant: fieldsV19.KeywordThemeConstantField | fieldsV20.KeywordThemeConstantField | fieldsV21.KeywordThemeConstantField;
-  keyword_view: fieldsV19.KeywordViewField | fieldsV20.KeywordViewField | fieldsV21.KeywordViewField;
+  group_placement_view:
+    | fieldsV19.GroupPlacementViewField
+    | fieldsV20.GroupPlacementViewField
+    | fieldsV21.GroupPlacementViewField;
+  hotel_group_view:
+    | fieldsV19.HotelGroupViewField
+    | fieldsV20.HotelGroupViewField
+    | fieldsV21.HotelGroupViewField;
+  hotel_performance_view:
+    | fieldsV19.HotelPerformanceViewField
+    | fieldsV20.HotelPerformanceViewField
+    | fieldsV21.HotelPerformanceViewField;
+  hotel_reconciliation:
+    | fieldsV19.HotelReconciliationField
+    | fieldsV20.HotelReconciliationField
+    | fieldsV21.HotelReconciliationField;
+  income_range_view:
+    | fieldsV19.IncomeRangeViewField
+    | fieldsV20.IncomeRangeViewField
+    | fieldsV21.IncomeRangeViewField;
+  keyword_plan:
+    | fieldsV19.KeywordPlanField
+    | fieldsV20.KeywordPlanField
+    | fieldsV21.KeywordPlanField;
+  keyword_plan_ad_group:
+    | fieldsV19.KeywordPlanAdGroupField
+    | fieldsV20.KeywordPlanAdGroupField
+    | fieldsV21.KeywordPlanAdGroupField;
+  keyword_plan_ad_group_keyword:
+    | fieldsV19.KeywordPlanAdGroupKeywordField
+    | fieldsV20.KeywordPlanAdGroupKeywordField
+    | fieldsV21.KeywordPlanAdGroupKeywordField;
+  keyword_plan_campaign:
+    | fieldsV19.KeywordPlanCampaignField
+    | fieldsV20.KeywordPlanCampaignField
+    | fieldsV21.KeywordPlanCampaignField;
+  keyword_plan_campaign_keyword:
+    | fieldsV19.KeywordPlanCampaignKeywordField
+    | fieldsV20.KeywordPlanCampaignKeywordField
+    | fieldsV21.KeywordPlanCampaignKeywordField;
+  keyword_theme_constant:
+    | fieldsV19.KeywordThemeConstantField
+    | fieldsV20.KeywordThemeConstantField
+    | fieldsV21.KeywordThemeConstantField;
+  keyword_view:
+    | fieldsV19.KeywordViewField
+    | fieldsV20.KeywordViewField
+    | fieldsV21.KeywordViewField;
   label: fieldsV19.LabelField | fieldsV20.LabelField | fieldsV21.LabelField;
-  landing_page_view: fieldsV19.LandingPageViewField | fieldsV20.LandingPageViewField | fieldsV21.LandingPageViewField;
-  language_constant: fieldsV19.LanguageConstantField | fieldsV20.LanguageConstantField | fieldsV21.LanguageConstantField;
-  lead_form_submission_data: fieldsV19.LeadFormSubmissionDataField | fieldsV20.LeadFormSubmissionDataField | fieldsV21.LeadFormSubmissionDataField;
+  landing_page_view:
+    | fieldsV19.LandingPageViewField
+    | fieldsV20.LandingPageViewField
+    | fieldsV21.LandingPageViewField;
+  language_constant:
+    | fieldsV19.LanguageConstantField
+    | fieldsV20.LanguageConstantField
+    | fieldsV21.LanguageConstantField;
+  lead_form_submission_data:
+    | fieldsV19.LeadFormSubmissionDataField
+    | fieldsV20.LeadFormSubmissionDataField
+    | fieldsV21.LeadFormSubmissionDataField;
   life_event: fieldsV19.LifeEventField | fieldsV20.LifeEventField | fieldsV21.LifeEventField;
-  local_services_employee: fieldsV19.LocalServicesEmployeeField | fieldsV20.LocalServicesEmployeeField | fieldsV21.LocalServicesEmployeeField;
-  local_services_lead: fieldsV19.LocalServicesLeadField | fieldsV20.LocalServicesLeadField | fieldsV21.LocalServicesLeadField;
-  local_services_lead_conversation: fieldsV19.LocalServicesLeadConversationField | fieldsV20.LocalServicesLeadConversationField | fieldsV21.LocalServicesLeadConversationField;
-  local_services_verification_artifact: fieldsV19.LocalServicesVerificationArtifactField | fieldsV20.LocalServicesVerificationArtifactField | fieldsV21.LocalServicesVerificationArtifactField;
+  local_services_employee:
+    | fieldsV19.LocalServicesEmployeeField
+    | fieldsV20.LocalServicesEmployeeField
+    | fieldsV21.LocalServicesEmployeeField;
+  local_services_lead:
+    | fieldsV19.LocalServicesLeadField
+    | fieldsV20.LocalServicesLeadField
+    | fieldsV21.LocalServicesLeadField;
+  local_services_lead_conversation:
+    | fieldsV19.LocalServicesLeadConversationField
+    | fieldsV20.LocalServicesLeadConversationField
+    | fieldsV21.LocalServicesLeadConversationField;
+  local_services_verification_artifact:
+    | fieldsV19.LocalServicesVerificationArtifactField
+    | fieldsV20.LocalServicesVerificationArtifactField
+    | fieldsV21.LocalServicesVerificationArtifactField;
   location_interest_view: fieldsV21.LocationInterestViewField;
-  location_view: fieldsV19.LocationViewField | fieldsV20.LocationViewField | fieldsV21.LocationViewField;
-  managed_placement_view: fieldsV19.ManagedPlacementViewField | fieldsV20.ManagedPlacementViewField | fieldsV21.ManagedPlacementViewField;
+  location_view:
+    | fieldsV19.LocationViewField
+    | fieldsV20.LocationViewField
+    | fieldsV21.LocationViewField;
+  managed_placement_view:
+    | fieldsV19.ManagedPlacementViewField
+    | fieldsV20.ManagedPlacementViewField
+    | fieldsV21.ManagedPlacementViewField;
   media_file: fieldsV19.MediaFileField | fieldsV20.MediaFileField | fieldsV21.MediaFileField;
-  mobile_app_category_constant: fieldsV19.MobileAppCategoryConstantField | fieldsV20.MobileAppCategoryConstantField | fieldsV21.MobileAppCategoryConstantField;
-  mobile_device_constant: fieldsV19.MobileDeviceConstantField | fieldsV20.MobileDeviceConstantField | fieldsV21.MobileDeviceConstantField;
-  offline_conversion_upload_client_summary: fieldsV19.OfflineConversionUploadClientSummaryField | fieldsV20.OfflineConversionUploadClientSummaryField | fieldsV21.OfflineConversionUploadClientSummaryField;
-  offline_conversion_upload_conversion_action_summary: fieldsV19.OfflineConversionUploadConversionActionSummaryField | fieldsV20.OfflineConversionUploadConversionActionSummaryField | fieldsV21.OfflineConversionUploadConversionActionSummaryField;
-  offline_user_data_job: fieldsV19.OfflineUserDataJobField | fieldsV20.OfflineUserDataJobField | fieldsV21.OfflineUserDataJobField;
-  operating_system_version_constant: fieldsV19.OperatingSystemVersionConstantField | fieldsV20.OperatingSystemVersionConstantField | fieldsV21.OperatingSystemVersionConstantField;
-  paid_organic_search_term_view: fieldsV19.PaidOrganicSearchTermViewField | fieldsV20.PaidOrganicSearchTermViewField | fieldsV21.PaidOrganicSearchTermViewField;
-  parental_status_view: fieldsV19.ParentalStatusViewField | fieldsV20.ParentalStatusViewField | fieldsV21.ParentalStatusViewField;
-  per_store_view: fieldsV19.PerStoreViewField | fieldsV20.PerStoreViewField | fieldsV21.PerStoreViewField;
-  performance_max_placement_view: fieldsV19.PerformanceMaxPlacementViewField | fieldsV20.PerformanceMaxPlacementViewField | fieldsV21.PerformanceMaxPlacementViewField;
-  product_category_constant: fieldsV19.ProductCategoryConstantField | fieldsV20.ProductCategoryConstantField | fieldsV21.ProductCategoryConstantField;
-  product_group_view: fieldsV19.ProductGroupViewField | fieldsV20.ProductGroupViewField | fieldsV21.ProductGroupViewField;
-  product_link: fieldsV19.ProductLinkField | fieldsV20.ProductLinkField | fieldsV21.ProductLinkField;
-  product_link_invitation: fieldsV19.ProductLinkInvitationField | fieldsV20.ProductLinkInvitationField | fieldsV21.ProductLinkInvitationField;
-  qualifying_question: fieldsV19.QualifyingQuestionField | fieldsV20.QualifyingQuestionField | fieldsV21.QualifyingQuestionField;
-  recommendation: fieldsV19.RecommendationField | fieldsV20.RecommendationField | fieldsV21.RecommendationField;
-  recommendation_subscription: fieldsV19.RecommendationSubscriptionField | fieldsV20.RecommendationSubscriptionField | fieldsV21.RecommendationSubscriptionField;
-  remarketing_action: fieldsV19.RemarketingActionField | fieldsV20.RemarketingActionField | fieldsV21.RemarketingActionField;
-  search_term_view: fieldsV19.SearchTermViewField | fieldsV20.SearchTermViewField | fieldsV21.SearchTermViewField;
-  shared_criterion: fieldsV19.SharedCriterionField | fieldsV20.SharedCriterionField | fieldsV21.SharedCriterionField;
+  mobile_app_category_constant:
+    | fieldsV19.MobileAppCategoryConstantField
+    | fieldsV20.MobileAppCategoryConstantField
+    | fieldsV21.MobileAppCategoryConstantField;
+  mobile_device_constant:
+    | fieldsV19.MobileDeviceConstantField
+    | fieldsV20.MobileDeviceConstantField
+    | fieldsV21.MobileDeviceConstantField;
+  offline_conversion_upload_client_summary:
+    | fieldsV19.OfflineConversionUploadClientSummaryField
+    | fieldsV20.OfflineConversionUploadClientSummaryField
+    | fieldsV21.OfflineConversionUploadClientSummaryField;
+  offline_conversion_upload_conversion_action_summary:
+    | fieldsV19.OfflineConversionUploadConversionActionSummaryField
+    | fieldsV20.OfflineConversionUploadConversionActionSummaryField
+    | fieldsV21.OfflineConversionUploadConversionActionSummaryField;
+  offline_user_data_job:
+    | fieldsV19.OfflineUserDataJobField
+    | fieldsV20.OfflineUserDataJobField
+    | fieldsV21.OfflineUserDataJobField;
+  operating_system_version_constant:
+    | fieldsV19.OperatingSystemVersionConstantField
+    | fieldsV20.OperatingSystemVersionConstantField
+    | fieldsV21.OperatingSystemVersionConstantField;
+  paid_organic_search_term_view:
+    | fieldsV19.PaidOrganicSearchTermViewField
+    | fieldsV20.PaidOrganicSearchTermViewField
+    | fieldsV21.PaidOrganicSearchTermViewField;
+  parental_status_view:
+    | fieldsV19.ParentalStatusViewField
+    | fieldsV20.ParentalStatusViewField
+    | fieldsV21.ParentalStatusViewField;
+  per_store_view:
+    | fieldsV19.PerStoreViewField
+    | fieldsV20.PerStoreViewField
+    | fieldsV21.PerStoreViewField;
+  performance_max_placement_view:
+    | fieldsV19.PerformanceMaxPlacementViewField
+    | fieldsV20.PerformanceMaxPlacementViewField
+    | fieldsV21.PerformanceMaxPlacementViewField;
+  product_category_constant:
+    | fieldsV19.ProductCategoryConstantField
+    | fieldsV20.ProductCategoryConstantField
+    | fieldsV21.ProductCategoryConstantField;
+  product_group_view:
+    | fieldsV19.ProductGroupViewField
+    | fieldsV20.ProductGroupViewField
+    | fieldsV21.ProductGroupViewField;
+  product_link:
+    | fieldsV19.ProductLinkField
+    | fieldsV20.ProductLinkField
+    | fieldsV21.ProductLinkField;
+  product_link_invitation:
+    | fieldsV19.ProductLinkInvitationField
+    | fieldsV20.ProductLinkInvitationField
+    | fieldsV21.ProductLinkInvitationField;
+  qualifying_question:
+    | fieldsV19.QualifyingQuestionField
+    | fieldsV20.QualifyingQuestionField
+    | fieldsV21.QualifyingQuestionField;
+  recommendation:
+    | fieldsV19.RecommendationField
+    | fieldsV20.RecommendationField
+    | fieldsV21.RecommendationField;
+  recommendation_subscription:
+    | fieldsV19.RecommendationSubscriptionField
+    | fieldsV20.RecommendationSubscriptionField
+    | fieldsV21.RecommendationSubscriptionField;
+  remarketing_action:
+    | fieldsV19.RemarketingActionField
+    | fieldsV20.RemarketingActionField
+    | fieldsV21.RemarketingActionField;
+  search_term_view:
+    | fieldsV19.SearchTermViewField
+    | fieldsV20.SearchTermViewField
+    | fieldsV21.SearchTermViewField;
+  shared_criterion:
+    | fieldsV19.SharedCriterionField
+    | fieldsV20.SharedCriterionField
+    | fieldsV21.SharedCriterionField;
   shared_set: fieldsV19.SharedSetField | fieldsV20.SharedSetField | fieldsV21.SharedSetField;
-  shopping_performance_view: fieldsV19.ShoppingPerformanceViewField | fieldsV20.ShoppingPerformanceViewField | fieldsV21.ShoppingPerformanceViewField;
-  shopping_product: fieldsV19.ShoppingProductField | fieldsV20.ShoppingProductField | fieldsV21.ShoppingProductField;
-  smart_campaign_search_term_view: fieldsV19.SmartCampaignSearchTermViewField | fieldsV20.SmartCampaignSearchTermViewField | fieldsV21.SmartCampaignSearchTermViewField;
-  smart_campaign_setting: fieldsV19.SmartCampaignSettingField | fieldsV20.SmartCampaignSettingField | fieldsV21.SmartCampaignSettingField;
-  third_party_app_analytics_link: fieldsV19.ThirdPartyAppAnalyticsLinkField | fieldsV20.ThirdPartyAppAnalyticsLinkField | fieldsV21.ThirdPartyAppAnalyticsLinkField;
-  topic_constant: fieldsV19.TopicConstantField | fieldsV20.TopicConstantField | fieldsV21.TopicConstantField;
+  shopping_performance_view:
+    | fieldsV19.ShoppingPerformanceViewField
+    | fieldsV20.ShoppingPerformanceViewField
+    | fieldsV21.ShoppingPerformanceViewField;
+  shopping_product:
+    | fieldsV19.ShoppingProductField
+    | fieldsV20.ShoppingProductField
+    | fieldsV21.ShoppingProductField;
+  smart_campaign_search_term_view:
+    | fieldsV19.SmartCampaignSearchTermViewField
+    | fieldsV20.SmartCampaignSearchTermViewField
+    | fieldsV21.SmartCampaignSearchTermViewField;
+  smart_campaign_setting:
+    | fieldsV19.SmartCampaignSettingField
+    | fieldsV20.SmartCampaignSettingField
+    | fieldsV21.SmartCampaignSettingField;
+  third_party_app_analytics_link:
+    | fieldsV19.ThirdPartyAppAnalyticsLinkField
+    | fieldsV20.ThirdPartyAppAnalyticsLinkField
+    | fieldsV21.ThirdPartyAppAnalyticsLinkField;
+  topic_constant:
+    | fieldsV19.TopicConstantField
+    | fieldsV20.TopicConstantField
+    | fieldsV21.TopicConstantField;
   topic_view: fieldsV19.TopicViewField | fieldsV20.TopicViewField | fieldsV21.TopicViewField;
-  travel_activity_group_view: fieldsV19.TravelActivityGroupViewField | fieldsV20.TravelActivityGroupViewField | fieldsV21.TravelActivityGroupViewField;
-  travel_activity_performance_view: fieldsV19.TravelActivityPerformanceViewField | fieldsV20.TravelActivityPerformanceViewField | fieldsV21.TravelActivityPerformanceViewField;
-  user_interest: fieldsV19.UserInterestField | fieldsV20.UserInterestField | fieldsV21.UserInterestField;
+  travel_activity_group_view:
+    | fieldsV19.TravelActivityGroupViewField
+    | fieldsV20.TravelActivityGroupViewField
+    | fieldsV21.TravelActivityGroupViewField;
+  travel_activity_performance_view:
+    | fieldsV19.TravelActivityPerformanceViewField
+    | fieldsV20.TravelActivityPerformanceViewField
+    | fieldsV21.TravelActivityPerformanceViewField;
+  user_interest:
+    | fieldsV19.UserInterestField
+    | fieldsV20.UserInterestField
+    | fieldsV21.UserInterestField;
   user_list: fieldsV19.UserListField | fieldsV20.UserListField | fieldsV21.UserListField;
-  user_list_customer_type: fieldsV19.UserListCustomerTypeField | fieldsV20.UserListCustomerTypeField | fieldsV21.UserListCustomerTypeField;
-  user_location_view: fieldsV19.UserLocationViewField | fieldsV20.UserLocationViewField | fieldsV21.UserLocationViewField;
+  user_list_customer_type:
+    | fieldsV19.UserListCustomerTypeField
+    | fieldsV20.UserListCustomerTypeField
+    | fieldsV21.UserListCustomerTypeField;
+  user_location_view:
+    | fieldsV19.UserLocationViewField
+    | fieldsV20.UserLocationViewField
+    | fieldsV21.UserLocationViewField;
   video: fieldsV19.VideoField | fieldsV20.VideoField | fieldsV21.VideoField;
-  webpage_view: fieldsV19.WebpageViewField | fieldsV20.WebpageViewField | fieldsV21.WebpageViewField;
+  webpage_view:
+    | fieldsV19.WebpageViewField
+    | fieldsV20.WebpageViewField
+    | fieldsV21.WebpageViewField;
 }
 
 /**
@@ -200,71 +635,227 @@ interface ResourceFieldMapInterface {
 interface ResourceMetricMapInterface {
   ad_group: fieldsV19.AdGroupMetric | fieldsV20.AdGroupMetric | fieldsV21.AdGroupMetric;
   ad_group_ad: fieldsV19.AdGroupAdMetric | fieldsV20.AdGroupAdMetric | fieldsV21.AdGroupAdMetric;
-  ad_group_ad_asset_combination_view: fieldsV19.AdGroupAdAssetCombinationViewMetric | fieldsV20.AdGroupAdAssetCombinationViewMetric | fieldsV21.AdGroupAdAssetCombinationViewMetric;
-  ad_group_ad_asset_view: fieldsV19.AdGroupAdAssetViewMetric | fieldsV20.AdGroupAdAssetViewMetric | fieldsV21.AdGroupAdAssetViewMetric;
-  ad_group_asset: fieldsV19.AdGroupAssetMetric | fieldsV20.AdGroupAssetMetric | fieldsV21.AdGroupAssetMetric;
-  ad_group_audience_view: fieldsV19.AdGroupAudienceViewMetric | fieldsV20.AdGroupAudienceViewMetric | fieldsV21.AdGroupAudienceViewMetric;
-  ad_schedule_view: fieldsV19.AdScheduleViewMetric | fieldsV20.AdScheduleViewMetric | fieldsV21.AdScheduleViewMetric;
-  age_range_view: fieldsV19.AgeRangeViewMetric | fieldsV20.AgeRangeViewMetric | fieldsV21.AgeRangeViewMetric;
+  ad_group_ad_asset_combination_view:
+    | fieldsV19.AdGroupAdAssetCombinationViewMetric
+    | fieldsV20.AdGroupAdAssetCombinationViewMetric
+    | fieldsV21.AdGroupAdAssetCombinationViewMetric;
+  ad_group_ad_asset_view:
+    | fieldsV19.AdGroupAdAssetViewMetric
+    | fieldsV20.AdGroupAdAssetViewMetric
+    | fieldsV21.AdGroupAdAssetViewMetric;
+  ad_group_asset:
+    | fieldsV19.AdGroupAssetMetric
+    | fieldsV20.AdGroupAssetMetric
+    | fieldsV21.AdGroupAssetMetric;
+  ad_group_audience_view:
+    | fieldsV19.AdGroupAudienceViewMetric
+    | fieldsV20.AdGroupAudienceViewMetric
+    | fieldsV21.AdGroupAudienceViewMetric;
+  ad_schedule_view:
+    | fieldsV19.AdScheduleViewMetric
+    | fieldsV20.AdScheduleViewMetric
+    | fieldsV21.AdScheduleViewMetric;
+  age_range_view:
+    | fieldsV19.AgeRangeViewMetric
+    | fieldsV20.AgeRangeViewMetric
+    | fieldsV21.AgeRangeViewMetric;
   ai_max_search_term_ad_combination_view: fieldsV21.AiMaxSearchTermAdCombinationViewMetric;
-  asset_field_type_view: fieldsV19.AssetFieldTypeViewMetric | fieldsV20.AssetFieldTypeViewMetric | fieldsV21.AssetFieldTypeViewMetric;
+  asset_field_type_view:
+    | fieldsV19.AssetFieldTypeViewMetric
+    | fieldsV20.AssetFieldTypeViewMetric
+    | fieldsV21.AssetFieldTypeViewMetric;
   asset_group: fieldsV19.AssetGroupMetric | fieldsV20.AssetGroupMetric | fieldsV21.AssetGroupMetric;
-  asset_group_asset: fieldsV19.AssetGroupAssetMetric | fieldsV20.AssetGroupAssetMetric | fieldsV21.AssetGroupAssetMetric;
-  asset_group_product_group_view: fieldsV19.AssetGroupProductGroupViewMetric | fieldsV20.AssetGroupProductGroupViewMetric | fieldsV21.AssetGroupProductGroupViewMetric;
-  asset_set_asset: fieldsV19.AssetSetAssetMetric | fieldsV20.AssetSetAssetMetric | fieldsV21.AssetSetAssetMetric;
-  asset_set_type_view: fieldsV19.AssetSetTypeViewMetric | fieldsV20.AssetSetTypeViewMetric | fieldsV21.AssetSetTypeViewMetric;
-  bidding_strategy: fieldsV19.BiddingStrategyMetric | fieldsV20.BiddingStrategyMetric | fieldsV21.BiddingStrategyMetric;
+  asset_group_asset:
+    | fieldsV19.AssetGroupAssetMetric
+    | fieldsV20.AssetGroupAssetMetric
+    | fieldsV21.AssetGroupAssetMetric;
+  asset_group_product_group_view:
+    | fieldsV19.AssetGroupProductGroupViewMetric
+    | fieldsV20.AssetGroupProductGroupViewMetric
+    | fieldsV21.AssetGroupProductGroupViewMetric;
+  asset_set_asset:
+    | fieldsV19.AssetSetAssetMetric
+    | fieldsV20.AssetSetAssetMetric
+    | fieldsV21.AssetSetAssetMetric;
+  asset_set_type_view:
+    | fieldsV19.AssetSetTypeViewMetric
+    | fieldsV20.AssetSetTypeViewMetric
+    | fieldsV21.AssetSetTypeViewMetric;
+  bidding_strategy:
+    | fieldsV19.BiddingStrategyMetric
+    | fieldsV20.BiddingStrategyMetric
+    | fieldsV21.BiddingStrategyMetric;
   campaign: fieldsV19.CampaignMetric | fieldsV20.CampaignMetric | fieldsV21.CampaignMetric;
-  campaign_aggregate_asset_view: fieldsV19.CampaignAggregateAssetViewMetric | fieldsV20.CampaignAggregateAssetViewMetric | fieldsV21.CampaignAggregateAssetViewMetric;
-  campaign_asset: fieldsV19.CampaignAssetMetric | fieldsV20.CampaignAssetMetric | fieldsV21.CampaignAssetMetric;
-  campaign_audience_view: fieldsV19.CampaignAudienceViewMetric | fieldsV20.CampaignAudienceViewMetric | fieldsV21.CampaignAudienceViewMetric;
-  campaign_bid_modifier: fieldsV19.CampaignBidModifierMetric | fieldsV20.CampaignBidModifierMetric | fieldsV21.CampaignBidModifierMetric;
-  campaign_budget: fieldsV19.CampaignBudgetMetric | fieldsV20.CampaignBudgetMetric | fieldsV21.CampaignBudgetMetric;
-  campaign_group: fieldsV19.CampaignGroupMetric | fieldsV20.CampaignGroupMetric | fieldsV21.CampaignGroupMetric;
-  campaign_search_term_insight: fieldsV19.CampaignSearchTermInsightMetric | fieldsV20.CampaignSearchTermInsightMetric | fieldsV21.CampaignSearchTermInsightMetric;
+  campaign_aggregate_asset_view:
+    | fieldsV19.CampaignAggregateAssetViewMetric
+    | fieldsV20.CampaignAggregateAssetViewMetric
+    | fieldsV21.CampaignAggregateAssetViewMetric;
+  campaign_asset:
+    | fieldsV19.CampaignAssetMetric
+    | fieldsV20.CampaignAssetMetric
+    | fieldsV21.CampaignAssetMetric;
+  campaign_audience_view:
+    | fieldsV19.CampaignAudienceViewMetric
+    | fieldsV20.CampaignAudienceViewMetric
+    | fieldsV21.CampaignAudienceViewMetric;
+  campaign_bid_modifier:
+    | fieldsV19.CampaignBidModifierMetric
+    | fieldsV20.CampaignBidModifierMetric
+    | fieldsV21.CampaignBidModifierMetric;
+  campaign_budget:
+    | fieldsV19.CampaignBudgetMetric
+    | fieldsV20.CampaignBudgetMetric
+    | fieldsV21.CampaignBudgetMetric;
+  campaign_group:
+    | fieldsV19.CampaignGroupMetric
+    | fieldsV20.CampaignGroupMetric
+    | fieldsV21.CampaignGroupMetric;
+  campaign_search_term_insight:
+    | fieldsV19.CampaignSearchTermInsightMetric
+    | fieldsV20.CampaignSearchTermInsightMetric
+    | fieldsV21.CampaignSearchTermInsightMetric;
   campaign_search_term_view: fieldsV21.CampaignSearchTermViewMetric;
-  channel_aggregate_asset_view: fieldsV19.ChannelAggregateAssetViewMetric | fieldsV20.ChannelAggregateAssetViewMetric | fieldsV21.ChannelAggregateAssetViewMetric;
+  channel_aggregate_asset_view:
+    | fieldsV19.ChannelAggregateAssetViewMetric
+    | fieldsV20.ChannelAggregateAssetViewMetric
+    | fieldsV21.ChannelAggregateAssetViewMetric;
   click_view: fieldsV19.ClickViewMetric | fieldsV20.ClickViewMetric | fieldsV21.ClickViewMetric;
-  content_criterion_view: fieldsV19.ContentCriterionViewMetric | fieldsV20.ContentCriterionViewMetric | fieldsV21.ContentCriterionViewMetric;
-  conversion_action: fieldsV19.ConversionActionMetric | fieldsV20.ConversionActionMetric | fieldsV21.ConversionActionMetric;
+  content_criterion_view:
+    | fieldsV19.ContentCriterionViewMetric
+    | fieldsV20.ContentCriterionViewMetric
+    | fieldsV21.ContentCriterionViewMetric;
+  conversion_action:
+    | fieldsV19.ConversionActionMetric
+    | fieldsV20.ConversionActionMetric
+    | fieldsV21.ConversionActionMetric;
   customer: fieldsV19.CustomerMetric | fieldsV20.CustomerMetric | fieldsV21.CustomerMetric;
-  customer_asset: fieldsV19.CustomerAssetMetric | fieldsV20.CustomerAssetMetric | fieldsV21.CustomerAssetMetric;
-  customer_search_term_insight: fieldsV19.CustomerSearchTermInsightMetric | fieldsV20.CustomerSearchTermInsightMetric | fieldsV21.CustomerSearchTermInsightMetric;
+  customer_asset:
+    | fieldsV19.CustomerAssetMetric
+    | fieldsV20.CustomerAssetMetric
+    | fieldsV21.CustomerAssetMetric;
+  customer_search_term_insight:
+    | fieldsV19.CustomerSearchTermInsightMetric
+    | fieldsV20.CustomerSearchTermInsightMetric
+    | fieldsV21.CustomerSearchTermInsightMetric;
   detail_content_suitability_placement_view: fieldsV21.DetailContentSuitabilityPlacementViewMetric;
-  detail_placement_view: fieldsV19.DetailPlacementViewMetric | fieldsV20.DetailPlacementViewMetric | fieldsV21.DetailPlacementViewMetric;
-  display_keyword_view: fieldsV19.DisplayKeywordViewMetric | fieldsV20.DisplayKeywordViewMetric | fieldsV21.DisplayKeywordViewMetric;
-  distance_view: fieldsV19.DistanceViewMetric | fieldsV20.DistanceViewMetric | fieldsV21.DistanceViewMetric;
-  dynamic_search_ads_search_term_view: fieldsV19.DynamicSearchAdsSearchTermViewMetric | fieldsV20.DynamicSearchAdsSearchTermViewMetric | fieldsV21.DynamicSearchAdsSearchTermViewMetric;
-  expanded_landing_page_view: fieldsV19.ExpandedLandingPageViewMetric | fieldsV20.ExpandedLandingPageViewMetric | fieldsV21.ExpandedLandingPageViewMetric;
+  detail_placement_view:
+    | fieldsV19.DetailPlacementViewMetric
+    | fieldsV20.DetailPlacementViewMetric
+    | fieldsV21.DetailPlacementViewMetric;
+  display_keyword_view:
+    | fieldsV19.DisplayKeywordViewMetric
+    | fieldsV20.DisplayKeywordViewMetric
+    | fieldsV21.DisplayKeywordViewMetric;
+  distance_view:
+    | fieldsV19.DistanceViewMetric
+    | fieldsV20.DistanceViewMetric
+    | fieldsV21.DistanceViewMetric;
+  dynamic_search_ads_search_term_view:
+    | fieldsV19.DynamicSearchAdsSearchTermViewMetric
+    | fieldsV20.DynamicSearchAdsSearchTermViewMetric
+    | fieldsV21.DynamicSearchAdsSearchTermViewMetric;
+  expanded_landing_page_view:
+    | fieldsV19.ExpandedLandingPageViewMetric
+    | fieldsV20.ExpandedLandingPageViewMetric
+    | fieldsV21.ExpandedLandingPageViewMetric;
   final_url_expansion_asset_view: fieldsV21.FinalUrlExpansionAssetViewMetric;
   gender_view: fieldsV19.GenderViewMetric | fieldsV20.GenderViewMetric | fieldsV21.GenderViewMetric;
-  geographic_view: fieldsV19.GeographicViewMetric | fieldsV20.GeographicViewMetric | fieldsV21.GeographicViewMetric;
+  geographic_view:
+    | fieldsV19.GeographicViewMetric
+    | fieldsV20.GeographicViewMetric
+    | fieldsV21.GeographicViewMetric;
   group_content_suitability_placement_view: fieldsV21.GroupContentSuitabilityPlacementViewMetric;
-  group_placement_view: fieldsV19.GroupPlacementViewMetric | fieldsV20.GroupPlacementViewMetric | fieldsV21.GroupPlacementViewMetric;
-  hotel_group_view: fieldsV19.HotelGroupViewMetric | fieldsV20.HotelGroupViewMetric | fieldsV21.HotelGroupViewMetric;
-  hotel_performance_view: fieldsV19.HotelPerformanceViewMetric | fieldsV20.HotelPerformanceViewMetric | fieldsV21.HotelPerformanceViewMetric;
-  hotel_reconciliation: fieldsV19.HotelReconciliationMetric | fieldsV20.HotelReconciliationMetric | fieldsV21.HotelReconciliationMetric;
-  income_range_view: fieldsV19.IncomeRangeViewMetric | fieldsV20.IncomeRangeViewMetric | fieldsV21.IncomeRangeViewMetric;
-  keyword_view: fieldsV19.KeywordViewMetric | fieldsV20.KeywordViewMetric | fieldsV21.KeywordViewMetric;
-  landing_page_view: fieldsV19.LandingPageViewMetric | fieldsV20.LandingPageViewMetric | fieldsV21.LandingPageViewMetric;
+  group_placement_view:
+    | fieldsV19.GroupPlacementViewMetric
+    | fieldsV20.GroupPlacementViewMetric
+    | fieldsV21.GroupPlacementViewMetric;
+  hotel_group_view:
+    | fieldsV19.HotelGroupViewMetric
+    | fieldsV20.HotelGroupViewMetric
+    | fieldsV21.HotelGroupViewMetric;
+  hotel_performance_view:
+    | fieldsV19.HotelPerformanceViewMetric
+    | fieldsV20.HotelPerformanceViewMetric
+    | fieldsV21.HotelPerformanceViewMetric;
+  hotel_reconciliation:
+    | fieldsV19.HotelReconciliationMetric
+    | fieldsV20.HotelReconciliationMetric
+    | fieldsV21.HotelReconciliationMetric;
+  income_range_view:
+    | fieldsV19.IncomeRangeViewMetric
+    | fieldsV20.IncomeRangeViewMetric
+    | fieldsV21.IncomeRangeViewMetric;
+  keyword_view:
+    | fieldsV19.KeywordViewMetric
+    | fieldsV20.KeywordViewMetric
+    | fieldsV21.KeywordViewMetric;
+  landing_page_view:
+    | fieldsV19.LandingPageViewMetric
+    | fieldsV20.LandingPageViewMetric
+    | fieldsV21.LandingPageViewMetric;
   location_interest_view: fieldsV21.LocationInterestViewMetric;
-  location_view: fieldsV19.LocationViewMetric | fieldsV20.LocationViewMetric | fieldsV21.LocationViewMetric;
-  managed_placement_view: fieldsV19.ManagedPlacementViewMetric | fieldsV20.ManagedPlacementViewMetric | fieldsV21.ManagedPlacementViewMetric;
-  paid_organic_search_term_view: fieldsV19.PaidOrganicSearchTermViewMetric | fieldsV20.PaidOrganicSearchTermViewMetric | fieldsV21.PaidOrganicSearchTermViewMetric;
-  parental_status_view: fieldsV19.ParentalStatusViewMetric | fieldsV20.ParentalStatusViewMetric | fieldsV21.ParentalStatusViewMetric;
-  per_store_view: fieldsV19.PerStoreViewMetric | fieldsV20.PerStoreViewMetric | fieldsV21.PerStoreViewMetric;
-  performance_max_placement_view: fieldsV19.PerformanceMaxPlacementViewMetric | fieldsV20.PerformanceMaxPlacementViewMetric | fieldsV21.PerformanceMaxPlacementViewMetric;
-  product_group_view: fieldsV19.ProductGroupViewMetric | fieldsV20.ProductGroupViewMetric | fieldsV21.ProductGroupViewMetric;
-  search_term_view: fieldsV19.SearchTermViewMetric | fieldsV20.SearchTermViewMetric | fieldsV21.SearchTermViewMetric;
-  shopping_performance_view: fieldsV19.ShoppingPerformanceViewMetric | fieldsV20.ShoppingPerformanceViewMetric | fieldsV21.ShoppingPerformanceViewMetric;
-  shopping_product: fieldsV19.ShoppingProductMetric | fieldsV20.ShoppingProductMetric | fieldsV21.ShoppingProductMetric;
-  smart_campaign_search_term_view: fieldsV19.SmartCampaignSearchTermViewMetric | fieldsV20.SmartCampaignSearchTermViewMetric | fieldsV21.SmartCampaignSearchTermViewMetric;
+  location_view:
+    | fieldsV19.LocationViewMetric
+    | fieldsV20.LocationViewMetric
+    | fieldsV21.LocationViewMetric;
+  managed_placement_view:
+    | fieldsV19.ManagedPlacementViewMetric
+    | fieldsV20.ManagedPlacementViewMetric
+    | fieldsV21.ManagedPlacementViewMetric;
+  paid_organic_search_term_view:
+    | fieldsV19.PaidOrganicSearchTermViewMetric
+    | fieldsV20.PaidOrganicSearchTermViewMetric
+    | fieldsV21.PaidOrganicSearchTermViewMetric;
+  parental_status_view:
+    | fieldsV19.ParentalStatusViewMetric
+    | fieldsV20.ParentalStatusViewMetric
+    | fieldsV21.ParentalStatusViewMetric;
+  per_store_view:
+    | fieldsV19.PerStoreViewMetric
+    | fieldsV20.PerStoreViewMetric
+    | fieldsV21.PerStoreViewMetric;
+  performance_max_placement_view:
+    | fieldsV19.PerformanceMaxPlacementViewMetric
+    | fieldsV20.PerformanceMaxPlacementViewMetric
+    | fieldsV21.PerformanceMaxPlacementViewMetric;
+  product_group_view:
+    | fieldsV19.ProductGroupViewMetric
+    | fieldsV20.ProductGroupViewMetric
+    | fieldsV21.ProductGroupViewMetric;
+  search_term_view:
+    | fieldsV19.SearchTermViewMetric
+    | fieldsV20.SearchTermViewMetric
+    | fieldsV21.SearchTermViewMetric;
+  shopping_performance_view:
+    | fieldsV19.ShoppingPerformanceViewMetric
+    | fieldsV20.ShoppingPerformanceViewMetric
+    | fieldsV21.ShoppingPerformanceViewMetric;
+  shopping_product:
+    | fieldsV19.ShoppingProductMetric
+    | fieldsV20.ShoppingProductMetric
+    | fieldsV21.ShoppingProductMetric;
+  smart_campaign_search_term_view:
+    | fieldsV19.SmartCampaignSearchTermViewMetric
+    | fieldsV20.SmartCampaignSearchTermViewMetric
+    | fieldsV21.SmartCampaignSearchTermViewMetric;
   topic_view: fieldsV19.TopicViewMetric | fieldsV20.TopicViewMetric | fieldsV21.TopicViewMetric;
-  travel_activity_group_view: fieldsV19.TravelActivityGroupViewMetric | fieldsV20.TravelActivityGroupViewMetric | fieldsV21.TravelActivityGroupViewMetric;
-  travel_activity_performance_view: fieldsV19.TravelActivityPerformanceViewMetric | fieldsV20.TravelActivityPerformanceViewMetric | fieldsV21.TravelActivityPerformanceViewMetric;
-  user_location_view: fieldsV19.UserLocationViewMetric | fieldsV20.UserLocationViewMetric | fieldsV21.UserLocationViewMetric;
+  travel_activity_group_view:
+    | fieldsV19.TravelActivityGroupViewMetric
+    | fieldsV20.TravelActivityGroupViewMetric
+    | fieldsV21.TravelActivityGroupViewMetric;
+  travel_activity_performance_view:
+    | fieldsV19.TravelActivityPerformanceViewMetric
+    | fieldsV20.TravelActivityPerformanceViewMetric
+    | fieldsV21.TravelActivityPerformanceViewMetric;
+  user_location_view:
+    | fieldsV19.UserLocationViewMetric
+    | fieldsV20.UserLocationViewMetric
+    | fieldsV21.UserLocationViewMetric;
   video: fieldsV19.VideoMetric | fieldsV20.VideoMetric | fieldsV21.VideoMetric;
-  webpage_view: fieldsV19.WebpageViewMetric | fieldsV20.WebpageViewMetric | fieldsV21.WebpageViewMetric;
+  webpage_view:
+    | fieldsV19.WebpageViewMetric
+    | fieldsV20.WebpageViewMetric
+    | fieldsV21.WebpageViewMetric;
 }
 
 /**
@@ -274,98 +865,270 @@ interface ResourceMetricMapInterface {
 interface ResourceSegmentMapInterface {
   ad_group: fieldsV19.AdGroupSegment | fieldsV20.AdGroupSegment | fieldsV21.AdGroupSegment;
   ad_group_ad: fieldsV19.AdGroupAdSegment | fieldsV20.AdGroupAdSegment | fieldsV21.AdGroupAdSegment;
-  ad_group_ad_asset_combination_view: fieldsV19.AdGroupAdAssetCombinationViewSegment | fieldsV20.AdGroupAdAssetCombinationViewSegment | fieldsV21.AdGroupAdAssetCombinationViewSegment;
-  ad_group_ad_asset_view: fieldsV19.AdGroupAdAssetViewSegment | fieldsV20.AdGroupAdAssetViewSegment | fieldsV21.AdGroupAdAssetViewSegment;
-  ad_group_asset: fieldsV19.AdGroupAssetSegment | fieldsV20.AdGroupAssetSegment | fieldsV21.AdGroupAssetSegment;
-  ad_group_audience_view: fieldsV19.AdGroupAudienceViewSegment | fieldsV20.AdGroupAudienceViewSegment | fieldsV21.AdGroupAudienceViewSegment;
-  ad_schedule_view: fieldsV19.AdScheduleViewSegment | fieldsV20.AdScheduleViewSegment | fieldsV21.AdScheduleViewSegment;
-  age_range_view: fieldsV19.AgeRangeViewSegment | fieldsV20.AgeRangeViewSegment | fieldsV21.AgeRangeViewSegment;
+  ad_group_ad_asset_combination_view:
+    | fieldsV19.AdGroupAdAssetCombinationViewSegment
+    | fieldsV20.AdGroupAdAssetCombinationViewSegment
+    | fieldsV21.AdGroupAdAssetCombinationViewSegment;
+  ad_group_ad_asset_view:
+    | fieldsV19.AdGroupAdAssetViewSegment
+    | fieldsV20.AdGroupAdAssetViewSegment
+    | fieldsV21.AdGroupAdAssetViewSegment;
+  ad_group_asset:
+    | fieldsV19.AdGroupAssetSegment
+    | fieldsV20.AdGroupAssetSegment
+    | fieldsV21.AdGroupAssetSegment;
+  ad_group_audience_view:
+    | fieldsV19.AdGroupAudienceViewSegment
+    | fieldsV20.AdGroupAudienceViewSegment
+    | fieldsV21.AdGroupAudienceViewSegment;
+  ad_schedule_view:
+    | fieldsV19.AdScheduleViewSegment
+    | fieldsV20.AdScheduleViewSegment
+    | fieldsV21.AdScheduleViewSegment;
+  age_range_view:
+    | fieldsV19.AgeRangeViewSegment
+    | fieldsV20.AgeRangeViewSegment
+    | fieldsV21.AgeRangeViewSegment;
   ai_max_search_term_ad_combination_view: fieldsV21.AiMaxSearchTermAdCombinationViewSegment;
-  android_privacy_shared_key_google_ad_group: fieldsV19.AndroidPrivacySharedKeyGoogleAdGroupSegment | fieldsV20.AndroidPrivacySharedKeyGoogleAdGroupSegment | fieldsV21.AndroidPrivacySharedKeyGoogleAdGroupSegment;
-  android_privacy_shared_key_google_campaign: fieldsV19.AndroidPrivacySharedKeyGoogleCampaignSegment | fieldsV20.AndroidPrivacySharedKeyGoogleCampaignSegment | fieldsV21.AndroidPrivacySharedKeyGoogleCampaignSegment;
-  android_privacy_shared_key_google_network_type: fieldsV19.AndroidPrivacySharedKeyGoogleNetworkTypeSegment | fieldsV20.AndroidPrivacySharedKeyGoogleNetworkTypeSegment | fieldsV21.AndroidPrivacySharedKeyGoogleNetworkTypeSegment;
+  android_privacy_shared_key_google_ad_group:
+    | fieldsV19.AndroidPrivacySharedKeyGoogleAdGroupSegment
+    | fieldsV20.AndroidPrivacySharedKeyGoogleAdGroupSegment
+    | fieldsV21.AndroidPrivacySharedKeyGoogleAdGroupSegment;
+  android_privacy_shared_key_google_campaign:
+    | fieldsV19.AndroidPrivacySharedKeyGoogleCampaignSegment
+    | fieldsV20.AndroidPrivacySharedKeyGoogleCampaignSegment
+    | fieldsV21.AndroidPrivacySharedKeyGoogleCampaignSegment;
+  android_privacy_shared_key_google_network_type:
+    | fieldsV19.AndroidPrivacySharedKeyGoogleNetworkTypeSegment
+    | fieldsV20.AndroidPrivacySharedKeyGoogleNetworkTypeSegment
+    | fieldsV21.AndroidPrivacySharedKeyGoogleNetworkTypeSegment;
   asset: fieldsV19.AssetSegment | fieldsV20.AssetSegment | fieldsV21.AssetSegment;
-  asset_field_type_view: fieldsV19.AssetFieldTypeViewSegment | fieldsV20.AssetFieldTypeViewSegment | fieldsV21.AssetFieldTypeViewSegment;
-  asset_group: fieldsV19.AssetGroupSegment | fieldsV20.AssetGroupSegment | fieldsV21.AssetGroupSegment;
-  asset_group_asset: fieldsV19.AssetGroupAssetSegment | fieldsV20.AssetGroupAssetSegment | fieldsV21.AssetGroupAssetSegment;
-  asset_group_product_group_view: fieldsV19.AssetGroupProductGroupViewSegment | fieldsV20.AssetGroupProductGroupViewSegment | fieldsV21.AssetGroupProductGroupViewSegment;
-  asset_group_top_combination_view: fieldsV19.AssetGroupTopCombinationViewSegment | fieldsV20.AssetGroupTopCombinationViewSegment | fieldsV21.AssetGroupTopCombinationViewSegment;
-  asset_set_asset: fieldsV19.AssetSetAssetSegment | fieldsV20.AssetSetAssetSegment | fieldsV21.AssetSetAssetSegment;
-  asset_set_type_view: fieldsV19.AssetSetTypeViewSegment | fieldsV20.AssetSetTypeViewSegment | fieldsV21.AssetSetTypeViewSegment;
-  bidding_strategy: fieldsV19.BiddingStrategySegment | fieldsV20.BiddingStrategySegment | fieldsV21.BiddingStrategySegment;
+  asset_field_type_view:
+    | fieldsV19.AssetFieldTypeViewSegment
+    | fieldsV20.AssetFieldTypeViewSegment
+    | fieldsV21.AssetFieldTypeViewSegment;
+  asset_group:
+    | fieldsV19.AssetGroupSegment
+    | fieldsV20.AssetGroupSegment
+    | fieldsV21.AssetGroupSegment;
+  asset_group_asset:
+    | fieldsV19.AssetGroupAssetSegment
+    | fieldsV20.AssetGroupAssetSegment
+    | fieldsV21.AssetGroupAssetSegment;
+  asset_group_product_group_view:
+    | fieldsV19.AssetGroupProductGroupViewSegment
+    | fieldsV20.AssetGroupProductGroupViewSegment
+    | fieldsV21.AssetGroupProductGroupViewSegment;
+  asset_group_top_combination_view:
+    | fieldsV19.AssetGroupTopCombinationViewSegment
+    | fieldsV20.AssetGroupTopCombinationViewSegment
+    | fieldsV21.AssetGroupTopCombinationViewSegment;
+  asset_set_asset:
+    | fieldsV19.AssetSetAssetSegment
+    | fieldsV20.AssetSetAssetSegment
+    | fieldsV21.AssetSetAssetSegment;
+  asset_set_type_view:
+    | fieldsV19.AssetSetTypeViewSegment
+    | fieldsV20.AssetSetTypeViewSegment
+    | fieldsV21.AssetSetTypeViewSegment;
+  bidding_strategy:
+    | fieldsV19.BiddingStrategySegment
+    | fieldsV20.BiddingStrategySegment
+    | fieldsV21.BiddingStrategySegment;
   campaign: fieldsV19.CampaignSegment | fieldsV20.CampaignSegment | fieldsV21.CampaignSegment;
-  campaign_aggregate_asset_view: fieldsV19.CampaignAggregateAssetViewSegment | fieldsV20.CampaignAggregateAssetViewSegment | fieldsV21.CampaignAggregateAssetViewSegment;
-  campaign_asset: fieldsV19.CampaignAssetSegment | fieldsV20.CampaignAssetSegment | fieldsV21.CampaignAssetSegment;
-  campaign_audience_view: fieldsV19.CampaignAudienceViewSegment | fieldsV20.CampaignAudienceViewSegment | fieldsV21.CampaignAudienceViewSegment;
-  campaign_budget: fieldsV19.CampaignBudgetSegment | fieldsV20.CampaignBudgetSegment | fieldsV21.CampaignBudgetSegment;
-  campaign_group: fieldsV19.CampaignGroupSegment | fieldsV20.CampaignGroupSegment | fieldsV21.CampaignGroupSegment;
-  campaign_search_term_insight: fieldsV19.CampaignSearchTermInsightSegment | fieldsV20.CampaignSearchTermInsightSegment | fieldsV21.CampaignSearchTermInsightSegment;
+  campaign_aggregate_asset_view:
+    | fieldsV19.CampaignAggregateAssetViewSegment
+    | fieldsV20.CampaignAggregateAssetViewSegment
+    | fieldsV21.CampaignAggregateAssetViewSegment;
+  campaign_asset:
+    | fieldsV19.CampaignAssetSegment
+    | fieldsV20.CampaignAssetSegment
+    | fieldsV21.CampaignAssetSegment;
+  campaign_audience_view:
+    | fieldsV19.CampaignAudienceViewSegment
+    | fieldsV20.CampaignAudienceViewSegment
+    | fieldsV21.CampaignAudienceViewSegment;
+  campaign_budget:
+    | fieldsV19.CampaignBudgetSegment
+    | fieldsV20.CampaignBudgetSegment
+    | fieldsV21.CampaignBudgetSegment;
+  campaign_group:
+    | fieldsV19.CampaignGroupSegment
+    | fieldsV20.CampaignGroupSegment
+    | fieldsV21.CampaignGroupSegment;
+  campaign_search_term_insight:
+    | fieldsV19.CampaignSearchTermInsightSegment
+    | fieldsV20.CampaignSearchTermInsightSegment
+    | fieldsV21.CampaignSearchTermInsightSegment;
   campaign_search_term_view: fieldsV21.CampaignSearchTermViewSegment;
-  channel_aggregate_asset_view: fieldsV19.ChannelAggregateAssetViewSegment | fieldsV20.ChannelAggregateAssetViewSegment | fieldsV21.ChannelAggregateAssetViewSegment;
+  channel_aggregate_asset_view:
+    | fieldsV19.ChannelAggregateAssetViewSegment
+    | fieldsV20.ChannelAggregateAssetViewSegment
+    | fieldsV21.ChannelAggregateAssetViewSegment;
   click_view: fieldsV19.ClickViewSegment | fieldsV20.ClickViewSegment | fieldsV21.ClickViewSegment;
-  content_criterion_view: fieldsV19.ContentCriterionViewSegment | fieldsV20.ContentCriterionViewSegment | fieldsV21.ContentCriterionViewSegment;
-  conversion_action: fieldsV19.ConversionActionSegment | fieldsV20.ConversionActionSegment | fieldsV21.ConversionActionSegment;
+  content_criterion_view:
+    | fieldsV19.ContentCriterionViewSegment
+    | fieldsV20.ContentCriterionViewSegment
+    | fieldsV21.ContentCriterionViewSegment;
+  conversion_action:
+    | fieldsV19.ConversionActionSegment
+    | fieldsV20.ConversionActionSegment
+    | fieldsV21.ConversionActionSegment;
   customer: fieldsV19.CustomerSegment | fieldsV20.CustomerSegment | fieldsV21.CustomerSegment;
-  customer_asset: fieldsV19.CustomerAssetSegment | fieldsV20.CustomerAssetSegment | fieldsV21.CustomerAssetSegment;
-  customer_search_term_insight: fieldsV19.CustomerSearchTermInsightSegment | fieldsV20.CustomerSearchTermInsightSegment | fieldsV21.CustomerSearchTermInsightSegment;
+  customer_asset:
+    | fieldsV19.CustomerAssetSegment
+    | fieldsV20.CustomerAssetSegment
+    | fieldsV21.CustomerAssetSegment;
+  customer_search_term_insight:
+    | fieldsV19.CustomerSearchTermInsightSegment
+    | fieldsV20.CustomerSearchTermInsightSegment
+    | fieldsV21.CustomerSearchTermInsightSegment;
   detail_content_suitability_placement_view: fieldsV21.DetailContentSuitabilityPlacementViewSegment;
-  detail_placement_view: fieldsV19.DetailPlacementViewSegment | fieldsV20.DetailPlacementViewSegment | fieldsV21.DetailPlacementViewSegment;
-  display_keyword_view: fieldsV19.DisplayKeywordViewSegment | fieldsV20.DisplayKeywordViewSegment | fieldsV21.DisplayKeywordViewSegment;
-  distance_view: fieldsV19.DistanceViewSegment | fieldsV20.DistanceViewSegment | fieldsV21.DistanceViewSegment;
-  dynamic_search_ads_search_term_view: fieldsV19.DynamicSearchAdsSearchTermViewSegment | fieldsV20.DynamicSearchAdsSearchTermViewSegment | fieldsV21.DynamicSearchAdsSearchTermViewSegment;
-  expanded_landing_page_view: fieldsV19.ExpandedLandingPageViewSegment | fieldsV20.ExpandedLandingPageViewSegment | fieldsV21.ExpandedLandingPageViewSegment;
+  detail_placement_view:
+    | fieldsV19.DetailPlacementViewSegment
+    | fieldsV20.DetailPlacementViewSegment
+    | fieldsV21.DetailPlacementViewSegment;
+  display_keyword_view:
+    | fieldsV19.DisplayKeywordViewSegment
+    | fieldsV20.DisplayKeywordViewSegment
+    | fieldsV21.DisplayKeywordViewSegment;
+  distance_view:
+    | fieldsV19.DistanceViewSegment
+    | fieldsV20.DistanceViewSegment
+    | fieldsV21.DistanceViewSegment;
+  dynamic_search_ads_search_term_view:
+    | fieldsV19.DynamicSearchAdsSearchTermViewSegment
+    | fieldsV20.DynamicSearchAdsSearchTermViewSegment
+    | fieldsV21.DynamicSearchAdsSearchTermViewSegment;
+  expanded_landing_page_view:
+    | fieldsV19.ExpandedLandingPageViewSegment
+    | fieldsV20.ExpandedLandingPageViewSegment
+    | fieldsV21.ExpandedLandingPageViewSegment;
   final_url_expansion_asset_view: fieldsV21.FinalUrlExpansionAssetViewSegment;
-  gender_view: fieldsV19.GenderViewSegment | fieldsV20.GenderViewSegment | fieldsV21.GenderViewSegment;
-  geographic_view: fieldsV19.GeographicViewSegment | fieldsV20.GeographicViewSegment | fieldsV21.GeographicViewSegment;
+  gender_view:
+    | fieldsV19.GenderViewSegment
+    | fieldsV20.GenderViewSegment
+    | fieldsV21.GenderViewSegment;
+  geographic_view:
+    | fieldsV19.GeographicViewSegment
+    | fieldsV20.GeographicViewSegment
+    | fieldsV21.GeographicViewSegment;
   group_content_suitability_placement_view: fieldsV21.GroupContentSuitabilityPlacementViewSegment;
-  group_placement_view: fieldsV19.GroupPlacementViewSegment | fieldsV20.GroupPlacementViewSegment | fieldsV21.GroupPlacementViewSegment;
-  hotel_group_view: fieldsV19.HotelGroupViewSegment | fieldsV20.HotelGroupViewSegment | fieldsV21.HotelGroupViewSegment;
-  hotel_performance_view: fieldsV19.HotelPerformanceViewSegment | fieldsV20.HotelPerformanceViewSegment | fieldsV21.HotelPerformanceViewSegment;
-  hotel_reconciliation: fieldsV19.HotelReconciliationSegment | fieldsV20.HotelReconciliationSegment | fieldsV21.HotelReconciliationSegment;
-  income_range_view: fieldsV19.IncomeRangeViewSegment | fieldsV20.IncomeRangeViewSegment | fieldsV21.IncomeRangeViewSegment;
-  keyword_view: fieldsV19.KeywordViewSegment | fieldsV20.KeywordViewSegment | fieldsV21.KeywordViewSegment;
-  landing_page_view: fieldsV19.LandingPageViewSegment | fieldsV20.LandingPageViewSegment | fieldsV21.LandingPageViewSegment;
+  group_placement_view:
+    | fieldsV19.GroupPlacementViewSegment
+    | fieldsV20.GroupPlacementViewSegment
+    | fieldsV21.GroupPlacementViewSegment;
+  hotel_group_view:
+    | fieldsV19.HotelGroupViewSegment
+    | fieldsV20.HotelGroupViewSegment
+    | fieldsV21.HotelGroupViewSegment;
+  hotel_performance_view:
+    | fieldsV19.HotelPerformanceViewSegment
+    | fieldsV20.HotelPerformanceViewSegment
+    | fieldsV21.HotelPerformanceViewSegment;
+  hotel_reconciliation:
+    | fieldsV19.HotelReconciliationSegment
+    | fieldsV20.HotelReconciliationSegment
+    | fieldsV21.HotelReconciliationSegment;
+  income_range_view:
+    | fieldsV19.IncomeRangeViewSegment
+    | fieldsV20.IncomeRangeViewSegment
+    | fieldsV21.IncomeRangeViewSegment;
+  keyword_view:
+    | fieldsV19.KeywordViewSegment
+    | fieldsV20.KeywordViewSegment
+    | fieldsV21.KeywordViewSegment;
+  landing_page_view:
+    | fieldsV19.LandingPageViewSegment
+    | fieldsV20.LandingPageViewSegment
+    | fieldsV21.LandingPageViewSegment;
   location_interest_view: fieldsV21.LocationInterestViewSegment;
-  location_view: fieldsV19.LocationViewSegment | fieldsV20.LocationViewSegment | fieldsV21.LocationViewSegment;
-  managed_placement_view: fieldsV19.ManagedPlacementViewSegment | fieldsV20.ManagedPlacementViewSegment | fieldsV21.ManagedPlacementViewSegment;
-  paid_organic_search_term_view: fieldsV19.PaidOrganicSearchTermViewSegment | fieldsV20.PaidOrganicSearchTermViewSegment | fieldsV21.PaidOrganicSearchTermViewSegment;
-  parental_status_view: fieldsV19.ParentalStatusViewSegment | fieldsV20.ParentalStatusViewSegment | fieldsV21.ParentalStatusViewSegment;
-  per_store_view: fieldsV19.PerStoreViewSegment | fieldsV20.PerStoreViewSegment | fieldsV21.PerStoreViewSegment;
-  performance_max_placement_view: fieldsV19.PerformanceMaxPlacementViewSegment | fieldsV20.PerformanceMaxPlacementViewSegment | fieldsV21.PerformanceMaxPlacementViewSegment;
-  product_group_view: fieldsV19.ProductGroupViewSegment | fieldsV20.ProductGroupViewSegment | fieldsV21.ProductGroupViewSegment;
-  search_term_view: fieldsV19.SearchTermViewSegment | fieldsV20.SearchTermViewSegment | fieldsV21.SearchTermViewSegment;
+  location_view:
+    | fieldsV19.LocationViewSegment
+    | fieldsV20.LocationViewSegment
+    | fieldsV21.LocationViewSegment;
+  managed_placement_view:
+    | fieldsV19.ManagedPlacementViewSegment
+    | fieldsV20.ManagedPlacementViewSegment
+    | fieldsV21.ManagedPlacementViewSegment;
+  paid_organic_search_term_view:
+    | fieldsV19.PaidOrganicSearchTermViewSegment
+    | fieldsV20.PaidOrganicSearchTermViewSegment
+    | fieldsV21.PaidOrganicSearchTermViewSegment;
+  parental_status_view:
+    | fieldsV19.ParentalStatusViewSegment
+    | fieldsV20.ParentalStatusViewSegment
+    | fieldsV21.ParentalStatusViewSegment;
+  per_store_view:
+    | fieldsV19.PerStoreViewSegment
+    | fieldsV20.PerStoreViewSegment
+    | fieldsV21.PerStoreViewSegment;
+  performance_max_placement_view:
+    | fieldsV19.PerformanceMaxPlacementViewSegment
+    | fieldsV20.PerformanceMaxPlacementViewSegment
+    | fieldsV21.PerformanceMaxPlacementViewSegment;
+  product_group_view:
+    | fieldsV19.ProductGroupViewSegment
+    | fieldsV20.ProductGroupViewSegment
+    | fieldsV21.ProductGroupViewSegment;
+  search_term_view:
+    | fieldsV19.SearchTermViewSegment
+    | fieldsV20.SearchTermViewSegment
+    | fieldsV21.SearchTermViewSegment;
   shared_set: fieldsV19.SharedSetSegment | fieldsV20.SharedSetSegment | fieldsV21.SharedSetSegment;
-  shopping_performance_view: fieldsV19.ShoppingPerformanceViewSegment | fieldsV20.ShoppingPerformanceViewSegment | fieldsV21.ShoppingPerformanceViewSegment;
-  shopping_product: fieldsV19.ShoppingProductSegment | fieldsV20.ShoppingProductSegment | fieldsV21.ShoppingProductSegment;
-  smart_campaign_search_term_view: fieldsV19.SmartCampaignSearchTermViewSegment | fieldsV20.SmartCampaignSearchTermViewSegment | fieldsV21.SmartCampaignSearchTermViewSegment;
+  shopping_performance_view:
+    | fieldsV19.ShoppingPerformanceViewSegment
+    | fieldsV20.ShoppingPerformanceViewSegment
+    | fieldsV21.ShoppingPerformanceViewSegment;
+  shopping_product:
+    | fieldsV19.ShoppingProductSegment
+    | fieldsV20.ShoppingProductSegment
+    | fieldsV21.ShoppingProductSegment;
+  smart_campaign_search_term_view:
+    | fieldsV19.SmartCampaignSearchTermViewSegment
+    | fieldsV20.SmartCampaignSearchTermViewSegment
+    | fieldsV21.SmartCampaignSearchTermViewSegment;
   topic_view: fieldsV19.TopicViewSegment | fieldsV20.TopicViewSegment | fieldsV21.TopicViewSegment;
-  travel_activity_group_view: fieldsV19.TravelActivityGroupViewSegment | fieldsV20.TravelActivityGroupViewSegment | fieldsV21.TravelActivityGroupViewSegment;
-  travel_activity_performance_view: fieldsV19.TravelActivityPerformanceViewSegment | fieldsV20.TravelActivityPerformanceViewSegment | fieldsV21.TravelActivityPerformanceViewSegment;
-  user_location_view: fieldsV19.UserLocationViewSegment | fieldsV20.UserLocationViewSegment | fieldsV21.UserLocationViewSegment;
+  travel_activity_group_view:
+    | fieldsV19.TravelActivityGroupViewSegment
+    | fieldsV20.TravelActivityGroupViewSegment
+    | fieldsV21.TravelActivityGroupViewSegment;
+  travel_activity_performance_view:
+    | fieldsV19.TravelActivityPerformanceViewSegment
+    | fieldsV20.TravelActivityPerformanceViewSegment
+    | fieldsV21.TravelActivityPerformanceViewSegment;
+  user_location_view:
+    | fieldsV19.UserLocationViewSegment
+    | fieldsV20.UserLocationViewSegment
+    | fieldsV21.UserLocationViewSegment;
   video: fieldsV19.VideoSegment | fieldsV20.VideoSegment | fieldsV21.VideoSegment;
-  webpage_view: fieldsV19.WebpageViewSegment | fieldsV20.WebpageViewSegment | fieldsV21.WebpageViewSegment;
+  webpage_view:
+    | fieldsV19.WebpageViewSegment
+    | fieldsV20.WebpageViewSegment
+    | fieldsV21.WebpageViewSegment;
 }
 
 /**
  * Map resource name to its corresponding Field type from google-ads-api
  * Uses static interface lookup for better TypeScript performance
  */
-export type ResourceFieldMap<TResource extends string> = TResource extends keyof ResourceFieldMapInterface
-  ? ResourceFieldMapInterface[TResource]
-  : never;
+export type ResourceFieldMap<TResource extends string> =
+  TResource extends keyof ResourceFieldMapInterface ? ResourceFieldMapInterface[TResource] : never;
 
 /**
  * Map resource name to its corresponding Metric type from google-ads-api
  * Uses static interface lookup for better TypeScript performance
  */
-export type ResourceMetricMap<TResource extends string> = TResource extends keyof ResourceMetricMapInterface
-  ? ResourceMetricMapInterface[TResource]
-  : MetricV19 | MetricV20 | MetricV21;
+export type ResourceMetricMap<TResource extends string> =
+  TResource extends keyof ResourceMetricMapInterface
+    ? ResourceMetricMapInterface[TResource]
+    : MetricV19 | MetricV20 | MetricV21;
 
 /**
  * Map resource name to its corresponding Segment type from google-ads-api
  * Uses static interface lookup for better TypeScript performance
  */
-export type ResourceSegmentMap<TResource extends string> = TResource extends keyof ResourceSegmentMapInterface
-  ? ResourceSegmentMapInterface[TResource]
-  : SegmentV19 | SegmentV20 | SegmentV21;
+export type ResourceSegmentMap<TResource extends string> =
+  TResource extends keyof ResourceSegmentMapInterface
+    ? ResourceSegmentMapInterface[TResource]
+    : SegmentV19 | SegmentV20 | SegmentV21;

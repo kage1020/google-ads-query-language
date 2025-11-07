@@ -1,16 +1,15 @@
 import type { fields as fieldsV19 } from 'google-ads-api-v19';
 import type { fields as fieldsV20 } from 'google-ads-api-v20';
 import type { fields as fieldsV21 } from 'google-ads-api-v21';
-import fieldsDataV19 from './schemas/fields-v19.json' with { type: 'json' };
-import fieldsDataV20 from './schemas/fields-v20.json' with { type: 'json' };
-import fieldsDataV21 from './schemas/fields-v21.json' with { type: 'json' };
-
 // Import auto-generated type mappings for all 173 resources
 import type {
   ResourceFieldMap,
   ResourceMetricMap,
   ResourceSegmentMap,
 } from './generated-resource-types.js';
+import fieldsDataV19 from './schemas/fields-v19.json' with { type: 'json' };
+import fieldsDataV20 from './schemas/fields-v20.json' with { type: 'json' };
+import fieldsDataV21 from './schemas/fields-v21.json' with { type: 'json' };
 
 export const SupportedApiVersions = ['19', '20', '21'] as const;
 export type SupportedApiVersion = (typeof SupportedApiVersions)[number];

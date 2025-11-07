@@ -1,5 +1,3 @@
-import type { ValidationResult } from './validator.js';
-import { validateQuery } from './validator.js';
 import {
   type AnyResourceName,
   defaultApiVersion,
@@ -9,6 +7,8 @@ import {
   type ResourceName,
   type SupportedApiVersion,
 } from './schema.js';
+import type { ValidationResult } from './validator.js';
+import { validateQuery } from './validator.js';
 
 /**
  * Interface for query validation
@@ -495,7 +495,9 @@ export class GoogleAdsQueryBuilder<TResource extends string = never> {
    * // Returns: ['campaign', 'ad_group', 'ad_group_ad', ...]
    * ```
    */
-  static getAvailableResourcesForVersion(apiVersion: SupportedApiVersion = defaultApiVersion): string[] {
+  static getAvailableResourcesForVersion(
+    apiVersion: SupportedApiVersion = defaultApiVersion,
+  ): string[] {
     return getResourceNames(apiVersion);
   }
 

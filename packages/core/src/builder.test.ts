@@ -10,7 +10,6 @@ import {
 import { ValidationErrorType } from './validator.js';
 
 describe('GoogleAdsQueryBuilder', () => {
-
   describe('Basic Query Building', () => {
     it('should build a simple SELECT FROM query', () => {
       const builder = new GoogleAdsQueryBuilder();
@@ -128,7 +127,10 @@ describe('GoogleAdsQueryBuilder', () => {
   describe('Method Chaining', () => {
     it('should support method chaining', () => {
       const builder = new GoogleAdsQueryBuilder();
-      const result = builder.from('campaign').select(['campaign.id']).where('campaign.status = "ENABLED"');
+      const result = builder
+        .from('campaign')
+        .select(['campaign.id'])
+        .where('campaign.status = "ENABLED"');
 
       expect(result).toBeInstanceOf(GoogleAdsQueryBuilder);
     });
@@ -141,9 +143,7 @@ describe('GoogleAdsQueryBuilder', () => {
         .select(['metrics.impressions'])
         .build();
 
-      expect(query).toBe(
-        'SELECT campaign.id, campaign.name, metrics.impressions FROM campaign',
-      );
+      expect(query).toBe('SELECT campaign.id, campaign.name, metrics.impressions FROM campaign');
     });
 
     it('should allow building query step by step', () => {
@@ -251,9 +251,7 @@ describe('GoogleAdsQueryBuilder', () => {
 
       const result = builder.validate();
       expect(result.valid).toBe(false);
-      expect(result.errors.some((e) => e.type === ValidationErrorType.INVALID_RESOURCE)).toBe(
-        true,
-      );
+      expect(result.errors.some((e) => e.type === ValidationErrorType.INVALID_RESOURCE)).toBe(true);
     });
 
     it('should detect invalid field names', () => {
@@ -427,9 +425,7 @@ describe('GoogleAdsQueryBuilder', () => {
       const cloned = builder.clone();
       const query = cloned.build();
 
-      expect(query).toBe(
-        'SELECT campaign.id FROM campaign WHERE campaign.status = "ENABLED"',
-      );
+      expect(query).toBe('SELECT campaign.id FROM campaign WHERE campaign.status = "ENABLED"');
       expect(customValidator.validate).toHaveBeenCalled();
     });
 
