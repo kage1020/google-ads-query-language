@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   createQueryBuilder,
   DefaultQueryValidator,
@@ -7,13 +7,9 @@ import {
   type QueryParser,
   type QueryValidator,
 } from './builder.js';
-import { setApiVersion, type SupportedApiVersion } from './schema.js';
-import { ValidationErrorType, type ValidationResult } from './validator.js';
+import { ValidationErrorType } from './validator.js';
 
 describe('GoogleAdsQueryBuilder', () => {
-  beforeEach(() => {
-    setApiVersion('21' as SupportedApiVersion);
-  });
 
   describe('Basic Query Building', () => {
     it('should build a simple SELECT FROM query', () => {
@@ -353,7 +349,17 @@ describe('GoogleAdsQueryBuilder', () => {
     });
 
     it('should get available resources', () => {
-      const resources = GoogleAdsQueryBuilder.getAvailableResources();
+      const builder = new GoogleAdsQueryBuilder();
+      const resources = builder.getAvailableResources();
+
+      expect(resources.length).toBeGreaterThan(0);
+      expect(resources).toContain('campaign');
+      expect(resources).toContain('ad_group');
+      expect(resources).toContain('customer');
+    });
+
+    it('should get available resources for specific version', () => {
+      const resources = GoogleAdsQueryBuilder.getAvailableResourcesForVersion('21');
 
       expect(resources.length).toBeGreaterThan(0);
       expect(resources).toContain('campaign');

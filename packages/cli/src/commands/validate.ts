@@ -3,7 +3,6 @@ import { stdin } from 'node:process';
 import {
   type SupportedApiVersion,
   SupportedApiVersions,
-  setApiVersion,
   type ValidationResult,
   validateText,
 } from '@gaql/core';
@@ -30,7 +29,6 @@ export async function validateCommand(
     );
     process.exit(1);
   }
-  setApiVersion(version);
 
   // Read input
   const spinner = ora('Reading input...').start();
@@ -51,7 +49,7 @@ export async function validateCommand(
 
   // Validate
   spinner.start('Validating GAQL queries...');
-  const results = validateText(text);
+  const results = validateText(text, version);
   spinner.stop();
 
   // Output results

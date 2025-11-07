@@ -1,6 +1,11 @@
 import type { ValidationResult } from './validator.js';
 import { validateQuery } from './validator.js';
-import { getFieldsForResource, getResourceNames } from './schema.js';
+import {
+  defaultApiVersion,
+  getFieldsForResource,
+  getResourceNames,
+  type SupportedApiVersion,
+} from './schema.js';
 
 /**
  * Interface for query validation
@@ -67,6 +72,10 @@ export interface QueryBuilderConfig<TResult = unknown, TParsed = unknown> {
    * Automatically validate query when building (default: true)
    */
   autoValidate?: boolean;
+  /**
+   * Google Ads API version (defaults to defaultApiVersion)
+   */
+  apiVersion?: SupportedApiVersion;
 }
 
 /**
@@ -123,6 +132,7 @@ export class GoogleAdsQueryBuilder<TResource extends string = never> {
   private executor?: QueryExecutor<unknown>;
   private parser?: QueryParser<unknown>;
   private autoValidate: boolean;
+  private apiVersion: SupportedApiVersion;
 
   /**
    * Create a new GoogleAdsQueryBuilder instance
@@ -133,6 +143,7 @@ export class GoogleAdsQueryBuilder<TResource extends string = never> {
     this.executor = config.executor;
     this.parser = config.parser;
     this.autoValidate = config.autoValidate !== false;
+    this.apiVersion = config.apiVersion || defaultApiVersion;
   }
 
   /**
@@ -413,23 +424,59 @@ export class GoogleAdsQueryBuilder<TResource extends string = never> {
       return [];
     }
 
-    const fields = getFieldsForResource(this._from);
+    const fields = getFieldsForResource(this._from as any, this.apiVersion);
     return fields.map((f) => f.description);
   }
 
   /**
-   * Get all available resource names
+   * Get all available resource names for the configured API version
    *
    * @returns Array of all available resource names
    *
    * @example
    * ```typescript
-   * const resources = GoogleAdsQueryBuilder.getAvailableResources();
+   * const resources = builder.getAvailableResources();
    * // Returns: ['campaign', 'ad_group', 'ad_group_ad', ...]
    * ```
    */
-  static getAvailableResources(): string[] {
-    return getResourceNames();
+  getAvailableResources(): string[] {
+    return getResourceNames(this.apiVersion);
+  }
+
+  /**
+   * Get all available resource names for a specific API version
+   *
+   * @param apiVersion The API version to get resources for
+   * @returns Array of all available resource names
+   *
+   * @example
+   * ```typescript
+   * const resources = GoogleAdsQueryBuilder.getAvailableResourcesForVersion('21');
+   * // Returns: ['campaign', 'ad_group', 'ad_group_ad', ...]
+   * ```
+   */
+  static getAvailableResourcesForVersion(apiVersion: SupportedApiVersion = defaultApiVersion): string[] {
+    return getResourceNames(apiVersion);
+  }
+
+  /**
+   * Get the current API version
+   *
+   * @returns The API version being used
+   */
+  getApiVersion(): SupportedApiVersion {
+    return this.apiVersion;
+  }
+
+  /**
+   * Set the API version to use
+   *
+   * @param version The API version to use
+   * @returns The builder instance for method chaining
+   */
+  setApiVersion(version: SupportedApiVersion): this {
+    this.apiVersion = version;
+    return this;
   }
 
   /**
@@ -501,6 +548,7 @@ export class GoogleAdsQueryBuilder<TResource extends string = never> {
       executor: this.executor,
       parser: this.parser,
       autoValidate: this.autoValidate,
+      apiVersion: this.apiVersion,
     });
 
     newBuilder._select = [...this._select];

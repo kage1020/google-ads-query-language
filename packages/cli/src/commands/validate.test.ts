@@ -1,6 +1,8 @@
+// @gaql-disable
 import * as fs from 'node:fs/promises';
 import * as core from '@gaql/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { validateCommand } from './validate.js';
 
 // Mock process.exit to prevent tests from exiting
 const mockExit = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
@@ -49,8 +51,6 @@ describe('validate command', () => {
 
       vi.mocked(fs.readFile).mockResolvedValue(mockContent);
 
-      const { validateCommand } = await import('./validate.js');
-
       // Mock console.log to capture output
       const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
@@ -65,8 +65,6 @@ describe('validate command', () => {
 
     it('should handle non-existent file', async () => {
       vi.mocked(fs.readFile).mockRejectedValue(new Error('ENOENT: no such file or directory'));
-
-      const { validateCommand } = await import('./validate.js');
 
       const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
@@ -83,8 +81,6 @@ describe('validate command', () => {
       `;
 
       vi.mocked(fs.readFile).mockResolvedValue(mockContent);
-
-      const { validateCommand } = await import('./validate.js');
 
       const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
@@ -112,8 +108,6 @@ describe('validate command', () => {
 
       vi.mocked(fs.readFile).mockResolvedValue(mockContent);
 
-      const { validateCommand } = await import('./validate.js');
-
       const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
       await validateCommand('test.ts', { apiVersion: '21', format: 'json', color: false });
@@ -134,8 +128,6 @@ describe('validate command', () => {
 
     it('should handle empty file', async () => {
       vi.mocked(fs.readFile).mockResolvedValue('');
-
-      const { validateCommand } = await import('./validate.js');
 
       const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
@@ -161,8 +153,6 @@ describe('validate command', () => {
       `;
 
       vi.mocked(fs.readFile).mockResolvedValue(mockContent);
-
-      const { validateCommand } = await import('./validate.js');
 
       const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
@@ -191,27 +181,19 @@ describe('validate command', () => {
 
       vi.mocked(fs.readFile).mockResolvedValue(mockContent);
 
-      const setApiVersionSpy = vi.spyOn(core, 'setApiVersion');
-
-      const { validateCommand } = await import('./validate.js');
-
       const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
       await validateCommand('test.ts', { apiVersion: '19', format: 'text', color: false });
 
-      expect(setApiVersionSpy).toHaveBeenCalledWith('19');
       expect(mockExit).toHaveBeenCalledWith(0);
 
       consoleLogSpy.mockRestore();
-      setApiVersionSpy.mockRestore();
     });
 
     it('should respect --format option for JSON', async () => {
       const mockContent = `const query = \`SELECT campaign.id FROM campaign\`;`;
 
       vi.mocked(fs.readFile).mockResolvedValue(mockContent);
-
-      const { validateCommand } = await import('./validate.js');
 
       const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
@@ -232,8 +214,6 @@ describe('validate command', () => {
 
       vi.mocked(fs.readFile).mockResolvedValue(mockContent);
 
-      const { validateCommand } = await import('./validate.js');
-
       const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
       await validateCommand('test.ts', { apiVersion: '21', format: 'text', color: false });
@@ -252,8 +232,6 @@ describe('validate command', () => {
       const mockContent = `const query = \`SELECT campaign.id FROM campaign\`;`;
 
       vi.mocked(fs.readFile).mockResolvedValue(mockContent);
-
-      const { validateCommand } = await import('./validate.js');
 
       const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
@@ -277,8 +255,6 @@ describe('validate command', () => {
       const mockContent = `const query = \`SELECT campaign.invalid_field FROM campaign\`;`;
 
       vi.mocked(fs.readFile).mockResolvedValue(mockContent);
-
-      const { validateCommand } = await import('./validate.js');
 
       const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
@@ -305,8 +281,6 @@ describe('validate command', () => {
 
       vi.mocked(fs.readFile).mockResolvedValue(mockContent);
 
-      const { validateCommand } = await import('./validate.js');
-
       const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
       await validateCommand('test.ts', { apiVersion: '21', format: 'rich', color: false });
@@ -327,8 +301,6 @@ describe('validate command', () => {
       const mockContent = `const query = \`SELECT campaign.invalid_field FROM campaign\`;`;
 
       vi.mocked(fs.readFile).mockResolvedValue(mockContent);
-
-      const { validateCommand } = await import('./validate.js');
 
       const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
@@ -354,20 +326,14 @@ describe('validate command', () => {
 
       vi.mocked(fs.readFile).mockResolvedValue(mockContent);
 
-      const setApiVersionSpy = vi.spyOn(core, 'setApiVersion');
-
-      const { validateCommand } = await import('./validate.js');
-
       const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
       await validateCommand('test.ts', { apiVersion: '21', format: 'text', color: false });
 
       // Should be called with the provided version
-      expect(setApiVersionSpy).toHaveBeenCalledWith('21');
       expect(mockExit).toHaveBeenCalledWith(0);
 
       consoleLogSpy.mockRestore();
-      setApiVersionSpy.mockRestore();
     });
   });
 
@@ -376,8 +342,6 @@ describe('validate command', () => {
       const mockContent = `const query = \`SELECT campaign.id FROM campaign\`;`;
 
       vi.mocked(fs.readFile).mockResolvedValue(mockContent);
-
-      const { validateCommand } = await import('./validate.js');
 
       const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
@@ -412,8 +376,6 @@ describe('validate command', () => {
 
       vi.mocked(fs.readFile).mockResolvedValue(mockContent);
 
-      const { validateCommand } = await import('./validate.js');
-
       const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
       await validateCommand('test.ts', { apiVersion: '21', format: 'json', color: false });
@@ -439,8 +401,6 @@ describe('validate command', () => {
 
       vi.mocked(fs.readFile).mockResolvedValue(mockContent);
 
-      const { validateCommand } = await import('./validate.js');
-
       const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
       await validateCommand('test.ts', { apiVersion: '21', format: 'json', color: false });
@@ -463,8 +423,6 @@ describe('validate command', () => {
 
       vi.mocked(fs.readFile).mockResolvedValue(mockContent);
 
-      const { validateCommand } = await import('./validate.js');
-
       const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
       await validateCommand('test.ts', { apiVersion: '21', format: 'json', color: false });
@@ -486,8 +444,6 @@ describe('validate command', () => {
       `;
 
       vi.mocked(fs.readFile).mockResolvedValue(mockContent);
-
-      const { validateCommand } = await import('./validate.js');
 
       const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
@@ -513,13 +469,11 @@ describe('validate command', () => {
 
       const validateTextSpy = vi.spyOn(core, 'validateText');
 
-      const { validateCommand } = await import('./validate.js');
-
       const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
       await validateCommand('test.ts', { apiVersion: '21', format: 'json', color: false });
 
-      expect(validateTextSpy).toHaveBeenCalledWith(mockContent);
+      expect(validateTextSpy).toHaveBeenCalledWith(mockContent, '21');
       expect(mockExit).toHaveBeenCalledWith(0);
 
       consoleLogSpy.mockRestore();
@@ -533,8 +487,6 @@ describe('validate command', () => {
       `;
 
       vi.mocked(fs.readFile).mockResolvedValue(mockContent);
-
-      const { validateCommand } = await import('./validate.js');
 
       const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
