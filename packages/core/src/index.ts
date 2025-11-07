@@ -1,5 +1,13 @@
-// Schema exports
-
+// Builder exports
+export {
+  createQueryBuilder,
+  DefaultQueryValidator,
+  GoogleAdsQueryBuilder,
+  type QueryBuilderConfig,
+  type QueryExecutor,
+  type QueryParser,
+  type QueryValidator,
+} from './builder.js';
 // Parser exports
 export {
   type CompletionItem,

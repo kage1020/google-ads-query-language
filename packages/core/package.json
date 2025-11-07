@@ -48,6 +48,10 @@
     "./parser": {
       "import": "./dist/parser.js",
       "types": "./dist/parser.d.ts"
+    },
+    "./builder": {
+      "import": "./dist/builder.js",
+      "types": "./dist/builder.d.ts"
     }
   },
   "files": [
