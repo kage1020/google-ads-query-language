@@ -382,8 +382,8 @@ function generateResourceTypes(resourcesByVersion) {
 
   console.log(`   Found ${sortedResources.length} unique resources across all API versions`);
 
-  // Generate Field type mapping
-  const fieldMappings = sortedResources
+  // Generate Field interface properties
+  const fieldInterfaceProps = sortedResources
     .map((resource) => {
       const pascalCase = toPascalCase(resource);
       const types = [];
@@ -399,13 +399,13 @@ function generateResourceTypes(resourcesByVersion) {
       }
 
       if (types.length === 0) return null;
-      return `  : TResource extends '${resource}'\n    ? ${types.join(' | ')}`;
+      return `  ${resource}: ${types.join(' | ')};`;
     })
     .filter(Boolean)
     .join('\n');
 
-  // Generate Metric type mapping
-  const metricMappings = sortedResources
+  // Generate Metric interface properties
+  const metricInterfaceProps = sortedResources
     .map((resource) => {
       const pascalCase = toPascalCase(resource);
       const types = [];
@@ -421,13 +421,13 @@ function generateResourceTypes(resourcesByVersion) {
       }
 
       if (types.length === 0) return null;
-      return `  : TResource extends '${resource}'\n    ? ${types.join(' | ')}`;
+      return `  ${resource}: ${types.join(' | ')};`;
     })
     .filter(Boolean)
     .join('\n');
 
-  // Generate Segment type mapping
-  const segmentMappings = sortedResources
+  // Generate Segment interface properties
+  const segmentInterfaceProps = sortedResources
     .map((resource) => {
       const pascalCase = toPascalCase(resource);
       const types = [];
@@ -443,7 +443,7 @@ function generateResourceTypes(resourcesByVersion) {
       }
 
       if (types.length === 0) return null;
-      return `  : TResource extends '${resource}'\n    ? ${types.join(' | ')}`;
+      return `  ${resource}: ${types.join(' | ')};`;
     })
     .filter(Boolean)
     .join('\n');
@@ -464,31 +464,52 @@ type SegmentV20 = fieldsV20.Segment;
 type SegmentV21 = fieldsV21.Segment;
 
 /**
- * Map resource name to its corresponding Field type from google-ads-api
+ * Static mapping of resource names to their Field types
  * Supports all ${sortedResources.length} resources across API versions 19, 20, and 21
  */
-export type ResourceFieldMap<TResource extends string> = TResource extends 'campaign'
-  ? fieldsV19.CampaignField | fieldsV20.CampaignField | fieldsV21.CampaignField
-${fieldMappings}
-    : never;
+interface ResourceFieldMapInterface {
+${fieldInterfaceProps}
+}
+
+/**
+ * Static mapping of resource names to their Metric types
+ * Falls back to global Metric type for resources without specific metrics
+ */
+interface ResourceMetricMapInterface {
+${metricInterfaceProps}
+}
+
+/**
+ * Static mapping of resource names to their Segment types
+ * Falls back to global Segment type for resources without specific segments
+ */
+interface ResourceSegmentMapInterface {
+${segmentInterfaceProps}
+}
+
+/**
+ * Map resource name to its corresponding Field type from google-ads-api
+ * Uses static interface lookup for better TypeScript performance
+ */
+export type ResourceFieldMap<TResource extends string> = TResource extends keyof ResourceFieldMapInterface
+  ? ResourceFieldMapInterface[TResource]
+  : never;
 
 /**
  * Map resource name to its corresponding Metric type from google-ads-api
- * Falls back to global Metric type if resource-specific type not found
+ * Uses static interface lookup for better TypeScript performance
  */
-export type ResourceMetricMap<TResource extends string> = TResource extends 'campaign'
-  ? fieldsV19.CampaignMetric | fieldsV20.CampaignMetric | fieldsV21.CampaignMetric
-${metricMappings}
-    : MetricV19 | MetricV20 | MetricV21;
+export type ResourceMetricMap<TResource extends string> = TResource extends keyof ResourceMetricMapInterface
+  ? ResourceMetricMapInterface[TResource]
+  : MetricV19 | MetricV20 | MetricV21;
 
 /**
  * Map resource name to its corresponding Segment type from google-ads-api
- * Falls back to global Segment type if resource-specific type not found
+ * Uses static interface lookup for better TypeScript performance
  */
-export type ResourceSegmentMap<TResource extends string> = TResource extends 'campaign'
-  ? fieldsV19.CampaignSegment | fieldsV20.CampaignSegment | fieldsV21.CampaignSegment
-${segmentMappings}
-    : SegmentV19 | SegmentV20 | SegmentV21;
+export type ResourceSegmentMap<TResource extends string> = TResource extends keyof ResourceSegmentMapInterface
+  ? ResourceSegmentMapInterface[TResource]
+  : SegmentV19 | SegmentV20 | SegmentV21;
 `;
 
   // Write to generated file
