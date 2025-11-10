@@ -119,7 +119,7 @@
     "@gaql/core": "workspace:*",
     "@types/node": "^24.9.1",
     "@types/vscode": "^1.105.0",
-    "@vitest/ui": "^4.0.3",
+    "@vitest/ui": "^4.0.8",
     "@vscode/vsce": "^3.6.2",
     "happy-dom": "^20.0.8",
     "typescript": "^5.9.3",
