@@ -72,6 +72,6 @@
     "google-ads-api-v20": "npm:google-ads-api@^20.0.1",
     "google-ads-api-v21": "npm:google-ads-api@^21.0.1",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.3"
+    "vitest": "^4.0.8"
   }
 }
