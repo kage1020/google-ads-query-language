@@ -1,4 +1,10 @@
-import { getFieldsForResource, getResourceNames } from './schema.js';
+import { extractDottedIdentifiers, extractSelectClause, extractWhereClause } from './parser.js';
+import {
+  getFieldsForResource,
+  getResourceNames,
+  type ResourceName,
+  type SupportedApiVersion,
+} from './schema.js';
 
 /**
  * Validation error types
@@ -43,7 +49,32 @@ export interface ValidationResult {
 function stripTemplateLiteralInterpolations(query: string): string {
   // Replace ${...} with a placeholder to avoid validating interpolated expressions
   // We use a string literal placeholder to maintain query structure
-  return query.replace(/\$\{(?:[^{}]|\{[^}]*\})*\}/g, "'__PLACEHOLDER__'");
+  // Manual parsing instead of regex to avoid polynomial backtracking (ReDoS)
+  const parts: string[] = [];
+  let i = 0;
+  while (i < query.length) {
+    if (query[i] === '$' && i + 1 < query.length && query[i + 1] === '{') {
+      // Found ${, find the matching } by tracking brace depth
+      let depth = 1;
+      let j = i + 2;
+      while (j < query.length && depth > 0) {
+        if (query[j] === '{') depth++;
+        else if (query[j] === '}') depth--;
+        j++;
+      }
+      if (depth === 0) {
+        parts.push("'__PLACEHOLDER__'");
+        i = j;
+      } else {
+        parts.push(query[i]);
+        i++;
+      }
+    } else {
+      parts.push(query[i]);
+      i++;
+    }
+  }
+  return parts.join('');
 }
 
 /**
@@ -51,7 +82,10 @@ function stripTemplateLiteralInterpolations(query: string): string {
  * @param query The GAQL query string to validate
  * @returns Validation result with errors if any
  */
-export function validateQuery(query: string): ValidationResult {
+export function validateQuery<T extends SupportedApiVersion>(
+  query: string,
+  version: T,
+): ValidationResult {
   // Strip template literal interpolations before validation
   const cleanedQuery = stripTemplateLiteralInterpolations(query);
 
@@ -95,8 +129,8 @@ export function validateQuery(query: string): ValidationResult {
     return { valid: false, errors };
   }
 
-  const resourceName = fromMatch[1];
-  const availableResources = getResourceNames();
+  const resourceName = fromMatch[1] as ResourceName<T>;
+  const availableResources = getResourceNames(version);
 
   // Validate resource name
   if (!availableResources.includes(resourceName)) {
@@ -118,14 +152,14 @@ export function validateQuery(query: string): ValidationResult {
   }
 
   // Validate fields in SELECT clause
-  const selectMatch = cleanedQuery.match(/\bSELECT\s+(.+?)\s+FROM/is);
-  if (selectMatch) {
-    const selectFields = selectMatch[1]
+  const selectClause = extractSelectClause(cleanedQuery);
+  if (selectClause) {
+    const selectFields = selectClause
       .split(',')
       .map((f) => f.trim())
       .filter((f) => f.length > 0);
 
-    const validFields = getFieldsForResource(resourceName);
+    const validFields = getFieldsForResource(resourceName, version);
     const validFieldDescriptions = validFields.map((f) => f.description);
 
     for (const field of selectFields) {
@@ -150,14 +184,12 @@ export function validateQuery(query: string): ValidationResult {
   }
 
   // Validate fields in WHERE clause
-  const whereMatch = cleanedQuery.match(/\bWHERE\s+(.+?)(\s+ORDER\s+BY|\s+LIMIT|$)/is);
-  if (whereMatch) {
-    const whereClause = whereMatch[1];
+  const whereClause = extractWhereClause(cleanedQuery);
+  if (whereClause) {
     // Extract field references (e.g., campaign.id, metrics.clicks)
-    const fieldRegex = /([a-z_][a-z0-9_]*\.[a-z_][a-z0-9_]*)/gi;
-    const whereFields = whereClause.match(fieldRegex) || [];
+    const whereFields = extractDottedIdentifiers(whereClause);
 
-    const validFields = getFieldsForResource(resourceName);
+    const validFields = getFieldsForResource(resourceName, version);
     const validFieldDescriptions = validFields.map((f) => f.description);
 
     for (const field of whereFields) {
@@ -258,22 +290,29 @@ function levenshteinDistance(a: string, b: string): number {
  * @param text The text containing GAQL queries
  * @returns Array of validation results with query positions
  */
-export function validateText(
+export function validateText<T extends SupportedApiVersion>(
   text: string,
+  version: T,
 ): Array<ValidationResult & { query: string; line: number }> {
   const results: Array<ValidationResult & { query: string; line: number }> = [];
 
   // Extract queries from template literals
-  const queryRegex = /`([^`]*SELECT[^`]*FROM[^`]*)`/gi;
+  // Use a simple regex to match backtick strings, then check for SELECT/FROM separately
+  // to avoid polynomial backtracking (ReDoS) with nested quantifiers
+  const backtickRegex = /`([^`]*)`/g;
   let match: RegExpExecArray | null;
 
   // biome-ignore lint/suspicious/noAssignInExpressions: needed for regex matching
-  while ((match = queryRegex.exec(text)) !== null) {
-    const query = match[1].trim();
+  while ((match = backtickRegex.exec(text)) !== null) {
+    const content = match[1];
+    if (!/SELECT/i.test(content) || !/FROM/i.test(content)) {
+      continue;
+    }
+    const query = content.trim();
     const startPos = match.index;
     const lineNumber = text.substring(0, startPos).split('\n').length - 1;
 
-    const result = validateQuery(query);
+    const result = validateQuery(query, version);
     results.push({
       ...result,
       query,

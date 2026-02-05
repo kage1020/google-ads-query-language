@@ -5,7 +5,7 @@ describe('validator.ts', () => {
   describe('Query Validation - Valid Queries', () => {
     it('should validate a correct GAQL query', () => {
       const query = 'SELECT campaign.id, campaign.name FROM campaign';
-      const result = validateQuery(query);
+      const result = validateQuery(query, '21');
 
       expect(result.valid).toBe(true);
       expect(result.errors).toHaveLength(0);
@@ -14,7 +14,7 @@ describe('validator.ts', () => {
     it('should validate query with WHERE clause', () => {
       const query =
         'SELECT campaign.id, campaign.name FROM campaign WHERE campaign.status = "ENABLED"';
-      const result = validateQuery(query);
+      const result = validateQuery(query, '21');
 
       expect(result.valid).toBe(true);
       expect(result.errors).toHaveLength(0);
@@ -22,7 +22,7 @@ describe('validator.ts', () => {
 
     it('should validate query with metrics', () => {
       const query = 'SELECT campaign.id, metrics.impressions, metrics.clicks FROM campaign';
-      const result = validateQuery(query);
+      const result = validateQuery(query, '21');
 
       expect(result.valid).toBe(true);
       expect(result.errors).toHaveLength(0);
@@ -33,7 +33,7 @@ describe('validator.ts', () => {
         campaign.id,
         campaign.name
       FROM campaign`;
-      const result = validateQuery(query);
+      const result = validateQuery(query, '21');
 
       expect(result.valid).toBe(true);
       expect(result.errors).toHaveLength(0);
@@ -43,7 +43,7 @@ describe('validator.ts', () => {
   describe('Query Validation - Missing Clauses', () => {
     it('should detect missing SELECT clause', () => {
       const query = 'FROM campaign';
-      const result = validateQuery(query);
+      const result = validateQuery(query, '21');
 
       expect(result.valid).toBe(false);
       expect(result.errors.length).toBeGreaterThan(0);
@@ -53,7 +53,7 @@ describe('validator.ts', () => {
 
     it('should detect missing FROM clause', () => {
       const query = 'SELECT campaign.id, campaign.name';
-      const result = validateQuery(query);
+      const result = validateQuery(query, '21');
 
       expect(result.valid).toBe(false);
       expect(result.errors.length).toBeGreaterThan(0);
@@ -63,7 +63,7 @@ describe('validator.ts', () => {
 
     it('should detect both missing clauses', () => {
       const query = 'WHERE campaign.status = "ENABLED"';
-      const result = validateQuery(query);
+      const result = validateQuery(query, '21');
 
       expect(result.valid).toBe(false);
       expect(result.errors.length).toBeGreaterThanOrEqual(2);
@@ -76,7 +76,7 @@ describe('validator.ts', () => {
   describe('Query Validation - Invalid Resource', () => {
     it('should detect invalid resource name', () => {
       const query = 'SELECT field FROM invalid_resource_name';
-      const result = validateQuery(query);
+      const result = validateQuery(query, '21');
 
       expect(result.valid).toBe(false);
       const invalidResourceError = result.errors.find(
@@ -88,7 +88,7 @@ describe('validator.ts', () => {
 
     it('should suggest similar resource names', () => {
       const query = 'SELECT field FROM campain'; // Typo: campain instead of campaign
-      const result = validateQuery(query);
+      const result = validateQuery(query, '21');
 
       expect(result.valid).toBe(false);
       const invalidResourceError = result.errors.find(
@@ -105,7 +105,7 @@ describe('validator.ts', () => {
   describe('Query Validation - Invalid Fields', () => {
     it('should detect invalid field name', () => {
       const query = 'SELECT campaign.invalid_field FROM campaign';
-      const result = validateQuery(query);
+      const result = validateQuery(query, '21');
 
       expect(result.valid).toBe(false);
       const invalidFieldError = result.errors.find(
@@ -117,7 +117,7 @@ describe('validator.ts', () => {
 
     it('should suggest similar field names', () => {
       const query = 'SELECT campaign.nam FROM campaign'; // Typo: nam instead of name
-      const result = validateQuery(query);
+      const result = validateQuery(query, '21');
 
       expect(result.valid).toBe(false);
       const invalidFieldError = result.errors.find(
@@ -133,7 +133,7 @@ describe('validator.ts', () => {
     it('should validate multiple fields', () => {
       const query =
         'SELECT campaign.id, campaign.invalid1, campaign.name, campaign.invalid2 FROM campaign';
-      const result = validateQuery(query);
+      const result = validateQuery(query, '21');
 
       expect(result.valid).toBe(false);
       const invalidFieldErrors = result.errors.filter(
@@ -146,7 +146,7 @@ describe('validator.ts', () => {
   describe('Query Validation - Error Information', () => {
     it('should provide line and column information', () => {
       const query = 'SELECT campaign.invalid FROM campaign';
-      const result = validateQuery(query);
+      const result = validateQuery(query, '21');
 
       expect(result.valid).toBe(false);
       expect(result.errors[0]).toHaveProperty('line');
@@ -158,7 +158,7 @@ describe('validator.ts', () => {
 
     it('should have descriptive error messages', () => {
       const query = 'SELECT campaign.invalid FROM campaign';
-      const result = validateQuery(query);
+      const result = validateQuery(query, '21');
 
       expect(result.valid).toBe(false);
       expect(result.errors[0].message).toBeTruthy();
@@ -174,7 +174,7 @@ describe('validator.ts', () => {
           FROM campaign
         \`;
       `;
-      const results = validateText(text);
+      const results = validateText(text, '21');
 
       expect(results.length).toBeGreaterThan(0);
       expect(results[0].valid).toBe(true);
@@ -185,7 +185,7 @@ describe('validator.ts', () => {
         const query1 = \`SELECT campaign.id FROM campaign\`;
         const query2 = \`SELECT ad_group.id FROM ad_group\`;
       `;
-      const results = validateText(text);
+      const results = validateText(text, '21');
 
       expect(results.length).toBe(2);
       expect(results[0].valid).toBe(true);
@@ -199,7 +199,7 @@ describe('validator.ts', () => {
           FROM campaign
         \`;
       `;
-      const results = validateText(text);
+      const results = validateText(text, '21');
 
       expect(results.length).toBeGreaterThan(0);
       expect(results[0].valid).toBe(false);
@@ -211,7 +211,7 @@ describe('validator.ts', () => {
         const message = \`Hello World\`;
         const query = \`SELECT campaign.id FROM campaign\`;
       `;
-      const results = validateText(text);
+      const results = validateText(text, '21');
 
       // Should only find the actual GAQL query
       expect(results.length).toBe(1);
@@ -230,7 +230,7 @@ describe('validator.ts', () => {
             campaign.status = "ENABLED"
         \`;
       `;
-      const results = validateText(text);
+      const results = validateText(text, '21');
 
       expect(results.length).toBeGreaterThan(0);
       expect(results[0].valid).toBe(true);
@@ -248,7 +248,7 @@ describe('validator.ts', () => {
         WHERE
           customer_client.client_customer = '\${this.customerId}'
       `;
-      const result = validateQuery(query);
+      const result = validateQuery(query, '21');
 
       expect(result.valid).toBe(true);
       expect(result.errors).toHaveLength(0);
@@ -264,7 +264,7 @@ describe('validator.ts', () => {
         WHERE
           campaign.name LIKE '%\${searchTerm}%'
       `;
-      const result = validateQuery(query);
+      const result = validateQuery(query, '21');
 
       expect(result.valid).toBe(true);
       expect(result.errors).toHaveLength(0);
@@ -281,7 +281,7 @@ describe('validator.ts', () => {
           campaign.id = '\${campaignId}'
           AND campaign.status = '\${status}'
       `;
-      const result = validateQuery(query);
+      const result = validateQuery(query, '21');
 
       expect(result.valid).toBe(true);
       expect(result.errors).toHaveLength(0);
@@ -296,7 +296,7 @@ describe('validator.ts', () => {
         WHERE
           campaign.id = '\${campaignId}'
       `;
-      const result = validateQuery(query);
+      const result = validateQuery(query, '21');
 
       expect(result.valid).toBe(false);
       const invalidFieldError = result.errors.find(
@@ -310,7 +310,7 @@ describe('validator.ts', () => {
   describe('Edge Cases', () => {
     it('should handle empty query', () => {
       const query = '';
-      const result = validateQuery(query);
+      const result = validateQuery(query, '21');
 
       expect(result.valid).toBe(false);
       expect(result.errors.length).toBeGreaterThan(0);
@@ -318,21 +318,21 @@ describe('validator.ts', () => {
 
     it('should handle query with only whitespace', () => {
       const query = '   \n  \t  ';
-      const result = validateQuery(query);
+      const result = validateQuery(query, '21');
 
       expect(result.valid).toBe(false);
     });
 
     it('should be case-insensitive for keywords', () => {
       const query = 'select campaign.id from campaign';
-      const result = validateQuery(query);
+      const result = validateQuery(query, '21');
 
       expect(result.valid).toBe(true);
     });
 
     it('should handle extra whitespace', () => {
       const query = '  SELECT    campaign.id   ,   campaign.name   FROM    campaign  ';
-      const result = validateQuery(query);
+      const result = validateQuery(query, '21');
 
       expect(result.valid).toBe(true);
     });

@@ -1,6 +1,22 @@
+import type { fields as fieldsV19 } from 'google-ads-api-v19';
+import type { fields as fieldsV20 } from 'google-ads-api-v20';
+import type { fields as fieldsV21 } from 'google-ads-api-v21';
 import fieldsDataV19 from './schemas/fields-v19.json' with { type: 'json' };
 import fieldsDataV20 from './schemas/fields-v20.json' with { type: 'json' };
 import fieldsDataV21 from './schemas/fields-v21.json' with { type: 'json' };
+
+export const SupportedApiVersions = ['19', '20', '21'] as const;
+export type SupportedApiVersion = (typeof SupportedApiVersions)[number];
+
+export type ResourceNameV19 = fieldsV19.Resource;
+export type ResourceNameV20 = fieldsV20.Resource;
+export type ResourceNameV21 = fieldsV21.Resource;
+
+export type ResourceName<T extends SupportedApiVersion> = T extends '19'
+  ? ResourceNameV19
+  : T extends '20'
+    ? ResourceNameV20
+    : ResourceNameV21;
 
 export interface FieldDefinition {
   name: string;
@@ -9,8 +25,8 @@ export interface FieldDefinition {
   documentation?: string;
 }
 
-interface FieldsDataType {
-  [resourceName: string]: {
+type FieldsDataType<T extends SupportedApiVersion> = {
+  [resourceName in ResourceName<T>]: {
     fields: {
       [attributeResource: string]: {
         [fieldName: string]: string;
@@ -23,44 +39,15 @@ interface FieldsDataType {
       [fieldName: string]: string;
     };
   };
-}
-
-export const SupportedApiVersions = ['19', '20', '21'] as const;
-export type SupportedApiVersion = (typeof SupportedApiVersions)[number];
-
-// Version management
-let currentApiVersion: SupportedApiVersion = '21';
-export const defaultApiVersion: SupportedApiVersion = '21';
-
-const versionSchemas: Record<SupportedApiVersion, FieldsDataType> = {
-  '19': fieldsDataV19 as FieldsDataType,
-  '20': fieldsDataV20 as FieldsDataType,
-  '21': fieldsDataV21 as FieldsDataType,
 };
 
-/**
- * Set the Google Ads API version to use
- * @param version API version
- */
-export function setApiVersion(version: SupportedApiVersion): void {
-  currentApiVersion = version;
-}
+export const defaultApiVersion: SupportedApiVersion = '21';
 
-/**
- * Get the current Google Ads API version
- * @returns Current API version
- */
-export function getApiVersion(): string {
-  return currentApiVersion;
-}
-
-/**
- * Get the fields data for the current API version
- * @returns Fields data for the current version
- */
-function getFieldsData(): FieldsDataType {
-  return versionSchemas[currentApiVersion];
-}
+const versionSchemas: Record<SupportedApiVersion, FieldsDataType<SupportedApiVersion>> = {
+  '19': fieldsDataV19 as FieldsDataType<'19'>,
+  '20': fieldsDataV20 as FieldsDataType<'20'>,
+  '21': fieldsDataV21 as FieldsDataType<'21'>,
+};
 
 // GAQL Keywords
 export const GAQL_KEYWORDS = [
@@ -100,12 +87,13 @@ export const STATUS_VALUES = ['ENABLED', 'PAUSED', 'REMOVED', 'UNKNOWN', 'UNSPEC
 export const OPERATORS = ['=', '!=', '>', '<', '>=', '<=', 'IN', 'NOT IN', 'LIKE', 'NOT LIKE'];
 
 // Get fields for a specific resource (including attributed resources)
-export function getFieldsForResource(resourceName: string): FieldDefinition[] {
-  const fieldsData = getFieldsData();
+export function getFieldsForResource<T extends SupportedApiVersion>(
+  resourceName: ResourceName<T>,
+  version: T,
+): FieldDefinition[] {
+  const fieldsData = versionSchemas[version];
   const data = fieldsData[resourceName];
-  if (!data || !data.fields) {
-    return [];
-  }
+  if (!data) return [];
 
   // Collect all fields from all attributed resources
   const allFields: FieldDefinition[] = [];
@@ -144,11 +132,12 @@ export function getFieldsForResource(resourceName: string): FieldDefinition[] {
 }
 
 // Get fields for a specific resource prefix (e.g., "customer" when FROM campaign)
-export function getFieldsForResourcePrefix(
-  fromResource: string,
+export function getFieldsForResourcePrefix<T extends SupportedApiVersion>(
+  fromResource: ResourceName<T>,
   resourcePrefix: string,
+  version: T,
 ): FieldDefinition[] {
-  const fieldsData = getFieldsData();
+  const fieldsData = versionSchemas[version];
   const data = fieldsData[fromResource];
   if (!data || !data.fields) return [];
 
@@ -163,18 +152,12 @@ export function getFieldsForResourcePrefix(
   }));
 }
 
-// Get all available resource prefixes for a FROM resource
-export function getResourcePrefixesForResource(resourceName: string): string[] {
-  const fieldsData = getFieldsData();
-  const data = fieldsData[resourceName];
-  if (!data || !data.fields) return [];
-
-  return Object.keys(data.fields).sort();
-}
-
 // Get metrics fields for a specific resource
-export function getMetricsForResource(resourceName: string): FieldDefinition[] {
-  const fieldsData = getFieldsData();
+export function getMetricsForResource<T extends SupportedApiVersion>(
+  resourceName: ResourceName<T>,
+  version: T,
+): FieldDefinition[] {
+  const fieldsData = versionSchemas[version];
   const data = fieldsData[resourceName];
   if (!data || !data.metrics) return [];
 
@@ -187,8 +170,11 @@ export function getMetricsForResource(resourceName: string): FieldDefinition[] {
 }
 
 // Get segments fields for a specific resource
-export function getSegmentsForResource(resourceName: string): FieldDefinition[] {
-  const fieldsData = getFieldsData();
+export function getSegmentsForResource<T extends SupportedApiVersion>(
+  resourceName: ResourceName<T>,
+  version: T,
+): FieldDefinition[] {
+  const fieldsData = versionSchemas[version];
   const data = fieldsData[resourceName];
   if (!data || !data.segments) return [];
 
@@ -201,20 +187,23 @@ export function getSegmentsForResource(resourceName: string): FieldDefinition[] 
 }
 
 // Get all available resource names
-export function getResourceNames(): string[] {
-  const fieldsData = getFieldsData();
-  return Object.keys(fieldsData).sort();
+export function getResourceNames<T extends SupportedApiVersion>(version: T): ResourceName<T>[] {
+  const fieldsData = versionSchemas[version];
+  return Object.keys(fieldsData).sort() as ResourceName<T>[];
 }
 
 // Get resource information
-export function getResourceInfo(resourceName: string): {
+export function getResourceInfo<T extends SupportedApiVersion>(
+  resourceName: ResourceName<T>,
+  version: T,
+): {
   name: string;
   fieldCount: number;
   metricCount: number;
   segmentCount: number;
   attributedResources: string[];
 } | null {
-  const fieldsData = getFieldsData();
+  const fieldsData = versionSchemas[version];
   const data = fieldsData[resourceName];
   if (!data) return null;
 
@@ -234,3 +223,5 @@ export function getResourceInfo(resourceName: string): {
     attributedResources,
   };
 }
+
+export { fieldsDataV19, fieldsDataV20, fieldsDataV21 };

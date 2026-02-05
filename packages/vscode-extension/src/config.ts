@@ -1,6 +1,15 @@
 import { defaultApiVersion, type SupportedApiVersion } from '@gaql/core';
 import * as vscode from 'vscode';
 
+const configPrefix = 'gaql' as const;
+export const configName = {
+  prefix: configPrefix,
+  apiVersion: 'apiVersion',
+  language: 'language',
+  enabled: 'enabled',
+  activationMode: 'activationMode',
+} as const;
+
 /**
  * Get configuration value
  * @param key Configuration key (without prefix)
@@ -8,7 +17,7 @@ import * as vscode from 'vscode';
  * @returns Configuration value
  */
 function getConfigValue<T>(key: string, defaultValue: T): T {
-  const config = vscode.workspace.getConfiguration('gaql');
+  const config = vscode.workspace.getConfiguration(configPrefix);
   return config.get<T>(key, defaultValue);
 }
 
@@ -16,26 +25,26 @@ function getConfigValue<T>(key: string, defaultValue: T): T {
  * Get whether GAQL validation is enabled
  */
 export function getEnabled(): boolean {
-  return getConfigValue('enabled', true);
+  return getConfigValue(configName.enabled, true);
 }
 
 /**
  * Get activation mode
  */
 export function getActivationMode(): 'always' | 'onDemand' {
-  return getConfigValue<'always' | 'onDemand'>('activationMode', 'onDemand');
+  return getConfigValue<'always' | 'onDemand'>(configName.activationMode, 'onDemand');
 }
 
 /**
  * Get API version
  */
 export function getApiVersion(): SupportedApiVersion {
-  return getConfigValue<SupportedApiVersion>('apiVersion', defaultApiVersion);
+  return getConfigValue<SupportedApiVersion>(configName.apiVersion, defaultApiVersion);
 }
 
 /**
  * Get language setting
  */
 export function getLanguage(): string {
-  return getConfigValue('language', 'auto');
+  return getConfigValue(configName.language, 'auto');
 }
