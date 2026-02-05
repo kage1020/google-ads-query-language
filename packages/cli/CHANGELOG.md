@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.4] - 2026-02-05
+
+### Changed
+
+- Update `@gaql/core` to `0.1.4`
+
 ## [0.1.3] - 2025-10-26
 
 ## Changed
@@ -51,6 +57,7 @@
 
 ---
 
+[0.1.4]: https://github.com/kage1020/google-ads-query-language/releases/tag/cli-v0.1.4
 [0.1.3]: https://github.com/kage1020/google-ads-query-language/releases/tag/cli-v0.1.3
 [0.1.2]: https://github.com/kage1020/google-ads-query-language/releases/tag/cli-v0.1.2
 [0.1.1]: https://github.com/kage1020/google-ads-query-language/releases/tag/cli-v0.1.1
