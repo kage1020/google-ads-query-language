@@ -1,10 +1,11 @@
 # Changelog
 
-## [0.1.4] - 2025-10-29
+## [0.1.4] - 2026-02-05
 
 ### Changed
 
 - Removed stateful api version management in favor of explicit version parameters in functions
+- Update dependencies
 
 ## [0.1.3] - 2025-10-26
 

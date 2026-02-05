@@ -1,10 +1,10 @@
 # Changelog
 
-## [0.1.4] - 2025-10-29
+## [0.1.4] - 2026-02-05
 
 ### Changed
 
-- Update `@gaql/core` to v0.1.4
+- Update `@gaql/core` to `0.1.4`
 
 ## [0.1.3] - 2025-10-26
 
