@@ -321,7 +321,10 @@ export function extractWhereClause(query: string): string | null {
     let afterOrder = orderIdx + 5;
     while (afterOrder < upper.length && isWhitespaceChar(upper.charCodeAt(afterOrder)))
       afterOrder++;
-    if (upper.startsWith('BY', afterOrder) && (afterOrder + 2 >= upper.length || !isIdentCharCode(upper.charCodeAt(afterOrder + 2)))) {
+    if (
+      upper.startsWith('BY', afterOrder) &&
+      (afterOrder + 2 >= upper.length || !isIdentCharCode(upper.charCodeAt(afterOrder + 2)))
+    ) {
       end = orderIdx;
     }
   }
