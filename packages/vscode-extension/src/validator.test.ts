@@ -4,6 +4,18 @@ import * as vscode from 'vscode';
 import { initializeLocalization } from './localization.js';
 import { GAQLValidator } from './validator.js';
 
+// Settings returned by the mocked vscode configuration. Tests mutate this to
+// exercise the different activation modes.
+const { mockSettings } = vi.hoisted(() => ({
+  mockSettings: {} as Record<string, unknown>,
+}));
+
+const defaultSettings: Record<string, unknown> = {
+  enabled: true,
+  activationMode: 'always',
+  language: 'ja',
+};
+
 // Mock vscode module
 vi.mock('vscode', async () => {
   const actual = await vi.importActual<typeof import('vscode')>('vscode');
@@ -11,12 +23,7 @@ vi.mock('vscode', async () => {
     ...actual,
     workspace: {
       getConfiguration: vi.fn(() => ({
-        get: vi.fn((key: string) => {
-          if (key === 'enabled') return true;
-          if (key === 'activationMode') return 'always';
-          if (key === 'language') return 'ja';
-          return undefined;
-        }),
+        get: vi.fn((key: string) => mockSettings[key]),
       })),
     },
     env: {
@@ -59,10 +66,36 @@ vi.mock('vscode', async () => {
   };
 });
 
+/**
+ * Run the validator over the given source and return the diagnostics it published.
+ */
+async function collectDiagnostics(documentText: string): Promise<vscode.Diagnostic[]> {
+  const diagnosticCollection = vscode.languages.createDiagnosticCollection('gaql');
+  const validator = new GAQLValidator(diagnosticCollection);
+
+  const document = {
+    getText: () => documentText,
+    uri: { fsPath: 'test.ts' },
+  } as vscode.TextDocument;
+
+  await validator.validateDocument(document);
+
+  const mockSet = diagnosticCollection.set as Mock;
+  const setCalls = mockSet.mock.calls as Array<
+    [uri: vscode.Uri, diagnostics: vscode.Diagnostic[] | undefined]
+  >;
+  expect(setCalls.length).toBeGreaterThan(0);
+
+  const diagnostics = setCalls[setCalls.length - 1][1];
+  expect(diagnostics).toBeDefined();
+  return diagnostics as vscode.Diagnostic[];
+}
+
 describe('GAQLValidator', () => {
   beforeEach(() => {
     // Initialize localization to Japanese for testing
     initializeLocalization('ja');
+    Object.assign(mockSettings, defaultSettings);
   });
 
   describe('Template Literal Interpolations', () => {
@@ -181,6 +214,82 @@ describe('GAQLValidator', () => {
       expect(diagnostic?.message).toBe(
         'リソース「campaign」には「campaign.invalid_field_name」というフィールドは存在しません',
       );
+    });
+  });
+
+  describe('Activation Directives', () => {
+    it('should keep validating the file when @gaql-disable-next-line appears near the top', async () => {
+      const documentText = `
+        // @gaql
+        // @gaql-disable-next-line
+        const first = \`
+          SELECT campaign.first_invalid_field
+          FROM campaign
+        \`;
+        const second = \`
+          SELECT campaign.second_invalid_field
+          FROM campaign
+        \`;
+      `;
+
+      const diagnostics = await collectDiagnostics(documentText);
+
+      const messages = diagnostics.map((d) => d.message).join('\n');
+      expect(messages).not.toContain('first_invalid_field');
+      expect(messages).toContain('second_invalid_field');
+    });
+
+    it('should disable the whole file with @gaql-disable', async () => {
+      const documentText = `
+        // @gaql-disable
+        const query = \`
+          SELECT campaign.invalid_field
+          FROM campaign
+        \`;
+      `;
+
+      const diagnostics = await collectDiagnostics(documentText);
+
+      expect(diagnostics).toHaveLength(0);
+    });
+
+    it('should not activate onDemand validation with @gaql-disable-next-line alone', async () => {
+      mockSettings.activationMode = 'onDemand';
+
+      const documentText = `
+        // @gaql-disable-next-line
+        const query = \`
+          SELECT campaign.invalid_field
+          FROM campaign
+        \`;
+      `;
+
+      const diagnostics = await collectDiagnostics(documentText);
+
+      expect(diagnostics).toHaveLength(0);
+    });
+
+    it('should honor @gaql alongside @gaql-disable-next-line in onDemand mode', async () => {
+      mockSettings.activationMode = 'onDemand';
+
+      const documentText = `
+        // @gaql
+        // @gaql-disable-next-line
+        const first = \`
+          SELECT campaign.first_invalid_field
+          FROM campaign
+        \`;
+        const second = \`
+          SELECT campaign.second_invalid_field
+          FROM campaign
+        \`;
+      `;
+
+      const diagnostics = await collectDiagnostics(documentText);
+
+      const messages = diagnostics.map((d) => d.message).join('\n');
+      expect(messages).not.toContain('first_invalid_field');
+      expect(messages).toContain('second_invalid_field');
     });
   });
 });
