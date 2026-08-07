@@ -4,6 +4,14 @@ import { getActivationMode, getEnabled } from './config.js';
 import { getMessage, MessageKey } from './localization.js';
 
 /**
+ * File-level activation directives. `@gaql-disable-next-line` scopes to a single
+ * query, so it must match neither of these: it may not silence the whole file,
+ * nor turn validation on in `onDemand` mode.
+ */
+const FILE_ENABLE_DIRECTIVE = /@gaql(?:-enable)?\b(?!-)/;
+const FILE_DISABLE_DIRECTIVE = /@gaql-disable\b(?!-next-line)/;
+
+/**
  * GAQL query validator
  */
 export class GAQLValidator {
@@ -62,10 +70,10 @@ export class GAQLValidator {
     let hasDisable = false;
 
     for (const line of lines.slice(0, 10)) {
-      if (line.includes('@gaql-enable') || line.includes('@gaql')) {
+      if (FILE_ENABLE_DIRECTIVE.test(line)) {
         hasEnable = true;
       }
-      if (line.includes('@gaql-disable')) {
+      if (FILE_DISABLE_DIRECTIVE.test(line)) {
         hasDisable = true;
       }
     }

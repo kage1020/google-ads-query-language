@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.5] - 2026-08-07
+
+### Fixed
+
+- `@gaql-disable-next-line` no longer disables validation for the entire file when it appears within the first 10 lines. It now only suppresses the query it precedes, which also makes the "Disable this line" Quick Fix safe to use near the top of a file.
+- `@gaql-disable-next-line` no longer activates validation on its own in `onDemand` mode.
+
 ## [0.1.4] - 2026-02-05
 
 ### Changed
