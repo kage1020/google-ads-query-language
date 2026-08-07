@@ -7,6 +7,10 @@ on:
     paths:
       - 'packages/vscode-extension/**'
       - '.github/workflows/publish-vscode.yml'
+  # Allows re-running a release that the push trigger missed or that failed
+  # before it reached the publish step. The version check below still guards it:
+  # a dispatch on an already-tagged version is a no-op.
+  workflow_dispatch:
 
 permissions:
   contents: write
