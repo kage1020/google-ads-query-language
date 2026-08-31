@@ -4,9 +4,11 @@ import {
   getFieldsForResource,
   getResourceInfo,
   getResourceNames,
+  type ResourceName,
+  type SupportedApiVersion,
 } from '@gaql/core';
 import * as vscode from 'vscode';
-import { getEnabled } from './config.js';
+import { getApiVersion, getEnabled } from './config.js';
 
 export class GAQLHoverProvider implements vscode.HoverProvider {
   public provideHover(
@@ -45,9 +47,10 @@ export class GAQLHoverProvider implements vscode.HoverProvider {
     }
 
     // Check if it's a resource name
-    const resourceNames = getResourceNames();
-    if (resourceNames.includes(word)) {
-      const resourceInfo = getResourceInfo(word);
+    const version = getApiVersion();
+    const resourceNames = getResourceNames(version);
+    if (resourceNames.includes(word as ResourceName<SupportedApiVersion>)) {
+      const resourceInfo = getResourceInfo(word as ResourceName<SupportedApiVersion>, version);
       if (resourceInfo) {
         const markdown = new vscode.MarkdownString();
         markdown.appendMarkdown(`**Resource**: \`${resourceInfo.name}\`\n\n`);
@@ -75,7 +78,7 @@ export class GAQLHoverProvider implements vscode.HoverProvider {
     }
 
     // Get all fields for the resource
-    const fields = getFieldsForResource(resource);
+    const fields = getFieldsForResource(resource, version);
 
     // Find matching field
     const field = fields.find((f) => f.description === word || f.name === word);

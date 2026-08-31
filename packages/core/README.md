@@ -20,10 +20,7 @@ npm install @gaql/core
 ### Basic Validation
 
 ```typescript
-import { validateQuery, setApiVersion } from '@gaql/core';
-
-// Set API version (default: 21)
-setApiVersion('21');
+import { validateQuery } from '@gaql/core';
 
 // Validate a query
 const query = `
@@ -109,12 +106,9 @@ console.log(result.suggestions);
 
 ### Schema Functions
 
-- `setApiVersion(version: '19' | '20' | '21')`: Set the Google Ads API version
-- `getApiVersion()`: Get the current API version
 - `getResourceNames()`: Get all available resource names
 - `getFieldsForResource(resource: string)`: Get all fields for a resource
 - `getFieldsForResourcePrefix(resource: string, prefix: string)`: Get fields for a specific prefix
-- `getResourcePrefixesForResource(resource: string)`: Get all resource prefixes
 - `getMetricsForResource(resource: string)`: Get metrics for a resource
 - `getSegmentsForResource(resource: string)`: Get segments for a resource
 

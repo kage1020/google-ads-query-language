@@ -55,10 +55,7 @@ gaql validate query.ts --format json
 ### Programmatic Usage
 
 ```typescript
-import { validateQuery, setApiVersion } from '@gaql/core';
-
-// Set API version
-setApiVersion('21');
+import { validateQuery } from '@gaql/core';
 
 // Validate a query
 const query = `

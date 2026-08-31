@@ -1,6 +1,6 @@
 import { getCompletions } from '@gaql/core';
 import * as vscode from 'vscode';
-import { getActivationMode, getEnabled } from './config.js';
+import { getActivationMode, getApiVersion, getEnabled } from './config.js';
 
 export class GAQLCompletionProvider implements vscode.CompletionItemProvider {
   public provideCompletionItems(
@@ -29,7 +29,8 @@ export class GAQLCompletionProvider implements vscode.CompletionItemProvider {
     }
 
     // Use @gaql/core to get completions
-    const result = getCompletions(query, cursorOffset);
+    const version = getApiVersion();
+    const result = getCompletions(query, cursorOffset, version);
 
     // Convert to VSCode CompletionItems
     return result.suggestions.map((suggestion) => {

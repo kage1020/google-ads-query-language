@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Removed stateful api version management in favor of explicit version parameters in functions
 - Update dependencies
 
 ## [0.1.3] - 2025-10-26
@@ -39,7 +40,6 @@
 
 ### Features
 
-- `setApiVersion()` / `getApiVersion()` - API version management
 - `getResourceNames()` - Get available resource names
 - `getFieldsForResource()` - Get fields for a specific resource
 - `getMetricsForResource()` - Get metrics for a resource

@@ -120,7 +120,7 @@ describe('GAQLValidator', () => {
         uri: { fsPath: 'test.ts' },
       } as vscode.TextDocument;
 
-      await validator.validateDocument(document);
+      await validator.validateDocument(document, '21');
 
       const mockSet = diagnosticCollection.set as Mock;
       const setCalls = mockSet.mock.calls as Array<
@@ -155,7 +155,7 @@ describe('GAQLValidator', () => {
         uri: { fsPath: 'test.ts' },
       } as vscode.TextDocument;
 
-      await validator.validateDocument(document);
+      await validator.validateDocument(document, '21');
 
       const mockSet = diagnosticCollection.set as Mock;
       const setCalls = mockSet.mock.calls as Array<
@@ -196,7 +196,7 @@ describe('GAQLValidator', () => {
         uri: { fsPath: 'test.ts' },
       } as vscode.TextDocument;
 
-      await validator.validateDocument(document);
+      await validator.validateDocument(document, '21');
 
       const mockSet = diagnosticCollection.set as Mock;
       const setCalls = mockSet.mock.calls as Array<

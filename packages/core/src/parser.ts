@@ -5,7 +5,9 @@ import {
   getFieldsForResourcePrefix,
   getResourceNames,
   OPERATORS,
+  type ResourceName,
   STATUS_VALUES,
+  type SupportedApiVersion,
 } from './schema.js';
 
 /**
@@ -94,7 +96,11 @@ export function determineContext(query: string, position: number): QueryContext 
  * @param position The cursor position (0-based index)
  * @returns Parse result with suggestions
  */
-export function getCompletions(query: string, position: number): ParseResult {
+export function getCompletions<T extends SupportedApiVersion>(
+  query: string,
+  position: number,
+  version: T,
+): ParseResult {
   const context = determineContext(query, position);
   const beforeCursor = query.substring(0, position);
 
@@ -112,7 +118,7 @@ export function getCompletions(query: string, position: number): ParseResult {
     case 'from_clause':
       return {
         context,
-        suggestions: getResourceNames().map((resource) => ({
+        suggestions: getResourceNames(version).map((resource) => ({
           label: resource,
           type: 'resource',
           description: `Google Ads resource: ${resource}`,
@@ -147,14 +153,14 @@ export function getCompletions(query: string, position: number): ParseResult {
         return { context, suggestions: [] };
       }
 
-      const resource = fromMatch[1];
+      const resource = fromMatch[1] as ResourceName<T>;
 
       // Extract the current field path being typed
       const fieldMatch = beforeCursor.match(/([a-z_][a-z0-9_]*(?:\.[a-z_][a-z0-9_]*)*)$/i);
       const typedPath = fieldMatch ? fieldMatch[1] : '';
 
       // Get field suggestions based on typed path
-      const suggestions = getFieldSuggestions(resource, typedPath);
+      const suggestions = getFieldSuggestions(resource, typedPath, version);
 
       return {
         context,
@@ -175,8 +181,12 @@ export function getCompletions(query: string, position: number): ParseResult {
  * @param typedPath The partially typed field path
  * @returns Array of completion items
  */
-function getFieldSuggestions(resource: string, typedPath: string): CompletionItem[] {
-  const allFields = getFieldsForResource(resource);
+function getFieldSuggestions<T extends SupportedApiVersion>(
+  resource: ResourceName<T>,
+  typedPath: string,
+  version: T,
+): CompletionItem[] {
+  const allFields = getFieldsForResource(resource, version);
 
   if (!typedPath || !typedPath.includes('.')) {
     // No prefix yet, show all fields
@@ -188,7 +198,7 @@ function getFieldSuggestions(resource: string, typedPath: string): CompletionIte
   const prefix = segments.slice(0, -1).join('.');
 
   // Get fields for the specific prefix
-  const prefixFields = prefix ? getFieldsForResourcePrefix(resource, prefix) : allFields;
+  const prefixFields = prefix ? getFieldsForResourcePrefix(resource, prefix, version) : allFields;
 
   // Filter fields that start with the typed path
   const matchingFields = prefixFields.filter((field) =>
@@ -227,9 +237,11 @@ function fieldToCompletionItem(field: FieldDefinition): CompletionItem {
  * @param query The GAQL query string
  * @returns The resource name or undefined
  */
-export function extractResource(query: string): string | undefined {
+export function extractResource<T extends SupportedApiVersion>(
+  query: string,
+): ResourceName<T> | undefined {
   const fromMatch = query.match(/\bFROM\s+(\w+)/i);
-  return fromMatch ? fromMatch[1] : undefined;
+  return fromMatch ? (fromMatch[1] as ResourceName<T>) : undefined;
 }
 
 /**
@@ -238,13 +250,37 @@ export function extractResource(query: string): string | undefined {
  * @returns Array of field names
  */
 export function extractSelectFields(query: string): string[] {
-  const selectMatch = query.match(/\bSELECT\s+(.+?)\s+FROM/is);
-  if (!selectMatch) return [];
+  const selectClause = extractSelectClause(query);
+  if (!selectClause) return [];
 
-  return selectMatch[1]
+  return selectClause
     .split(',')
     .map((f) => f.trim())
     .filter((f) => f.length > 0);
+}
+
+/**
+ * Extract the body of a SELECT clause from a GAQL query.
+ * Returns the text between SELECT and FROM keywords.
+ * Uses string searching instead of regex to avoid polynomial backtracking (ReDoS).
+ */
+export function extractSelectClause(query: string): string | null {
+  const upper = query.toUpperCase();
+
+  const selectIdx = findKeywordIndex(upper, 'SELECT', 0);
+  if (selectIdx === -1) return null;
+
+  // Skip SELECT and leading whitespace
+  let start = selectIdx + 6;
+  while (start < query.length && isWhitespaceChar(query.charCodeAt(start))) start++;
+  if (start >= query.length) return null;
+
+  // Find FROM after start
+  const fromIdx = findKeywordIndex(upper, 'FROM', start);
+  if (fromIdx === -1) return null;
+
+  const result = query.substring(start, fromIdx).trim();
+  return result.length > 0 ? result : null;
 }
 
 /**
@@ -253,9 +289,118 @@ export function extractSelectFields(query: string): string[] {
  * @returns Array of field names
  */
 export function extractWhereFields(query: string): string[] {
-  const whereMatch = query.match(/\bWHERE\s+(.+?)(\s+ORDER\s+BY|\s+LIMIT|$)/is);
-  if (!whereMatch) return [];
+  const whereClause = extractWhereClause(query);
+  if (!whereClause) return [];
 
-  const fieldRegex = /([a-z_][a-z0-9_]*\.[a-z_][a-z0-9_]*)/gi;
-  return whereMatch[1].match(fieldRegex) || [];
+  return extractDottedIdentifiers(whereClause);
+}
+
+/**
+ * Extract the body of a WHERE clause from a GAQL query.
+ * Returns the text between WHERE and the next ORDER BY, LIMIT, or end of string.
+ * Uses string searching instead of regex to avoid polynomial backtracking (ReDoS).
+ */
+export function extractWhereClause(query: string): string | null {
+  const upper = query.toUpperCase();
+
+  // Find WHERE keyword
+  const whereIdx = findKeywordIndex(upper, 'WHERE', 0);
+  if (whereIdx === -1) return null;
+
+  // Skip WHERE and leading whitespace
+  let start = whereIdx + 5;
+  while (start < query.length && isWhitespaceChar(query.charCodeAt(start))) start++;
+  if (start >= query.length) return null;
+
+  // Find end boundary: ORDER BY or LIMIT (whichever comes first after start)
+  let end = query.length;
+
+  const orderIdx = findKeywordIndex(upper, 'ORDER', start);
+  if (orderIdx !== -1 && orderIdx < end) {
+    // Verify it's followed by optional whitespace then BY
+    let afterOrder = orderIdx + 5;
+    while (afterOrder < upper.length && isWhitespaceChar(upper.charCodeAt(afterOrder)))
+      afterOrder++;
+    if (
+      upper.startsWith('BY', afterOrder) &&
+      (afterOrder + 2 >= upper.length || !isIdentCharCode(upper.charCodeAt(afterOrder + 2)))
+    ) {
+      end = orderIdx;
+    }
+  }
+
+  const limitIdx = findKeywordIndex(upper, 'LIMIT', start);
+  if (limitIdx !== -1 && limitIdx < end) {
+    end = limitIdx;
+  }
+
+  const result = query.substring(start, end).trim();
+  return result.length > 0 ? result : null;
+}
+
+/**
+ * Find a keyword in text at a word boundary (not preceded/followed by identifier chars).
+ */
+function findKeywordIndex(text: string, keyword: string, from: number): number {
+  const len = keyword.length;
+  let pos = from;
+  while (pos <= text.length - len) {
+    const idx = text.indexOf(keyword, pos);
+    if (idx === -1) return -1;
+    const before = idx > 0 ? text.charCodeAt(idx - 1) : 32;
+    const after = idx + len < text.length ? text.charCodeAt(idx + len) : 32;
+    if (!isIdentCharCode(before) && !isIdentCharCode(after)) {
+      return idx;
+    }
+    pos = idx + 1;
+  }
+  return -1;
+}
+
+function isWhitespaceChar(c: number): boolean {
+  return c === 32 || c === 9 || c === 10 || c === 13; // space, tab, LF, CR
+}
+
+/**
+ * Extract dotted identifiers (e.g., "campaign.id", "metrics.clicks") from text.
+ * Uses manual scanning instead of regex to avoid polynomial backtracking (ReDoS).
+ */
+export function extractDottedIdentifiers(text: string): string[] {
+  const results: string[] = [];
+  const len = text.length;
+  let i = 0;
+
+  while (i < len) {
+    const c = text.charCodeAt(i);
+    // Check for identifier start: [a-zA-Z_]
+    if ((c >= 65 && c <= 90) || (c >= 97 && c <= 122) || c === 95) {
+      const start = i;
+      i++;
+      // Consume identifier chars: [a-zA-Z0-9_]
+      while (i < len && isIdentCharCode(text.charCodeAt(i))) i++;
+      // Check for dot followed by another identifier
+      if (i < len && text.charCodeAt(i) === 46) {
+        const dotPos = i;
+        i++;
+        const c2 = i < len ? text.charCodeAt(i) : 0;
+        if ((c2 >= 65 && c2 <= 90) || (c2 >= 97 && c2 <= 122) || c2 === 95) {
+          i++;
+          while (i < len && isIdentCharCode(text.charCodeAt(i))) i++;
+          results.push(text.substring(start, i));
+        } else {
+          // Dot not followed by valid identifier start, skip
+          i = dotPos + 1;
+        }
+      }
+      // If no dot, just continue (i is already past the identifier)
+    } else {
+      i++;
+    }
+  }
+
+  return results;
+}
+
+function isIdentCharCode(c: number): boolean {
+  return (c >= 65 && c <= 90) || (c >= 97 && c <= 122) || (c >= 48 && c <= 57) || c === 95;
 }

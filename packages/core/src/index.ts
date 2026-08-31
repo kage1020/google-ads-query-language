@@ -1,6 +1,3 @@
-// Schema exports
-
-// Parser exports
 export {
   type CompletionItem,
   determineContext,
@@ -14,22 +11,25 @@ export {
 export {
   defaultApiVersion,
   type FieldDefinition,
+  fieldsDataV19,
+  fieldsDataV20,
+  fieldsDataV21,
   GAQL_KEYWORDS,
-  getApiVersion,
   getFieldsForResource,
   getFieldsForResourcePrefix,
   getMetricsForResource,
   getResourceInfo,
   getResourceNames,
-  getResourcePrefixesForResource,
   getSegmentsForResource,
   OPERATORS,
+  ResourceName,
+  ResourceNameV19,
+  ResourceNameV20,
+  ResourceNameV21,
   STATUS_VALUES,
   SupportedApiVersion,
   SupportedApiVersions,
-  setApiVersion,
 } from './schema.js';
-// Validator exports
 export {
   type ValidationError,
   ValidationErrorType,

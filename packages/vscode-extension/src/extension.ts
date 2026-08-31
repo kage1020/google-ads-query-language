@@ -1,39 +1,36 @@
-import { setApiVersion } from '@gaql/core';
 import * as vscode from 'vscode';
 import { GAQLCompletionProvider } from './completion.js';
-import { getApiVersion, getLanguage } from './config.js';
+import { configName, getApiVersion, getLanguage } from './config.js';
 import { GAQLHoverProvider } from './hover.js';
 import { initializeLocalization, updateLanguage } from './localization.js';
 import { GAQLCodeActionProvider, GAQLValidator } from './validator.js';
 
+const supportedCodeLanguages = ['typescript', 'javascript'] as const;
+type SupportedCodeLanguage = (typeof supportedCodeLanguages)[number];
+
 export function activate(context: vscode.ExtensionContext) {
   // Initialize localization
-  const language = getLanguage();
-  initializeLocalization(language);
-
-  // Initialize API version
-  const apiVersion = getApiVersion();
-  setApiVersion(apiVersion);
+  initializeLocalization(getLanguage());
 
   // Register completion provider
   const completionProvider = vscode.languages.registerCompletionItemProvider(
-    ['typescript', 'javascript'],
+    supportedCodeLanguages,
     new GAQLCompletionProvider(),
-    '.', // Triggered by dot
-    ' ', // Triggered by space
-    '\n', // Triggered by newline
-    '@', // Triggered by @ for directives
+    '.',
+    ' ',
+    '\n',
+    '@',
   );
 
   // Register hover provider
   const hoverProvider = vscode.languages.registerHoverProvider(
-    ['typescript', 'javascript'],
+    supportedCodeLanguages,
     new GAQLHoverProvider(),
   );
 
   // Register code action provider (Quick Fix)
   const codeActionProvider = vscode.languages.registerCodeActionsProvider(
-    ['typescript', 'javascript'],
+    supportedCodeLanguages,
     new GAQLCodeActionProvider(),
     {
       providedCodeActionKinds: GAQLCodeActionProvider.providedCodeActionKinds,
@@ -41,14 +38,14 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   // Create diagnostic collection for validation
-  const diagnosticCollection = vscode.languages.createDiagnosticCollection('gaql');
+  const diagnosticCollection = vscode.languages.createDiagnosticCollection(configName.prefix);
   const validator = new GAQLValidator(diagnosticCollection);
 
   // Validate on document open
   context.subscriptions.push(
     vscode.workspace.onDidOpenTextDocument((document) => {
-      if (document.languageId === 'typescript' || document.languageId === 'javascript') {
-        validator.validateDocument(document);
+      if (supportedCodeLanguages.includes(document.languageId as SupportedCodeLanguage)) {
+        validator.validateDocument(document, getApiVersion());
       }
     }),
   );
@@ -56,11 +53,8 @@ export function activate(context: vscode.ExtensionContext) {
   // Validate on document change
   context.subscriptions.push(
     vscode.workspace.onDidChangeTextDocument((event) => {
-      if (
-        event.document.languageId === 'typescript' ||
-        event.document.languageId === 'javascript'
-      ) {
-        validator.validateDocument(event.document);
+      if (supportedCodeLanguages.includes(event.document.languageId as SupportedCodeLanguage)) {
+        validator.validateDocument(event.document, getApiVersion());
       }
     }),
   );
@@ -70,8 +64,8 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.window.onDidChangeActiveTextEditor((editor) => {
       if (editor) {
         const document = editor.document;
-        if (document.languageId === 'typescript' || document.languageId === 'javascript') {
-          validator.validateDocument(document);
+        if (supportedCodeLanguages.includes(document.languageId as SupportedCodeLanguage)) {
+          validator.validateDocument(document, getApiVersion());
         }
       }
     }),
@@ -80,34 +74,30 @@ export function activate(context: vscode.ExtensionContext) {
   // Validate current document on activation
   if (vscode.window.activeTextEditor) {
     const document = vscode.window.activeTextEditor.document;
-    if (document.languageId === 'typescript' || document.languageId === 'javascript') {
-      validator.validateDocument(document);
+    if (supportedCodeLanguages.includes(document.languageId as SupportedCodeLanguage)) {
+      validator.validateDocument(document, getApiVersion());
     }
   }
 
   // Listen for configuration changes
   context.subscriptions.push(
     vscode.workspace.onDidChangeConfiguration((event) => {
-      if (event.affectsConfiguration('gaql.apiVersion')) {
-        const newVersion = getApiVersion();
-        setApiVersion(newVersion);
-
-        // Re-validate all open documents
+      if (event.affectsConfiguration(`${configName.prefix}.${configName.apiVersion}`)) {
         for (const document of vscode.workspace.textDocuments) {
-          if (document.languageId === 'typescript' || document.languageId === 'javascript') {
-            validator.validateDocument(document);
+          if (supportedCodeLanguages.includes(document.languageId as SupportedCodeLanguage)) {
+            validator.validateDocument(document, getApiVersion());
           }
         }
       }
 
-      if (event.affectsConfiguration('gaql.language')) {
+      if (event.affectsConfiguration(`${configName.prefix}.${configName.language}`)) {
         const newLanguage = getLanguage();
         updateLanguage(newLanguage);
 
         // Re-validate all open documents to update error messages
         for (const document of vscode.workspace.textDocuments) {
-          if (document.languageId === 'typescript' || document.languageId === 'javascript') {
-            validator.validateDocument(document);
+          if (supportedCodeLanguages.includes(document.languageId as SupportedCodeLanguage)) {
+            validator.validateDocument(document, getApiVersion());
           }
         }
       }
